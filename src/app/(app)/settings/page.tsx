@@ -1,3 +1,6 @@
+
+'use client';
+
 import {
   Card,
   CardContent,
@@ -22,8 +25,18 @@ import {
 } from '@/components/ui/select';
 import { departments, users } from '@/lib/data';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
 
 export default function SettingsPage() {
+  const { toast } = useToast();
+
+  const handleSaveChanges = () => {
+    toast({
+      title: 'Changes Saved!',
+      description: 'Your approval flow configuration has been updated.',
+    });
+  };
+
   return (
     <div className="flex flex-col gap-6">
       <h1 className="text-2xl font-bold font-headline">Settings</h1>
@@ -115,7 +128,7 @@ export default function SettingsPage() {
                             </SelectContent>
                           </Select>
                         </div>
-                        <Button className="mt-4">Save Changes</Button>
+                        <Button className="mt-4" onClick={handleSaveChanges}>Save Changes</Button>
                       </div>
                     </AccordionContent>
                   </AccordionItem>
