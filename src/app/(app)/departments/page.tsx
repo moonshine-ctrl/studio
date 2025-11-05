@@ -25,7 +25,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MoreHorizontal, PlusCircle, Trash2, Pen } from 'lucide-react';
-import { departments as initialDepartments, users, getUserById as getUser } from '@/lib/data';
+import { departments as initialDepartments, users } from '@/lib/data';
 import {
   Dialog,
   DialogContent,
@@ -51,6 +51,9 @@ export default function DepartmentsPage() {
   const [newDeptName, setNewDeptName] = useState('');
   const [newDeptHead, setNewDeptHead] = useState('');
 
+  const [editingDepartment, setEditingDepartment] = useState<Department | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+
   const getUserById = (id: string) => users.find(u => u.id === id);
   
   const handleAddDepartment = () => {
@@ -67,6 +70,25 @@ export default function DepartmentsPage() {
       setNewDeptHead('');
     }
   };
+
+  const handleEditClick = (department: Department) => {
+    setEditingDepartment({ ...department });
+    setIsEditDialogOpen(true);
+  };
+
+  const handleUpdateDepartment = () => {
+    if (editingDepartment) {
+      setDepartments(departments.map(d => d.id === editingDepartment.id ? editingDepartment : d));
+      setIsEditDialogOpen(false);
+      setEditingDepartment(null);
+    }
+  };
+  
+  const handleDepartmentChange = (field: keyof Department, value: string) => {
+    if (editingDepartment) {
+      setEditingDepartment({ ...editingDepartment, [field]: value });
+    }
+  }
 
 
   return (
@@ -163,7 +185,7 @@ export default function DepartmentsPage() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleEditClick(department)}>
                             <Pen className="mr-2 h-4 w-4" /> Edit
                           </DropdownMenuItem>
                           <DropdownMenuItem className="text-destructive focus:text-destructive">
@@ -179,6 +201,42 @@ export default function DepartmentsPage() {
           </Table>
         </CardContent>
       </Card>
+
+      {editingDepartment && (
+        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit Department</DialogTitle>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="edit-name" className="text-right">
+                  Name
+                </Label>
+                <Input id="edit-name" value={editingDepartment.name} onChange={(e) => handleDepartmentChange('name', e.target.value)} className="col-span-3" />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="edit-head" className="text-right">
+                  Department Head
+                </Label>
+                <Select onValueChange={(value) => handleDepartmentChange('headId', value)} value={editingDepartment.headId}>
+                    <SelectTrigger className="col-span-3">
+                        <SelectValue placeholder="Select a head" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {users.map((user) => (
+                            <SelectItem key={user.id} value={user.id}>{user.name}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button onClick={handleUpdateDepartment}>Save Changes</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }
