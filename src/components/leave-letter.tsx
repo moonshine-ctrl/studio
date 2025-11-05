@@ -185,7 +185,11 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                 <td colSpan={4} className={`${styles.cell}`}>
                                     <div className="text-center float-right w-1/2">
                                         <p>Atasan Langsung,</p>
-                                        <div className="h-[70px]"></div>
+                                        {approver?.qrCodeSignature ? (
+                                            <Image src={approver.qrCodeSignature} alt="QR Code" width={70} height={70} className="mx-auto my-1" />
+                                        ) : (
+                                            <div className="h-[70px]"></div>
+                                        )}
                                         <p>({approver?.name || '.......................'})</p>
                                         <p>NIP. {approver?.nip || '.......................'}</p>
                                     </div>
@@ -208,7 +212,11 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                 <td colSpan={4} className={`${styles.cell}`}>
                                     <div className="text-center float-right w-1/2">
                                         <p>Ketua,</p>
-                                        <div className="h-[70px]"></div>
+                                        {headOfAgency?.qrCodeSignature ? (
+                                            <Image src={headOfAgency.qrCodeSignature} alt="QR Code" width={70} height={70} className="mx-auto my-1" />
+                                        ) : (
+                                            <div className="h-[70px]"></div>
+                                        )}
                                         <p>({headOfAgency?.name || '.......................'})</p>
                                         <p>NIP. {headOfAgency?.nip || '.......................'}</p>
                                     </div>

@@ -64,7 +64,7 @@ export default function PrintLeaveRequestPage() {
     setIsLoading(false);
   }, [id, letterNumber]);
   
-  if (isLoading || !letterData) {
+  if (isLoading) {
     return (
       <div className="p-10 bg-white">
         <div className="max-w-4xl mx-auto space-y-4">
@@ -77,6 +77,15 @@ export default function PrintLeaveRequestPage() {
       </div>
     );
   }
+  
+  if (!letterData) {
+     return (
+       <div className="p-10 bg-white text-center">
+         <p>Data tidak ditemukan. Silakan periksa kembali ID permintaan cuti.</p>
+       </div>
+     );
+  }
+
 
   return (
     <div className="bg-white text-black">
