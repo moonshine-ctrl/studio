@@ -49,6 +49,8 @@ import { Badge } from '@/components/ui/badge';
 export default function UsersPage() {
   const [users, setUsers] = useState<User[]>(initialUsers);
   const [open, setOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [newUser, setNewUser] = useState({
     name: '',
     nip: '',
@@ -60,24 +62,29 @@ export default function UsersPage() {
 
   const getDepartmentById = (id: string) => departments.find(d => d.id === id);
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field: string, value: string, isEditing: boolean = false) => {
+    const target = isEditing ? editingUser : newUser;
+    const setter = isEditing ? setEditingUser : setNewUser;
+
     if (field === 'qrCodeSignature') {
         const input = event?.target as HTMLInputElement;
         if (input.files?.length) {
             const file = input.files[0];
             const reader = new FileReader();
             reader.onload = (e) => {
-                setNewUser({ ...newUser, [field]: e.target?.result as string });
+                setter({ ...target!, [field]: e.target?.result as string });
             };
             reader.readAsDataURL(file);
         }
     } else {
-        setNewUser({ ...newUser, [field]: value });
+        setter({ ...target!, [field]: value });
     }
   };
   
-  const handleSelectChange = (field: string, value: 'Admin' | 'Approver' | 'Employee' | string) => {
-    setNewUser({ ...newUser, [field]: value });
+  const handleSelectChange = (field: string, value: 'Admin' | 'Approver' | 'Employee' | string, isEditing: boolean = false) => {
+    const target = isEditing ? editingUser : newUser;
+    const setter = isEditing ? setEditingUser : setNewUser;
+    setter({ ...target!, [field]: value });
   };
 
   const handleAddUser = () => {
@@ -102,6 +109,19 @@ export default function UsersPage() {
         annualLeaveBalance: '12',
         qrCodeSignature: '',
       });
+    }
+  };
+
+  const handleEditClick = (user: User) => {
+    setEditingUser({ ...user });
+    setIsEditDialogOpen(true);
+  };
+
+  const handleUpdateUser = () => {
+    if (editingUser) {
+      setUsers(users.map(u => u.id === editingUser.id ? editingUser : u));
+      setIsEditDialogOpen(false);
+      setEditingUser(null);
     }
   };
 
@@ -239,7 +259,7 @@ export default function UsersPage() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleEditClick(user)}>
                             <UserPen className="mr-2 h-4 w-4" /> Edit
                           </DropdownMenuItem>
                           <DropdownMenuItem className="text-destructive focus:text-destructive">
@@ -255,6 +275,64 @@ export default function UsersPage() {
           </Table>
         </CardContent>
       </Card>
+      
+      {editingUser && (
+        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Edit User</DialogTitle>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="edit-name" className="text-right">Name</Label>
+                <Input id="edit-name" value={editingUser.name} onChange={(e) => handleInputChange('name', e.target.value, true)} className="col-span-3" />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="edit-nip" className="text-right">NIP</Label>
+                <Input id="edit-nip" value={editingUser.nip} onChange={(e) => handleInputChange('nip', e.target.value, true)} className="col-span-3" />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="edit-department" className="text-right">Department</Label>
+                 <Select onValueChange={(value) => handleSelectChange('departmentId', value, true)} value={editingUser.departmentId}>
+                    <SelectTrigger className="col-span-3">
+                        <SelectValue placeholder="Select a department" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {departments.map((dept) => (
+                            <SelectItem key={dept.id} value={dept.id}>{dept.name}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+              </div>
+               <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="edit-role" className="text-right">Role</Label>
+                 <Select onValueChange={(value: 'Admin' | 'Approver' | 'Employee') => handleSelectChange('role', value, true)} value={editingUser.role}>
+                    <SelectTrigger className="col-span-3">
+                        <SelectValue placeholder="Select a role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="Employee">Employee</SelectItem>
+                        <SelectItem value="Approver">Approver</SelectItem>
+                        <SelectItem value="Admin">Admin</SelectItem>
+                    </SelectContent>
+                </Select>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="edit-leave" className="text-right">Leave Balance</Label>
+                <Input id="edit-leave" type="number" value={editingUser.annualLeaveBalance} onChange={(e) => handleInputChange('annualLeaveBalance', e.target.value, true)} className="col-span-3" />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="edit-qr-code" className="text-right">TTD QR Code</Label>
+                <Input id="edit-qr-code" type="file" accept="image/png, image/jpeg" onChange={(e) => handleInputChange('qrCodeSignature', '', true)} className="col-span-3" />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button onClick={handleUpdateUser}>Save Changes</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
+
     </div>
   );
 }
