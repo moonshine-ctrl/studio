@@ -9,24 +9,27 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { LogOut, User as UserIcon } from 'lucide-react';
+import { users } from '@/lib/data';
 
 export function UserProfile() {
+  const adminUser = users.find(u => u.role === 'Admin');
+
   return (
     <div className="flex w-full items-center gap-3 p-2">
       <Avatar className="h-9 w-9">
         <AvatarImage
-          src="https://picsum.photos/seed/admin/100/100"
-          alt="Admin"
+          src={adminUser?.avatar || "https://picsum.photos/seed/admin/100/100"}
+          alt={adminUser?.name || "Admin"}
           data-ai-hint="profile person"
         />
-        <AvatarFallback>AD</AvatarFallback>
+        <AvatarFallback>{adminUser?.name.charAt(0) || 'A'}</AvatarFallback>
       </Avatar>
       <div className="hidden flex-1 flex-col group-data-[collapsible=icon]:hidden">
         <span className="text-sm font-medium text-sidebar-foreground">
-          Admin User
+          {adminUser?.name || 'Admin User'}
         </span>
         <span className="text-xs text-muted-foreground">
-          NIP: 199001012020121001
+          NIP: {adminUser?.nip || '199001012020121001'}
         </span>
       </div>
       <div className="hidden group-data-[collapsible=icon]:hidden">

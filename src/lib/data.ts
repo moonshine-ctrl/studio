@@ -10,6 +10,7 @@ export const users: User[] = [
   { id: '6', name: 'Gilang Ramadhan', nip: '199609092021091004', avatar: 'https://picsum.photos/seed/6/100/100', departmentId: 'marketing', role: 'Employee', annualLeaveBalance: 15, phone: '6281234567895' },
   { id: '7', name: 'Hana Yulita', nip: '199107212018112003', avatar: 'https://picsum.photos/seed/7/100/100', departmentId: 'finance', role: 'Approver', annualLeaveBalance: 9, phone: '6281234567896' },
   { id: '8', name: 'Indra Wijaya', nip: '198912302015021001', avatar: 'https://picsum.photos/seed/8/100/100', departmentId: 'marketing', role: 'Approver', annualLeaveBalance: 11, phone: '6281234567897' },
+  { id: 'admin', name: 'Admin User', nip: '199001012020121001', avatar: 'https://picsum.photos/seed/admin/100/100', departmentId: 'hr', role: 'Admin', annualLeaveBalance: 0, phone: '6281200000000'},
 ];
 
 export const departments: Department[] = [

@@ -7,12 +7,12 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { notifications } from '@/lib/data';
+import { notifications as initialNotifications } from '@/lib/data';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Check, Mail, MessageSquare } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import type { Notification, User } from '@/types';
 import {
@@ -22,7 +22,26 @@ import {
 } from '@/lib/data';
 
 export default function NotificationsPage() {
-  const [notifData, setNotifData] = useState<Notification[]>(notifications);
+  const [notifData, setNotifData] = useState<Notification[]>(initialNotifications);
+
+  const enrichedNotifications = useMemo(() => {
+    return notifData.map(notification => {
+      let message = notification.message;
+      if (notification.type === 'warning' && notification.leaveRequestId) {
+        const leaveRequest = getLeaveRequestById(notification.leaveRequestId);
+        if (leaveRequest) {
+          const employee = getUserById(leaveRequest.userId);
+          const department = employee ? getDepartmentById(employee.departmentId) : undefined;
+          const approver = department ? getUserById(department.headId) : undefined;
+          if (approver) {
+            message = `Permintaan cuti dari ${employee?.name} menunggu persetujuan Anda, ${approver.name}.`;
+          }
+        }
+      }
+      return { ...notification, message };
+    });
+  }, [notifData]);
+
 
   const markAsRead = (id: string) => {
     setNotifData(notifData.map(n => n.id === id ? {...n, isRead: true} : n));
@@ -50,7 +69,7 @@ export default function NotificationsPage() {
       return;
     }
     
-    const message = `Yth. Bapak/Ibu ${approver.name},\n\nDengan ini kami memberitahukan bahwa ada pengajuan cuti dari Sdr/i ${employee.name} (NIP: ${employee.nip}) yang memerlukan persetujuan Anda.\n\nDetail pengajuan:\nJenis Cuti: ${leaveRequest.leaveTypeId}\nTanggal: ${format(leaveRequest.startDate, 'dd-MM-yyyy')} s/d ${format(leaveRequest.endDate, 'dd-MM-yyyy')}\n\nMohon untuk segera ditindaklanjuti. Terima kasih.\n\n- HR Department -`;
+    const message = `Yth. Bapak/Ibu ${approver.name},\n\nDengan ini kami memberitahukan bahwa ada pengajuan cuti dari Sdr/i ${employee.name} (NIP: ${employee.nip}) yang memerlukan persetujuan Anda.\n\nDetail pengajuan:\nJenis Cuti: ${getLeaveRequestById(notification.leaveRequestId) ? getLeaveTypeById(getLeaveRequestById(notification.leaveRequestId)!.leaveTypeId)?.name : ''}\nTanggal: ${format(leaveRequest.startDate, 'dd-MM-yyyy')} s/d ${format(leaveRequest.endDate, 'dd-MM-yyyy')}\n\nMohon untuk segera ditindaklanjuti. Terima kasih.\n\n- HR Department -`;
     const whatsappUrl = `https://wa.me/${approver.phone}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
@@ -83,9 +102,9 @@ export default function NotificationsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-           {notifData.length > 0 ? (
+           {enrichedNotifications.length > 0 ? (
             <div className="space-y-4">
-              {notifData.map((notification) => (
+              {enrichedNotifications.map((notification) => (
                 <div 
                   key={notification.id}
                   className={cn(
