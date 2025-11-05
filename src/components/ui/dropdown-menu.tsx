@@ -181,6 +181,21 @@ const DropdownMenuShortcut = ({
 }
 DropdownMenuShortcut.displayName = "DropdownMenuShortcut"
 
+const DropdownMenuFooter = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
+  <div
+    className={cn(
+      "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 p-1",
+      className
+    )}
+    {...props}
+  />
+);
+DropdownMenuFooter.displayName = "DropdownMenuFooter";
+
+
 export {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -197,4 +212,5 @@ export {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuRadioGroup,
+  DropdownMenuFooter,
 }

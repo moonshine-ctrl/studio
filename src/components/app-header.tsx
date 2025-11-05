@@ -14,9 +14,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuFooter
 } from './ui/dropdown-menu';
 import { notifications } from '@/lib/data';
 import { Badge } from './ui/badge';
+import Link from 'next/link';
 
 export function AppHeader() {
   const { isMobile } = useSidebar();
@@ -25,7 +27,7 @@ export function AppHeader() {
   if (isMobile === undefined) return null;
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/60 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
+    <header className="sticky top-0 z-30 flex h-auto items-center gap-4 border-b bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 sm:py-4">
       <SidebarTrigger className="sm:hidden" />
       <div className="relative ml-auto flex-1 md:grow-0">
         <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -63,6 +65,12 @@ export function AppHeader() {
               </p>
             </DropdownMenuItem>
           ))}
+           <DropdownMenuSeparator />
+           <DropdownMenuFooter>
+                <Button asChild variant="outline" className="w-full">
+                    <Link href="/notifications">View All Notifications</Link>
+                </Button>
+           </DropdownMenuFooter>
         </DropdownMenuContent>
       </DropdownMenu>
     </header>

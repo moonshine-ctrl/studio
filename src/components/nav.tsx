@@ -6,6 +6,7 @@ import {
   LayoutDashboard,
   Settings,
   Users,
+  Bell,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -20,6 +21,7 @@ const links = [
   { href: '/', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/users', label: 'Users', icon: Users },
   { href: '/departments', label: 'Departments', icon: Building },
+  { href: '/notifications', label: 'Notifications', icon: Bell },
   { href: '/settings', label: 'Settings', icon: Settings },
   { href: '/reports', label: 'Reports', icon: FileDown },
 ];
