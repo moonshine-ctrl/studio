@@ -32,7 +32,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogFooter
+  DialogFooter,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -44,30 +44,42 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import type { Department } from '@/types';
+import { useToast } from '@/hooks/use-toast';
 
 export default function DepartmentsPage() {
   const [departments, setDepartments] = useState<Department[]>(initialDepartments);
   const [open, setOpen] = useState(false);
   const [newDeptName, setNewDeptName] = useState('');
-  const [newDeptHead, setNewDeptHead] = useState('');
-
+  
   const [editingDepartment, setEditingDepartment] = useState<Department | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const { toast } = useToast();
 
   const getUserById = (id: string) => users.find(u => u.id === id);
   
   const handleAddDepartment = () => {
-    if (newDeptName && newDeptHead) {
+    if (newDeptName) {
       const newDepartment: Department = {
         id: `dept-${Date.now()}`,
         name: newDeptName,
-        headId: newDeptHead,
+        headId: '', // Head is not assigned on creation
         employeeCount: 0,
       };
       setDepartments([...departments, newDepartment]);
+      // Also update the global/mock data so it reflects on settings page
+      initialDepartments.push(newDepartment); 
       setOpen(false);
       setNewDeptName('');
-      setNewDeptHead('');
+      toast({
+        title: 'Department Added',
+        description: `${newDepartment.name} has been created.`,
+      });
+    } else {
+        toast({
+            variant: 'destructive',
+            title: 'Error',
+            description: 'Department name is required.',
+        });
     }
   };
 
@@ -78,9 +90,21 @@ export default function DepartmentsPage() {
 
   const handleUpdateDepartment = () => {
     if (editingDepartment) {
-      setDepartments(departments.map(d => d.id === editingDepartment.id ? editingDepartment : d));
+      const updatedDepartments = departments.map(d => d.id === editingDepartment.id ? editingDepartment : d);
+      setDepartments(updatedDepartments);
+
+      // Also update the global/mock data
+      const index = initialDepartments.findIndex(d => d.id === editingDepartment.id);
+      if (index !== -1) {
+        initialDepartments[index] = editingDepartment;
+      }
+
       setIsEditDialogOpen(false);
       setEditingDepartment(null);
+      toast({
+        title: 'Department Updated',
+        description: 'Changes have been saved successfully.',
+      });
     }
   };
   
@@ -111,21 +135,6 @@ export default function DepartmentsPage() {
                   Name
                 </Label>
                 <Input id="name" value={newDeptName} onChange={(e) => setNewDeptName(e.target.value)} className="col-span-3" />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="head" className="text-right">
-                  Department Head
-                </Label>
-                <Select onValueChange={setNewDeptHead} value={newDeptHead}>
-                    <SelectTrigger className="col-span-3">
-                        <SelectValue placeholder="Select a head" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {users.map((user) => (
-                            <SelectItem key={user.id} value={user.id}>{user.name}</SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
               </div>
             </div>
             <DialogFooter>
