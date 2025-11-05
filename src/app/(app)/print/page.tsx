@@ -17,7 +17,6 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Printer } from 'lucide-react';
 import {
   getLeaveTypeById,
@@ -26,12 +25,20 @@ import {
 } from '@/lib/data';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
+import { useState } from 'react';
 
 export default function PrintPage() {
   
-  const handlePrint = () => {
+  const [letterNumbers, setLetterNumbers] = useState<{ [key: string]: string }>({});
+
+  const handleLetterNumberChange = (requestId: string, value: string) => {
+    setLetterNumbers(prev => ({...prev, [requestId]: value}));
+  };
+
+  const handlePrint = (requestId: string) => {
+    const letterNumber = letterNumbers[requestId] || '';
     // This is a placeholder for the print functionality
-    alert('Fungsi cetak belum diimplementasikan.');
+    alert(`Fungsi cetak belum diimplementasikan.\nNomor Surat: ${letterNumber}`);
   };
 
   return (
@@ -46,11 +53,6 @@ export default function PrintPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-           <div className="grid gap-2 max-w-sm">
-              <Label htmlFor="letter-number">Nomor Surat</Label>
-              <Input id="letter-number" placeholder="Contoh: 001/HRD/CUTI/2024" />
-            </div>
-
           <Table>
             <TableHeader>
               <TableRow>
@@ -82,10 +84,19 @@ export default function PrintPage() {
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button variant="outline" size="sm" onClick={handlePrint} disabled={!isPrintable}>
-                        <Printer className="mr-2 h-4 w-4" />
-                        Cetak Surat
-                      </Button>
+                       <div className="flex justify-end items-center gap-2">
+                        <Input 
+                          placeholder="Nomor Surat" 
+                          className="w-[200px]" 
+                          value={letterNumbers[request.id] || ''}
+                          onChange={(e) => handleLetterNumberChange(request.id, e.target.value)}
+                          disabled={!isPrintable}
+                        />
+                        <Button variant="outline" size="sm" onClick={() => handlePrint(request.id)} disabled={!isPrintable}>
+                          <Printer className="mr-2 h-4 w-4" />
+                          Cetak
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 );
