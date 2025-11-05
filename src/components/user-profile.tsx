@@ -26,7 +26,7 @@ export function UserProfile() {
           Admin User
         </span>
         <span className="text-xs text-muted-foreground">
-          admin@leavetrack.pro
+          NIP: 199001012020121001
         </span>
       </div>
       <div className="hidden group-data-[collapsible=icon]:hidden">

@@ -50,7 +50,7 @@ export default function UsersPage() {
   const [open, setOpen] = useState(false);
   const [newUser, setNewUser] = useState({
     name: '',
-    email: '',
+    nip: '',
     departmentId: '',
     role: 'Employee' as 'Admin' | 'Approver' | 'Employee',
     annualLeaveBalance: '12',
@@ -67,11 +67,11 @@ export default function UsersPage() {
   };
 
   const handleAddUser = () => {
-    if (newUser.name && newUser.email && newUser.departmentId && newUser.role) {
+    if (newUser.name && newUser.nip && newUser.departmentId && newUser.role) {
       const user: User = {
         id: `user-${Date.now()}`,
         name: newUser.name,
-        email: newUser.email,
+        nip: newUser.nip,
         avatar: `https://picsum.photos/seed/${Date.now()}/100/100`,
         departmentId: newUser.departmentId,
         role: newUser.role,
@@ -81,7 +81,7 @@ export default function UsersPage() {
       setOpen(false);
       setNewUser({
         name: '',
-        email: '',
+        nip: '',
         departmentId: '',
         role: 'Employee',
         annualLeaveBalance: '12',
@@ -109,8 +109,8 @@ export default function UsersPage() {
                 <Input id="name" value={newUser.name} onChange={(e) => handleInputChange('name', e.target.value)} className="col-span-3" />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="email" className="text-right">Email</Label>
-                <Input id="email" type="email" value={newUser.email} onChange={(e) => handleInputChange('email', e.target.value)} className="col-span-3" />
+                <Label htmlFor="nip" className="text-right">NIP</Label>
+                <Input id="nip" value={newUser.nip} onChange={(e) => handleInputChange('nip', e.target.value)} className="col-span-3" />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="department" className="text-right">Department</Label>
@@ -185,7 +185,7 @@ export default function UsersPage() {
                         </Avatar>
                         <div>
                           <div className="font-medium">{user.name}</div>
-                          <div className="text-sm text-muted-foreground hidden md:inline">{user.email}</div>
+                          <div className="text-sm text-muted-foreground hidden md:inline">{user.nip}</div>
                         </div>
                       </div>
                     </TableCell>

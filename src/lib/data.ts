@@ -2,14 +2,14 @@ import type { User, Department, LeaveType, LeaveRequest, Notification } from '@/
 import { subDays, addDays } from 'date-fns';
 
 export const users: User[] = [
-  { id: '1', name: 'Budi Santoso', email: 'budi.s@example.com', avatar: 'https://picsum.photos/seed/1/100/100', departmentId: 'hr', role: 'Employee', annualLeaveBalance: 12 },
-  { id: '2', name: 'Citra Lestari', email: 'citra.l@example.com', avatar: 'https://picsum.photos/seed/2/100/100', departmentId: 'it', role: 'Approver', annualLeaveBalance: 10 },
-  { id: '3', name: 'Doni Firmansyah', email: 'doni.f@example.com', avatar: 'https://picsum.photos/seed/3/100/100', departmentId: 'finance', role: 'Employee', annualLeaveBalance: 5 },
-  { id: '4', name: 'Eka Putri', email: 'eka.p@example.com', avatar: 'https://picsum.photos/seed/4/100/100', departmentId: 'it', role: 'Approver', annualLeaveBalance: 12 },
-  { id: '5', name: 'Fitriani', email: 'fitriani@example.com', avatar: 'https://picsum.photos/seed/5/100/100', departmentId: 'hr', role: 'Approver', annualLeaveBalance: 8 },
-  { id: '6', name: 'Gilang Ramadhan', email: 'gilang.r@example.com', avatar: 'https://picsum.photos/seed/6/100/100', departmentId: 'marketing', role: 'Employee', annualLeaveBalance: 15 },
-  { id: '7', name: 'Hana Yulita', email: 'hana.y@example.com', avatar: 'https://picsum.photos/seed/7/100/100', departmentId: 'finance', role: 'Approver', annualLeaveBalance: 9 },
-  { id: '8', name: 'Indra Wijaya', email: 'indra.w@example.com', avatar: 'https://picsum.photos/seed/8/100/100', departmentId: 'marketing', role: 'Approver', annualLeaveBalance: 11 },
+  { id: '1', name: 'Budi Santoso', nip: '199508172021011001', avatar: 'https://picsum.photos/seed/1/100/100', departmentId: 'hr', role: 'Employee', annualLeaveBalance: 12 },
+  { id: '2', name: 'Citra Lestari', nip: '199205202019032002', avatar: 'https://picsum.photos/seed/2/100/100', departmentId: 'it', role: 'Approver', annualLeaveBalance: 10 },
+  { id: '3', name: 'Doni Firmansyah', nip: '199811102022021003', avatar: 'https://picsum.photos/seed/3/100/100', departmentId: 'finance', role: 'Employee', annualLeaveBalance: 5 },
+  { id: '4', name: 'Eka Putri', nip: '199301152018052001', avatar: 'https://picsum.photos/seed/4/100/100', departmentId: 'it', role: 'Approver', annualLeaveBalance: 12 },
+  { id: '5', name: 'Fitriani', nip: '199003252017062002', avatar: 'https://picsum.photos/seed/5/100/100', departmentId: 'hr', role: 'Approver', annualLeaveBalance: 8 },
+  { id: '6', name: 'Gilang Ramadhan', nip: '199609092021091004', avatar: 'https://picsum.photos/seed/6/100/100', departmentId: 'marketing', role: 'Employee', annualLeaveBalance: 15 },
+  { id: '7', name: 'Hana Yulita', nip: '199107212018112003', avatar: 'https://picsum.photos/seed/7/100/100', departmentId: 'finance', role: 'Approver', annualLeaveBalance: 9 },
+  { id: '8', name: 'Indra Wijaya', nip: '198912302015021001', avatar: 'https://picsum.photos/seed/8/100/100', departmentId: 'marketing', role: 'Approver', annualLeaveBalance: 11 },
 ];
 
 export const departments: Department[] = [
