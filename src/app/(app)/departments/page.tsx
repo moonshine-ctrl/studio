@@ -1,3 +1,6 @@
+'use client';
+
+import { useState } from 'react';
 import {
   Card,
   CardContent,
@@ -22,16 +25,92 @@ import {
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MoreHorizontal, PlusCircle, Trash2, Pen } from 'lucide-react';
-import { departments, getUserById } from '@/lib/data';
+import { departments as initialDepartments, users, getUserById as getUser } from '@/lib/data';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import type { Department } from '@/types';
 
 export default function DepartmentsPage() {
+  const [departments, setDepartments] = useState<Department[]>(initialDepartments);
+  const [open, setOpen] = useState(false);
+  const [newDeptName, setNewDeptName] = useState('');
+  const [newDeptHead, setNewDeptHead] = useState('');
+
+  const getUserById = (id: string) => users.find(u => u.id === id);
+  
+  const handleAddDepartment = () => {
+    if (newDeptName && newDeptHead) {
+      const newDepartment: Department = {
+        id: `dept-${Date.now()}`,
+        name: newDeptName,
+        headId: newDeptHead,
+        employeeCount: 0,
+      };
+      setDepartments([...departments, newDepartment]);
+      setOpen(false);
+      setNewDeptName('');
+      setNewDeptHead('');
+    }
+  };
+
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold font-headline">Department Management</h1>
-        <Button>
-          <PlusCircle className="mr-2 h-4 w-4" /> Add Department
-        </Button>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              <PlusCircle className="mr-2 h-4 w-4" /> Add Department
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add New Department</DialogTitle>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="name" className="text-right">
+                  Name
+                </Label>
+                <Input id="name" value={newDeptName} onChange={(e) => setNewDeptName(e.target.value)} className="col-span-3" />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="head" className="text-right">
+                  Department Head
+                </Label>
+                <Select onValueChange={setNewDeptHead} value={newDeptHead}>
+                    <SelectTrigger className="col-span-3">
+                        <SelectValue placeholder="Select a head" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {users.map((user) => (
+                            <SelectItem key={user.id} value={user.id}>{user.name}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button onClick={handleAddDepartment}>Add Department</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <Card>

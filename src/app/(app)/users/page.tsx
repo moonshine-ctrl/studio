@@ -1,3 +1,6 @@
+'use client';
+
+import { useState } from 'react';
 import {
   Card,
   CardContent,
@@ -22,16 +25,129 @@ import {
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MoreHorizontal, PlusCircle, Trash2, UserPen } from 'lucide-react';
-import { getDepartmentById, users } from '@/lib/data';
+import { getDepartmentById as getDept, users as initialUsers, departments } from '@/lib/data';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import type { User } from '@/types';
 
 export default function UsersPage() {
+  const [users, setUsers] = useState<User[]>(initialUsers);
+  const [open, setOpen] = useState(false);
+  const [newUser, setNewUser] = useState({
+    name: '',
+    email: '',
+    departmentId: '',
+    role: 'Employee' as 'Admin' | 'Approver' | 'Employee',
+    annualLeaveBalance: '12',
+  });
+
+  const getDepartmentById = (id: string) => departments.find(d => d.id === id);
+
+  const handleInputChange = (field: string, value: string) => {
+    setNewUser({ ...newUser, [field]: value });
+  };
+  
+  const handleSelectChange = (field: string, value: 'Admin' | 'Approver' | 'Employee' | string) => {
+    setNewUser({ ...newUser, [field]: value });
+  };
+
+  const handleAddUser = () => {
+    if (newUser.name && newUser.email && newUser.departmentId && newUser.role) {
+      const user: User = {
+        id: `user-${Date.now()}`,
+        name: newUser.name,
+        email: newUser.email,
+        avatar: `https://picsum.photos/seed/${Date.now()}/100/100`,
+        departmentId: newUser.departmentId,
+        role: newUser.role,
+        annualLeaveBalance: parseInt(newUser.annualLeaveBalance, 10),
+      };
+      setUsers([...users, user]);
+      setOpen(false);
+      setNewUser({
+        name: '',
+        email: '',
+        departmentId: '',
+        role: 'Employee',
+        annualLeaveBalance: '12',
+      });
+    }
+  };
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold font-headline">User Management</h1>
-        <Button>
-          <PlusCircle className="mr-2 h-4 w-4" /> Add User
-        </Button>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              <PlusCircle className="mr-2 h-4 w-4" /> Add User
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Add New User</DialogTitle>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="name" className="text-right">Name</Label>
+                <Input id="name" value={newUser.name} onChange={(e) => handleInputChange('name', e.target.value)} className="col-span-3" />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="email" className="text-right">Email</Label>
+                <Input id="email" type="email" value={newUser.email} onChange={(e) => handleInputChange('email', e.target.value)} className="col-span-3" />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="department" className="text-right">Department</Label>
+                 <Select onValueChange={(value) => handleSelectChange('departmentId', value)} value={newUser.departmentId}>
+                    <SelectTrigger className="col-span-3">
+                        <SelectValue placeholder="Select a department" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {departments.map((dept) => (
+                            <SelectItem key={dept.id} value={dept.id}>{dept.name}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+              </div>
+               <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="role" className="text-right">Role</Label>
+                 <Select onValueChange={(value: 'Admin' | 'Approver' | 'Employee') => handleSelectChange('role', value)} value={newUser.role}>
+                    <SelectTrigger className="col-span-3">
+                        <SelectValue placeholder="Select a role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="Employee">Employee</SelectItem>
+                        <SelectItem value="Approver">Approver</SelectItem>
+                        <SelectItem value="Admin">Admin</SelectItem>
+                    </SelectContent>
+                </Select>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="leave" className="text-right">Leave Balance</Label>
+                <Input id="leave" type="number" value={newUser.annualLeaveBalance} onChange={(e) => handleInputChange('annualLeaveBalance', e.target.value)} className="col-span-3" />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button onClick={handleAddUser}>Add User</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <Card>
