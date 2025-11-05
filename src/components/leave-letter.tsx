@@ -186,8 +186,8 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                     <div className="text-center float-right w-1/2">
                                         <p>Atasan Langsung,</p>
                                         <div className="h-[70px]"></div>
-                                        <p>({approver?.name || ''})</p>
-                                        <p>NIP. {approver?.nip || ''}</p>
+                                        <p>({approver?.name || '.......................'})</p>
+                                        <p>NIP. {approver?.nip || '.......................'}</p>
                                     </div>
                                 </td>
                             </tr>
@@ -209,8 +209,8 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                     <div className="text-center float-right w-1/2">
                                         <p>Ketua,</p>
                                         <div className="h-[70px]"></div>
-                                        <p>({headOfAgency?.name || ''})</p>
-                                        <p>NIP. {headOfAgency?.nip || ''}</p>
+                                        <p>({headOfAgency?.name || '.......................'})</p>
+                                        <p>NIP. {headOfAgency?.nip || '.......................'}</p>
                                     </div>
                                 </td>
                             </tr>
@@ -245,11 +245,3 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
         </div>
     );
 }
-
-const styles2 = {
-    table: "w-full border-collapse border border-black text-xs",
-    cell: "border border-black p-1",
-    cellHeader: "border border-black p-1 font-medium",
-    cellCenter: "border border-black p-1 text-center",
-    outerBorder: "border border-black"
-  };

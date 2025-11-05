@@ -7,6 +7,9 @@ import {
   users,
   departments,
   leaveTypes,
+  getUserById,
+  getDepartmentById,
+  getLeaveTypeById
 } from '@/lib/data';
 import { LeaveLetter } from '@/components/leave-letter';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -18,15 +21,17 @@ export default function PrintLeaveRequestPage() {
   const letterNumber = searchParams.get('letterNumber') || '.......................';
 
   const request = leaveRequests.find((r) => r.id === id);
-  const user = request ? users.find((u) => u.id === request.userId) : undefined;
+  const user = request ? getUserById(request.userId) : undefined;
   const department = user
-    ? departments.find((d) => d.id === user.departmentId)
+    ? getDepartmentById(user.departmentId)
     : undefined;
   const leaveType = request
-    ? leaveTypes.find((lt) => lt.id === request.leaveTypeId)
+    ? getLeaveTypeById(request.leaveTypeId)
     : undefined;
     
-  const approver = user ? users.find(u => u.id === department?.headId) : undefined;
+  const approver = user && department ? users.find(u => u.id === department.headId) : undefined;
+  const headOfAgency = users.find(u => u.role === 'Admin');
+
 
   useEffect(() => {
     if (request && user && department && leaveType) {
@@ -57,7 +62,7 @@ export default function PrintLeaveRequestPage() {
     leaveType,
     letterNumber,
     approver,
-    headOfAgency: users.find(u => u.role === 'Admin') // Assuming one admin as head
+    headOfAgency,
   };
 
 
