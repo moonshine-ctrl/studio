@@ -13,7 +13,7 @@ interface LeaveLetterProps {
     headOfAgency?: User;
 }
 
-const-styles = {
+const styles = {
   table: "w-full border-collapse border border-black",
   cell: "border border-black p-1",
   cellHeader: "border border-black p-1 text-left",
@@ -246,7 +246,7 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
     );
 }
 
-const styles = {
+const styles2 = {
     table: "w-full border-collapse border border-black text-xs",
     cell: "border border-black p-1",
     cellHeader: "border border-black p-1 font-medium",

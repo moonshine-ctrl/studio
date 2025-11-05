@@ -37,17 +37,20 @@ export default function NotificationsPage() {
 
     const leaveRequest = getLeaveRequestById(notification.leaveRequestId);
     if (!leaveRequest) return;
-
+    
     const employee = getUserById(leaveRequest.userId);
-    const department = employee ? getDepartmentById(employee.departmentId) : undefined;
-    const approver = department ? getUserById(department.headId) : undefined;
+    if (!employee) return;
+    
+    const department = getDepartmentById(employee.departmentId);
+    if (!department) return;
 
+    const approver = getUserById(department.headId);
     if (!approver || !approver.phone) {
-      alert('Approver or approver phone number not found.');
+      alert('Approver contact not found.');
       return;
     }
     
-    const message = `Yth. Bapak/Ibu ${approver.name}, dengan ini kami memberitahukan bahwa ada pengajuan cuti dari ${employee?.name} yang memerlukan persetujuan Anda. Mohon untuk segera ditindaklanjuti. Terima kasih.`;
+    const message = `Yth. Bapak/Ibu ${approver.name},\n\nDengan ini kami memberitahukan bahwa ada pengajuan cuti dari Sdr/i ${employee.name} (NIP: ${employee.nip}) yang memerlukan persetujuan Anda.\n\nDetail pengajuan:\nJenis Cuti: ${leaveRequest.leaveTypeId}\nTanggal: ${format(leaveRequest.startDate, 'dd-MM-yyyy')} s/d ${format(leaveRequest.endDate, 'dd-MM-yyyy')}\n\nMohon untuk segera ditindaklanjuti. Terima kasih.\n\n- HR Department -`;
     const whatsappUrl = `https://wa.me/${approver.phone}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };

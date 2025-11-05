@@ -1,5 +1,5 @@
 import type { User, Department, LeaveType, LeaveRequest, Notification } from '@/types';
-import { subDays, addDays } from 'date-fns';
+import { subDays, addDays, format } from 'date-fns';
 
 export const users: User[] = [
   { id: '1', name: 'Budi Santoso', nip: '199508172021011001', avatar: 'https://picsum.photos/seed/1/100/100', departmentId: 'hr', role: 'Employee', annualLeaveBalance: 12, phone: '6281234567890' },
@@ -32,7 +32,7 @@ const now = new Date();
 
 export const leaveRequests: LeaveRequest[] = [
   { id: 'req1', userId: '1', leaveTypeId: 'annual', startDate: subDays(now, 5), endDate: subDays(now, 4), days: 2, reason: 'Family vacation', status: 'Approved', createdAt: subDays(now, 10) },
-  { id: 'req2', userId: '3', leaveTypeId: 'sick', startDate: subDays(now, 2), endDate: subDays(now, 1), days: 2, reason: 'Flu', status: 'Pending', createdAt: subDays(now, 3), medicalCertificate: undefined },
+  { id: 'req2', userId: '3', leaveTypeId: 'sick', startDate: subDays(now, 2), endDate: subDays(now, 1), days: 2, reason: 'Flu', status: 'Approved', createdAt: subDays(now, 3), medicalCertificate: undefined },
   { id: 'req3', userId: '6', leaveTypeId: 'annual', startDate: addDays(now, 10), endDate: addDays(now, 14), days: 5, reason: 'Trip to Bali', status: 'Pending', createdAt: subDays(now, 1) },
   { id: 'req4', userId: '1', leaveTypeId: 'important', startDate: subDays(now, 20), endDate: subDays(now, 19), days: 2, reason: 'Family emergency', status: 'Approved', createdAt: subDays(now, 22) },
   { id: 'req5', userId: '2', leaveTypeId: 'annual', startDate: subDays(now, 30), endDate: subDays(now, 28), days: 3, reason: 'Personal matters', status: 'Rejected', createdAt: subDays(now, 35) },
@@ -41,10 +41,11 @@ export const leaveRequests: LeaveRequest[] = [
 ];
 
 export const notifications: Notification[] = [
-    { id: 'notif1', userId: '3', message: 'Your sick leave is approved. Please upload your medical certificate.', type: 'warning', isRead: false, createdAt: subDays(now, 1), leaveRequestId: 'req2' },
-    { id: 'notif2', userId: '1', message: 'Your leave request has been approved by all approvers.', type: 'success', isRead: true, createdAt: subDays(now, 9), leaveRequestId: 'req1' },
-    { id: 'notif3', userId: 'admin', message: 'Doni Firmansyah has not uploaded their medical certificate for sick leave.', type: 'warning', isRead: false, createdAt: subDays(now, 1), leaveRequestId: 'req2' },
-    { id: 'notif4', userId: '2', message: 'Your leave request was rejected.', type: 'info', isRead: false, createdAt: subDays(now, 29), leaveRequestId: 'req5' },
+    { id: 'notif1', userId: '3', message: 'Reminder: Jangan lupa untuk mengunggah surat keterangan sakit Anda.', type: 'info', isRead: false, createdAt: subDays(now, 1), leaveRequestId: 'req2' },
+    { id: 'notif2', userId: '1', message: 'Permintaan cuti tahunan Anda telah disetujui.', type: 'success', isRead: true, createdAt: subDays(now, 9), leaveRequestId: 'req1' },
+    { id: 'notif3', userId: 'admin', message: 'Doni Firmansyah belum mengunggah surat keterangan sakit untuk cuti pada ' + format(subDays(now, 2), 'd MMM y'), type: 'warning', isRead: false, createdAt: subDays(now, 0), leaveRequestId: 'req2' },
+    { id: 'notif4', userId: 'admin', message: 'Permintaan cuti dari Gilang Ramadhan menunggu persetujuan.', type: 'warning', isRead: false, createdAt: subDays(now, 1), leaveRequestId: 'req3' },
+    { id: 'notif5', userId: '2', message: 'Permintaan cuti Anda ditolak.', type: 'info', isRead: false, createdAt: subDays(now, 29), leaveRequestId: 'req5' },
 ];
 
 // Helper functions to get data by ID
