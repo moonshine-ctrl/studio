@@ -36,6 +36,7 @@ import {
   Trash2,
   PlusCircle,
   Calendar as CalendarIcon,
+  Upload,
 } from 'lucide-react';
 import {
   getDepartmentById,
@@ -43,9 +44,10 @@ import {
   getUserById,
   leaveRequests as initialLeaveRequests,
   leaveTypes,
+  users,
 } from '@/lib/data';
 import { format } from 'date-fns';
-import { useState } from 'react';
+import { useState, ChangeEvent } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -87,6 +89,9 @@ export default function DashboardPage() {
   const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>(initialLeaveRequests);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingRequest, setEditingRequest] = useState<LeaveRequest | null>(null);
+  const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
+  const [selectedRequestForUpload, setSelectedRequestForUpload] = useState<LeaveRequest | null>(null);
+
   const { toast } = useToast();
   
   // This should come from an auth context in a real app
@@ -174,6 +179,30 @@ export default function DashboardPage() {
     setIsFormOpen(false);
   };
 
+  const handleOpenUploadDialog = (request: LeaveRequest) => {
+    setSelectedRequestForUpload(request);
+    setIsUploadDialogOpen(true);
+  };
+
+  const handleFileUpload = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0] && selectedRequestForUpload) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const fileDataUrl = e.target?.result as string;
+        setLeaveRequests(leaveRequests.map(r => 
+          r.id === selectedRequestForUpload.id 
+            ? { ...r, medicalCertificate: fileDataUrl } 
+            : r
+        ));
+        toast({ title: 'Success', description: 'Medical certificate uploaded.' });
+        setIsUploadDialogOpen(false);
+        setSelectedRequestForUpload(null);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
@@ -239,6 +268,7 @@ export default function DashboardPage() {
                 <TableHead>Dates</TableHead>
                 <TableHead>Days</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead className="hidden sm:table-cell">Surat Sakit</TableHead>
                 <TableHead>
                   <span className="sr-only">Actions</span>
                 </TableHead>
@@ -277,6 +307,17 @@ export default function DashboardPage() {
                         {request.status}
                       </Badge>
                     </TableCell>
+                    <TableCell className="hidden sm:table-cell">
+                      {leaveType.name === 'Sick' ? (
+                        request.medicalCertificate ? (
+                          <Badge variant="secondary">Uploaded</Badge>
+                        ) : (
+                          <Badge variant="outline">Not Set</Badge>
+                        )
+                      ) : (
+                        <span className="text-muted-foreground">N/A</span>
+                      )}
+                    </TableCell>
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -286,6 +327,11 @@ export default function DashboardPage() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
+                          {leaveType.name === 'Sick' && (
+                            <DropdownMenuItem onClick={() => handleOpenUploadDialog(request)}>
+                              <Upload className="mr-2 h-4 w-4" /> Upload Surat
+                            </DropdownMenuItem>
+                          )}
                           <DropdownMenuItem onClick={() => handleOpenForm(request)}>
                             <FilePen className="mr-2 h-4 w-4" /> Edit
                           </DropdownMenuItem>
@@ -308,6 +354,23 @@ export default function DashboardPage() {
             <DialogTitle>{editingRequest ? 'Edit' : 'Ajukan'} Cuti</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
+          <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="employee" className="text-right">Karyawan</Label>
+              <Select
+                value={formState.userId}
+                onValueChange={(value) => handleFormChange('userId', value)}
+                disabled={currentUserRole !== 'Admin' || !!editingRequest}
+              >
+                <SelectTrigger id="employee" className="col-span-3">
+                  <SelectValue placeholder="Pilih Karyawan" />
+                </SelectTrigger>
+                <SelectContent>
+                  {users.map(user => (
+                    <SelectItem key={user.id} value={user.id}>{user.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="leave-type" className="text-right">Jenis Cuti</Label>
               <Select 
@@ -391,8 +454,31 @@ export default function DashboardPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Upload Surat Keterangan Sakit</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="certificate" className="text-right">
+                File
+              </Label>
+              <Input
+                id="certificate"
+                type="file"
+                className="col-span-3"
+                onChange={handleFileUpload}
+                accept="image/png, image/jpeg, application/pdf"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsUploadDialogOpen(false)}>Cancel</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
-
-    
