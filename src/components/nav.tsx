@@ -7,6 +7,7 @@ import {
   Settings,
   Users,
   Bell,
+  Printer,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -22,6 +23,7 @@ const links = [
   { href: '/users', label: 'Users', icon: Users },
   { href: '/departments', label: 'Departments', icon: Building },
   { href: '/notifications', label: 'Notifications', icon: Bell },
+  { href: '/print', label: 'Cetak Surat', icon: Printer },
   { href: '/settings', label: 'Settings', icon: Settings },
   { href: '/reports', label: 'Reports', icon: FileDown },
 ];
