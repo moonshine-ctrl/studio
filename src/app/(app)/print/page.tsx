@@ -26,6 +26,8 @@ import {
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { useState } from 'react';
+import Link from 'next/link';
+import type { LeaveRequest, User } from '@/types';
 
 export default function PrintPage() {
   
@@ -35,10 +37,10 @@ export default function PrintPage() {
     setLetterNumbers(prev => ({...prev, [requestId]: value}));
   };
 
-  const handlePrint = (requestId: string) => {
-    const letterNumber = letterNumbers[requestId] || '';
-    // This is a placeholder for the print functionality
-    alert(`Fungsi cetak belum diimplementasikan.\nNomor Surat: ${letterNumber}`);
+  const handlePrint = (request: LeaveRequest, user: User) => {
+    const letterNumber = letterNumbers[request.id] || '';
+    const printUrl = `/print/${request.id}?letterNumber=${encodeURIComponent(letterNumber)}`;
+    window.open(printUrl, '_blank');
   };
 
   return (
@@ -92,7 +94,7 @@ export default function PrintPage() {
                           onChange={(e) => handleLetterNumberChange(request.id, e.target.value)}
                           disabled={!isPrintable}
                         />
-                        <Button variant="outline" size="sm" onClick={() => handlePrint(request.id)} disabled={!isPrintable}>
+                        <Button variant="outline" size="sm" onClick={() => handlePrint(request, user)} disabled={!isPrintable}>
                           <Printer className="mr-2 h-4 w-4" />
                           Cetak
                         </Button>
