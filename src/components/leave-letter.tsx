@@ -7,7 +7,7 @@ interface LeaveLetterProps {
     request: LeaveRequest;
     user: User;
     department: Department;
-    leaveType: LeaveType;
+    leaveType?: LeaveType;
     letterNumber: string;
     approver?: User;
     headOfAgency?: User;
@@ -21,7 +21,7 @@ const styles = {
   outerBorder: "border-2 border-black p-4"
 };
 
-const Cell = ({ children, className = '', colSpan = 1, isHeader = false }) => (
+const Cell = ({ children, className = '', colSpan = 1, isHeader = false }: { children: React.ReactNode, className?: string, colSpan?: number, isHeader?: boolean }) => (
     <td colSpan={colSpan} className={`${isHeader ? styles.cellHeader : styles.cell} ${className}`}>
         {children}
     </td>
@@ -30,7 +30,7 @@ const Cell = ({ children, className = '', colSpan = 1, isHeader = false }) => (
 export function LeaveLetter({ request, user, department, leaveType, letterNumber, approver, headOfAgency }: LeaveLetterProps) {
     
     const duration = differenceInDays(request.endDate, request.startDate) + 1;
-    const leaveTypeCheck = (type: string) => leaveType.name === type ? 'V' : '';
+    const leaveTypeCheck = (type: string) => leaveType?.name === type ? 'V' : '';
 
     return (
         <div className="bg-white p-8 font-serif text-xs">

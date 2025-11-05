@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import {
   leaveRequests,
@@ -13,6 +13,7 @@ import {
 } from '@/lib/data';
 import { LeaveLetter } from '@/components/leave-letter';
 import { Skeleton } from '@/components/ui/skeleton';
+import type { LeaveRequest, User, Department, LeaveType } from '@/types';
 
 export default function PrintLeaveRequestPage() {
   const params = useParams();
@@ -20,28 +21,50 @@ export default function PrintLeaveRequestPage() {
   const { id } = params;
   const letterNumber = searchParams.get('letterNumber') || '.......................';
 
-  const request = leaveRequests.find((r) => r.id === id);
-  const user = request ? getUserById(request.userId) : undefined;
-  const department = user
-    ? getDepartmentById(user.departmentId)
-    : undefined;
-  const leaveType = request
-    ? getLeaveTypeById(request.leaveTypeId)
-    : undefined;
-    
-  const approver = user && department ? users.find(u => u.id === department.headId) : undefined;
-  const headOfAgency = users.find(u => u.role === 'Admin');
-
+  const [letterData, setLetterData] = useState<{
+    request: LeaveRequest;
+    user: User;
+    department: Department;
+    leaveType?: LeaveType;
+    letterNumber: string;
+    approver?: User;
+    headOfAgency?: User;
+  } | null>(null);
+  
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (request && user && department && leaveType) {
-      setTimeout(() => {
-        window.print();
-      }, 500);
-    }
-  }, [request, user, department, leaveType]);
+    if (id) {
+      const request = leaveRequests.find((r) => r.id === id);
+      if (request) {
+        const user = getUserById(request.userId);
+        const department = user ? getDepartmentById(user.departmentId) : undefined;
+        const leaveType = getLeaveTypeById(request.leaveTypeId);
+        
+        if (user && department) {
+            const approver = users.find(u => u.id === department.headId);
+            const headOfAgency = users.find(u => u.role === 'Admin');
 
-  if (!request || !user || !department || !leaveType) {
+            setLetterData({
+              request,
+              user,
+              department,
+              leaveType,
+              letterNumber,
+              approver,
+              headOfAgency,
+            });
+
+            setTimeout(() => {
+                window.print();
+            }, 500);
+        }
+      }
+    }
+    setIsLoading(false);
+  }, [id, letterNumber]);
+  
+  if (isLoading || !letterData) {
     return (
       <div className="p-10 bg-white">
         <div className="max-w-4xl mx-auto space-y-4">
@@ -54,17 +77,6 @@ export default function PrintLeaveRequestPage() {
       </div>
     );
   }
-  
-  const letterData = {
-    request,
-    user,
-    department,
-    leaveType,
-    letterNumber,
-    approver,
-    headOfAgency,
-  };
-
 
   return (
     <div className="bg-white text-black">
