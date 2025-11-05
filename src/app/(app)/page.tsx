@@ -66,7 +66,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import type { LeaveRequest } from '@/types';
+import type { LeaveRequest, User } from '@/types';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { DateRange } from 'react-day-picker';
@@ -88,6 +88,10 @@ export default function DashboardPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingRequest, setEditingRequest] = useState<LeaveRequest | null>(null);
   const { toast } = useToast();
+  
+  // This should come from an auth context in a real app
+  const currentUserRole: User['role'] = 'Admin';
+
 
   const emptyForm: Partial<LeaveRequest> & { startDate?: Date; endDate?: Date } = {
     userId: '1', // Default to Budi Santoso for new requests
@@ -174,9 +178,11 @@ export default function DashboardPage() {
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold font-headline">Dashboard</h1>
-        <Button onClick={() => handleOpenForm()}>
-          <PlusCircle className="mr-2 h-4 w-4" /> Ajukan Cuti
-        </Button>
+        {currentUserRole !== 'Admin' && (
+          <Button onClick={() => handleOpenForm()}>
+            <PlusCircle className="mr-2 h-4 w-4" /> Ajukan Cuti
+          </Button>
+        )}
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">

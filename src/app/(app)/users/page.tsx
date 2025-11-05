@@ -51,13 +51,14 @@ export default function UsersPage() {
   const [open, setOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [newUser, setNewUser] = useState({
+  const [newUser, setNewUser] = useState<Partial<User>>({
     name: '',
     nip: '',
     departmentId: '',
-    role: 'Employee' as 'Admin' | 'Approver' | 'Employee',
-    annualLeaveBalance: '12',
+    role: 'Employee',
+    annualLeaveBalance: 12,
     qrCodeSignature: '',
+    phone: ''
   });
 
   const getDepartmentById = (id: string) => departments.find(d => d.id === id);
@@ -95,9 +96,10 @@ export default function UsersPage() {
         nip: newUser.nip,
         avatar: `https://picsum.photos/seed/${Date.now()}/100/100`,
         departmentId: newUser.departmentId,
-        role: newUser.role,
-        annualLeaveBalance: parseInt(newUser.annualLeaveBalance, 10),
+        role: newUser.role as User['role'],
+        annualLeaveBalance: Number(newUser.annualLeaveBalance),
         qrCodeSignature: newUser.qrCodeSignature,
+        phone: newUser.phone,
       };
       setUsers([...users, user]);
       setOpen(false);
@@ -106,8 +108,9 @@ export default function UsersPage() {
         nip: '',
         departmentId: '',
         role: 'Employee',
-        annualLeaveBalance: '12',
+        annualLeaveBalance: 12,
         qrCodeSignature: '',
+        phone: ''
       });
     }
   };
@@ -147,6 +150,10 @@ export default function UsersPage() {
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="nip" className="text-right">NIP</Label>
                 <Input id="nip" value={newUser.nip} onChange={(e) => handleInputChange('nip', e.target.value)} className="col-span-3" />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="phone" className="text-right">Phone</Label>
+                <Input id="phone" value={newUser.phone} onChange={(e) => handleInputChange('phone', e.target.value)} className="col-span-3" />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="department" className="text-right">Department</Label>
@@ -204,6 +211,7 @@ export default function UsersPage() {
                 <TableHead>Name</TableHead>
                 <TableHead className="hidden md:table-cell">Department</TableHead>
                 <TableHead className="hidden lg:table-cell">Role</TableHead>
+                <TableHead className="hidden sm:table-cell">Phone</TableHead>
                 <TableHead>Leave Balance</TableHead>
                 <TableHead className="hidden sm:table-cell">TTD QR Code</TableHead>
                 <TableHead>
@@ -234,6 +242,7 @@ export default function UsersPage() {
                       {department?.name}
                     </TableCell>
                     <TableCell className="hidden lg:table-cell">{user.role}</TableCell>
+                    <TableCell className="hidden sm:table-cell">{user.phone}</TableCell>
                     <TableCell>
                       <span className="font-medium">{user.annualLeaveBalance}</span> days
                     </TableCell>
@@ -290,6 +299,10 @@ export default function UsersPage() {
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="edit-nip" className="text-right">NIP</Label>
                 <Input id="edit-nip" value={editingUser.nip} onChange={(e) => handleInputChange('nip', e.target.value, true)} className="col-span-3" />
+              </div>
+               <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="edit-phone" className="text-right">Phone</Label>
+                <Input id="edit-phone" value={editingUser.phone} onChange={(e) => handleInputChange('phone', e.target.value, true)} className="col-span-3" />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="edit-department" className="text-right">Department</Label>

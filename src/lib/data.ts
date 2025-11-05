@@ -2,14 +2,14 @@ import type { User, Department, LeaveType, LeaveRequest, Notification } from '@/
 import { subDays, addDays } from 'date-fns';
 
 export const users: User[] = [
-  { id: '1', name: 'Budi Santoso', nip: '199508172021011001', avatar: 'https://picsum.photos/seed/1/100/100', departmentId: 'hr', role: 'Employee', annualLeaveBalance: 12 },
-  { id: '2', name: 'Citra Lestari', nip: '199205202019032002', avatar: 'https://picsum.photos/seed/2/100/100', departmentId: 'it', role: 'Approver', annualLeaveBalance: 10 },
-  { id: '3', name: 'Doni Firmansyah', nip: '199811102022021003', avatar: 'https://picsum.photos/seed/3/100/100', departmentId: 'finance', role: 'Employee', annualLeaveBalance: 5 },
-  { id: '4', name: 'Eka Putri', nip: '199301152018052001', avatar: 'https://picsum.photos/seed/4/100/100', departmentId: 'it', role: 'Approver', annualLeaveBalance: 12 },
-  { id: '5', name: 'Fitriani', nip: '199003252017062002', avatar: 'https://picsum.photos/seed/5/100/100', departmentId: 'hr', role: 'Approver', annualLeaveBalance: 8 },
-  { id: '6', name: 'Gilang Ramadhan', nip: '199609092021091004', avatar: 'https://picsum.photos/seed/6/100/100', departmentId: 'marketing', role: 'Employee', annualLeaveBalance: 15 },
-  { id: '7', name: 'Hana Yulita', nip: '199107212018112003', avatar: 'https://picsum.photos/seed/7/100/100', departmentId: 'finance', role: 'Approver', annualLeaveBalance: 9 },
-  { id: '8', name: 'Indra Wijaya', nip: '198912302015021001', avatar: 'https://picsum.photos/seed/8/100/100', departmentId: 'marketing', role: 'Approver', annualLeaveBalance: 11 },
+  { id: '1', name: 'Budi Santoso', nip: '199508172021011001', avatar: 'https://picsum.photos/seed/1/100/100', departmentId: 'hr', role: 'Employee', annualLeaveBalance: 12, phone: '6281234567890' },
+  { id: '2', name: 'Citra Lestari', nip: '199205202019032002', avatar: 'https://picsum.photos/seed/2/100/100', departmentId: 'it', role: 'Approver', annualLeaveBalance: 10, phone: '6281234567891' },
+  { id: '3', name: 'Doni Firmansyah', nip: '199811102022021003', avatar: 'https://picsum.photos/seed/3/100/100', departmentId: 'finance', role: 'Employee', annualLeaveBalance: 5, phone: '6281234567892' },
+  { id: '4', name: 'Eka Putri', nip: '199301152018052001', avatar: 'https://picsum.photos/seed/4/100/100', departmentId: 'it', role: 'Approver', annualLeaveBalance: 12, phone: '6281234567893' },
+  { id: '5', name: 'Fitriani', nip: '199003252017062002', avatar: 'https://picsum.photos/seed/5/100/100', departmentId: 'hr', role: 'Approver', annualLeaveBalance: 8, phone: '6281234567894' },
+  { id: '6', name: 'Gilang Ramadhan', nip: '199609092021091004', avatar: 'https://picsum.photos/seed/6/100/100', departmentId: 'marketing', role: 'Employee', annualLeaveBalance: 15, phone: '6281234567895' },
+  { id: '7', name: 'Hana Yulita', nip: '199107212018112003', avatar: 'https://picsum.photos/seed/7/100/100', departmentId: 'finance', role: 'Approver', annualLeaveBalance: 9, phone: '6281234567896' },
+  { id: '8', name: 'Indra Wijaya', nip: '198912302015021001', avatar: 'https://picsum.photos/seed/8/100/100', departmentId: 'marketing', role: 'Approver', annualLeaveBalance: 11, phone: '6281234567897' },
 ];
 
 export const departments: Department[] = [
@@ -41,13 +41,14 @@ export const leaveRequests: LeaveRequest[] = [
 ];
 
 export const notifications: Notification[] = [
-    { id: 'notif1', userId: '3', message: 'Your sick leave is approved. Please upload your medical certificate.', type: 'warning', isRead: false, createdAt: subDays(now, 1) },
-    { id: 'notif2', userId: '1', message: 'Your leave request has been approved by all approvers.', type: 'success', isRead: true, createdAt: subDays(now, 9) },
-    { id: 'notif3', userId: 'admin', message: 'Doni Firmansyah has not uploaded their medical certificate for sick leave.', type: 'warning', isRead: false, createdAt: subDays(now, 1) },
-    { id: 'notif4', userId: '2', message: 'Your leave request was rejected.', type: 'info', isRead: false, createdAt: subDays(now, 29) },
+    { id: 'notif1', userId: '3', message: 'Your sick leave is approved. Please upload your medical certificate.', type: 'warning', isRead: false, createdAt: subDays(now, 1), leaveRequestId: 'req2' },
+    { id: 'notif2', userId: '1', message: 'Your leave request has been approved by all approvers.', type: 'success', isRead: true, createdAt: subDays(now, 9), leaveRequestId: 'req1' },
+    { id: 'notif3', userId: 'admin', message: 'Doni Firmansyah has not uploaded their medical certificate for sick leave.', type: 'warning', isRead: false, createdAt: subDays(now, 1), leaveRequestId: 'req2' },
+    { id: 'notif4', userId: '2', message: 'Your leave request was rejected.', type: 'info', isRead: false, createdAt: subDays(now, 29), leaveRequestId: 'req5' },
 ];
 
 // Helper functions to get data by ID
 export const getUserById = (id: string) => users.find(u => u.id === id);
 export const getDepartmentById = (id: string) => departments.find(d => d.id === id);
 export const getLeaveTypeById = (id: string) => leaveTypes.find(lt => lt.id === id);
+export const getLeaveRequestById = (id: string) => leaveRequests.find(lr => lr.id === id);

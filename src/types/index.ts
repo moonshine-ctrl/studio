@@ -7,6 +7,7 @@ export type User = {
   role: 'Admin' | 'Approver' | 'Employee';
   annualLeaveBalance: number;
   qrCodeSignature?: string;
+  phone?: string;
 };
 
 export type Department = {
@@ -41,4 +42,5 @@ export type Notification = {
   type: 'info' | 'warning' | 'success';
   isRead: boolean;
   createdAt: Date;
+  leaveRequestId?: string;
 };
