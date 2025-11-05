@@ -1,4 +1,3 @@
-
 'use client';
 
 import {
@@ -45,7 +44,6 @@ export default function SettingsPage() {
         <TabsList>
           <TabsTrigger value="general">General</TabsTrigger>
           <TabsTrigger value="approval">Approval Flows</TabsTrigger>
-          <TabsTrigger value="notifications">Notifications</TabsTrigger>
         </TabsList>
         <TabsContent value="general" className="mt-6">
             <Card>
@@ -136,17 +134,6 @@ export default function SettingsPage() {
               </Accordion>
             </CardContent>
           </Card>
-        </TabsContent>
-        <TabsContent value="notifications" className="mt-6">
-             <Card>
-                <CardHeader>
-                    <CardTitle>Notification Settings</CardTitle>
-                    <CardDescription>Notification settings will be here, including WhatsApp integration.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <p className="text-muted-foreground">Coming soon.</p>
-                </CardContent>
-            </Card>
         </TabsContent>
       </Tabs>
     </div>
