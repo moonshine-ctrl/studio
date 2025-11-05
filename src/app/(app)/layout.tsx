@@ -1,3 +1,4 @@
+'use client';
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/app-sidebar';
 import { AppHeader } from '@/components/app-header';
@@ -9,15 +10,15 @@ export default function AppLayout({
 }) {
   return (
     <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <div className="flex flex-col">
+      <div className="flex">
+        <AppSidebar />
+        <div className="flex flex-col w-full">
           <AppHeader />
           <main className="flex-1 overflow-y-auto p-4 sm:p-6">
             {children}
           </main>
         </div>
-      </SidebarInset>
+      </div>
     </SidebarProvider>
   );
 }
