@@ -21,8 +21,8 @@ const styles = {
   outerBorder: "border-2 border-black p-4"
 };
 
-const Cell = ({ children, className = '', colSpan = 1, isHeader = false }: { children: React.ReactNode, className?: string, colSpan?: number, isHeader?: boolean }) => (
-    <td colSpan={colSpan} className={`${isHeader ? styles.cellHeader : styles.cell} ${className}`}>
+const Cell = ({ children, className = '', colSpan = 1, isHeader = false, rowSpan = 1 }: { children: React.ReactNode, className?: string, colSpan?: number, rowSpan?: number, isHeader?: boolean }) => (
+    <td colSpan={colSpan} rowSpan={rowSpan} className={`${isHeader ? styles.cellHeader : styles.cell} ${className}`}>
         {children}
     </td>
 );
