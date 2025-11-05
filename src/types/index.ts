@@ -6,6 +6,7 @@ export type User = {
   departmentId: string;
   role: 'Admin' | 'Approver' | 'Employee';
   annualLeaveBalance: number;
+  qrCodeSignature?: string;
 };
 
 export type Department = {

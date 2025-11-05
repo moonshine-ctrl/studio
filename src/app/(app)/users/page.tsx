@@ -24,7 +24,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { MoreHorizontal, PlusCircle, Trash2, UserPen } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, QrCode, Trash2, UserPen, X } from 'lucide-react';
 import { getDepartmentById as getDept, users as initialUsers, departments } from '@/lib/data';
 import {
   Dialog,
@@ -44,6 +44,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import type { User } from '@/types';
+import { Badge } from '@/components/ui/badge';
 
 export default function UsersPage() {
   const [users, setUsers] = useState<User[]>(initialUsers);
@@ -54,12 +55,25 @@ export default function UsersPage() {
     departmentId: '',
     role: 'Employee' as 'Admin' | 'Approver' | 'Employee',
     annualLeaveBalance: '12',
+    qrCodeSignature: '',
   });
 
   const getDepartmentById = (id: string) => departments.find(d => d.id === id);
 
   const handleInputChange = (field: string, value: string) => {
-    setNewUser({ ...newUser, [field]: value });
+    if (field === 'qrCodeSignature') {
+        const input = event?.target as HTMLInputElement;
+        if (input.files?.length) {
+            const file = input.files[0];
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                setNewUser({ ...newUser, [field]: e.target?.result as string });
+            };
+            reader.readAsDataURL(file);
+        }
+    } else {
+        setNewUser({ ...newUser, [field]: value });
+    }
   };
   
   const handleSelectChange = (field: string, value: 'Admin' | 'Approver' | 'Employee' | string) => {
@@ -76,6 +90,7 @@ export default function UsersPage() {
         departmentId: newUser.departmentId,
         role: newUser.role,
         annualLeaveBalance: parseInt(newUser.annualLeaveBalance, 10),
+        qrCodeSignature: newUser.qrCodeSignature,
       };
       setUsers([...users, user]);
       setOpen(false);
@@ -85,6 +100,7 @@ export default function UsersPage() {
         departmentId: '',
         role: 'Employee',
         annualLeaveBalance: '12',
+        qrCodeSignature: '',
       });
     }
   };
@@ -142,6 +158,10 @@ export default function UsersPage() {
                 <Label htmlFor="leave" className="text-right">Leave Balance</Label>
                 <Input id="leave" type="number" value={newUser.annualLeaveBalance} onChange={(e) => handleInputChange('annualLeaveBalance', e.target.value)} className="col-span-3" />
               </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="qr-code" className="text-right">TTD QR Code</Label>
+                <Input id="qr-code" type="file" accept="image/png, image/jpeg" onChange={(e) => handleInputChange('qrCodeSignature', '')} className="col-span-3" />
+              </div>
             </div>
             <DialogFooter>
               <Button onClick={handleAddUser}>Add User</Button>
@@ -165,6 +185,7 @@ export default function UsersPage() {
                 <TableHead className="hidden md:table-cell">Department</TableHead>
                 <TableHead className="hidden lg:table-cell">Role</TableHead>
                 <TableHead>Leave Balance</TableHead>
+                <TableHead className="hidden sm:table-cell">TTD QR Code</TableHead>
                 <TableHead>
                   <span className="sr-only">Actions</span>
                 </TableHead>
@@ -195,6 +216,19 @@ export default function UsersPage() {
                     <TableCell className="hidden lg:table-cell">{user.role}</TableCell>
                     <TableCell>
                       <span className="font-medium">{user.annualLeaveBalance}</span> days
+                    </TableCell>
+                     <TableCell className="hidden sm:table-cell">
+                      {user.qrCodeSignature ? (
+                        <Badge variant="secondary" className="flex items-center gap-2 w-fit">
+                          <QrCode className="h-4 w-4" />
+                          <span>Uploaded</span>
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline" className="flex items-center gap-2 w-fit">
+                           <X className="h-4 w-4" />
+                          <span>Not Set</span>
+                        </Badge>
+                      )}
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>
