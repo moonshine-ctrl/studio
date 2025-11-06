@@ -20,23 +20,23 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
-  FileDown,
-  Filter,
   Hourglass,
   CheckCircle,
   XCircle,
-  ClipboardList,
   MoreHorizontal,
   FilePen,
   Trash2,
   PlusCircle,
   Calendar as CalendarIcon,
   Upload,
+  Check,
+  X,
 } from 'lucide-react';
 import {
   getDepartmentById,
@@ -94,12 +94,13 @@ export default function DashboardPage() {
 
   const { toast } = useToast();
   
-  // This should come from an auth context in a real app
-  const currentUserRole: User['role'] = 'Admin';
+  // This should come from an auth context in a real app.
+  // We'll set the current user to an approver to test the logic.
+  const [currentUser, setCurrentUser] = useState<User | undefined>(users.find(u => u.id === '2')); // Citra Lestari, Head of IT
 
 
   const emptyForm: Partial<LeaveRequest> & { startDate?: Date; endDate?: Date } = {
-    userId: '1', // Default to Budi Santoso for new requests
+    userId: currentUser?.id,
     leaveTypeId: 'annual',
     startDate: undefined,
     endDate: undefined,
@@ -150,7 +151,6 @@ export default function DashboardPage() {
     }
 
     if (editingRequest) {
-      // Update existing request
       const updatedRequest: LeaveRequest = {
         ...editingRequest,
         ...formState,
@@ -161,7 +161,6 @@ export default function DashboardPage() {
       setLeaveRequests(leaveRequests.map(r => r.id === updatedRequest.id ? updatedRequest : r));
       toast({ title: 'Success', description: 'Leave request updated.' });
     } else {
-      // Add new request
       const newRequest: LeaveRequest = {
         id: `req-${Date.now()}`,
         userId: formState.userId!,
@@ -203,11 +202,22 @@ export default function DashboardPage() {
     }
   };
 
+  const handleApprove = (requestId: string) => {
+    setLeaveRequests(leaveRequests.map(r => r.id === requestId ? { ...r, status: 'Approved' } : r));
+    toast({ title: 'Request Approved', description: 'The leave request has been approved.' });
+  };
+  
+  const handleReject = (requestId: string) => {
+    setLeaveRequests(leaveRequests.map(r => r.id === requestId ? { ...r, status: 'Rejected' } : r));
+    toast({ variant: 'destructive', title: 'Request Rejected', description: 'The leave request has been rejected.' });
+  };
+  
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold font-headline">Dashboard</h1>
-        {currentUserRole !== 'Admin' && (
+        {currentUser?.role !== 'Admin' && (
           <Button onClick={() => handleOpenForm()}>
             <PlusCircle className="mr-2 h-4 w-4" /> Ajukan Cuti
           </Button>
@@ -218,7 +228,7 @@ export default function DashboardPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Requests</CardTitle>
-            <ClipboardList className="h-4 w-4 text-muted-foreground" />
+            <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.total}</div>
@@ -281,6 +291,8 @@ export default function DashboardPage() {
                 if (!user || !leaveType) return null;
                 const department = getDepartmentById(user.departmentId);
 
+                const canApprove = currentUser?.role === 'Approver' && department?.headId === currentUser.id && request.status === 'Pending';
+
                 return (
                   <TableRow key={request.id}>
                     <TableCell>
@@ -327,6 +339,17 @@ export default function DashboardPage() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
+                           {canApprove && (
+                            <>
+                              <DropdownMenuItem onClick={() => handleApprove(request.id)}>
+                                <Check className="mr-2 h-4 w-4" /> Approve
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleReject(request.id)} className="text-destructive focus:text-destructive">
+                                <X className="mr-2 h-4 w-4" /> Reject
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                            </>
+                          )}
                           {leaveType.name === 'Sick' && (
                             <DropdownMenuItem onClick={() => handleOpenUploadDialog(request)}>
                               <Upload className="mr-2 h-4 w-4" /> Upload Surat
@@ -359,7 +382,7 @@ export default function DashboardPage() {
               <Select
                 value={formState.userId}
                 onValueChange={(value) => handleFormChange('userId', value)}
-                disabled={currentUserRole !== 'Admin' || !!editingRequest}
+                disabled={currentUser?.role !== 'Admin' || !!editingRequest}
               >
                 <SelectTrigger id="employee" className="col-span-3">
                   <SelectValue placeholder="Pilih Karyawan" />
