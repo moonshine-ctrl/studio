@@ -25,7 +25,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MoreHorizontal, PlusCircle, QrCode, Trash2, UserPen, X } from 'lucide-react';
-import { getDepartmentById as getDept, users as initialUsers, departments } from '@/lib/data';
+import { users as initialUsers, departments as initialDepartments } from '@/lib/data';
 import {
   Dialog,
   DialogContent,
@@ -45,12 +45,15 @@ import {
 } from '@/components/ui/select';
 import type { User } from '@/types';
 import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/hooks/use-toast';
 
 export default function UsersPage() {
   const [users, setUsers] = useState<User[]>(initialUsers);
+  const [departments, setDepartments] = useState(initialDepartments);
   const [open, setOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const { toast } = useToast();
   const [newUser, setNewUser] = useState<Partial<User>>({
     name: '',
     nip: '',
@@ -101,7 +104,9 @@ export default function UsersPage() {
         qrCodeSignature: newUser.qrCodeSignature,
         phone: newUser.phone,
       };
-      setUsers([...users, user]);
+      const updatedUsers = [...users, user];
+      setUsers(updatedUsers);
+      initialUsers.push(user); // Update mock data
       setOpen(false);
       setNewUser({
         name: '',
@@ -112,6 +117,16 @@ export default function UsersPage() {
         qrCodeSignature: '',
         phone: ''
       });
+      toast({
+        title: 'User Added',
+        description: `${user.name} has been added successfully.`,
+      });
+    } else {
+        toast({
+            variant: 'destructive',
+            title: 'Error',
+            description: 'Please fill all required fields.',
+        });
     }
   };
 
@@ -122,11 +137,38 @@ export default function UsersPage() {
 
   const handleUpdateUser = () => {
     if (editingUser) {
-      setUsers(users.map(u => u.id === editingUser.id ? editingUser : u));
+      const updatedUsers = users.map(u => u.id === editingUser.id ? editingUser : u)
+      setUsers(updatedUsers);
+
+      const index = initialUsers.findIndex(u => u.id === editingUser.id);
+      if (index !== -1) {
+        initialUsers[index] = editingUser;
+      }
+      
       setIsEditDialogOpen(false);
       setEditingUser(null);
+      toast({
+        title: 'User Updated',
+        description: 'User information has been saved.',
+      });
     }
   };
+  
+  const handleDeleteUser = (userId: string) => {
+    const updatedUsers = users.filter(u => u.id !== userId);
+    setUsers(updatedUsers);
+
+    const index = initialUsers.findIndex(u => u.id === userId);
+    if (index !== -1) {
+      initialUsers.splice(index, 1);
+    }
+    
+    toast({
+      title: 'User Deleted',
+      description: 'The user has been removed.',
+    });
+  }
+
 
   return (
     <div className="flex flex-col gap-6">
@@ -271,7 +313,7 @@ export default function UsersPage() {
                           <DropdownMenuItem onClick={() => handleEditClick(user)}>
                             <UserPen className="mr-2 h-4 w-4" /> Edit
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="text-destructive focus:text-destructive">
+                          <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => handleDeleteUser(user.id)}>
                             <Trash2 className="mr-2 h-4 w-4" /> Delete
                           </DropdownMenuItem>
                         </DropdownMenuContent>

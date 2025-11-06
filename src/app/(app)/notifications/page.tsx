@@ -19,6 +19,7 @@ import {
   getUserById,
   getLeaveRequestById,
   getDepartmentById,
+  getLeaveTypeById,
 } from '@/lib/data';
 
 export default function NotificationsPage() {
@@ -69,7 +70,8 @@ export default function NotificationsPage() {
       return;
     }
     
-    const message = `Yth. Bapak/Ibu ${approver.name},\n\nDengan ini kami memberitahukan bahwa ada pengajuan cuti dari Sdr/i ${employee.name} (NIP: ${employee.nip}) yang memerlukan persetujuan Anda.\n\nDetail pengajuan:\nJenis Cuti: ${getLeaveRequestById(notification.leaveRequestId) ? getLeaveTypeById(getLeaveRequestById(notification.leaveRequestId)!.leaveTypeId)?.name : ''}\nTanggal: ${format(leaveRequest.startDate, 'dd-MM-yyyy')} s/d ${format(leaveRequest.endDate, 'dd-MM-yyyy')}\n\nMohon untuk segera ditindaklanjuti. Terima kasih.\n\n- HR Department -`;
+    const leaveType = getLeaveTypeById(leaveRequest.leaveTypeId);
+    const message = `Yth. Bapak/Ibu ${approver.name},\n\nDengan ini kami memberitahukan bahwa ada pengajuan cuti dari Sdr/i ${employee.name} (NIP: ${employee.nip}) yang memerlukan persetujuan Anda.\n\nDetail pengajuan:\nJenis Cuti: ${leaveType?.name}\nTanggal: ${format(leaveRequest.startDate, 'dd-MM-yyyy')} s/d ${format(leaveRequest.endDate, 'dd-MM-yyyy')}\n\nMohon untuk segera ditindaklanjuti. Terima kasih.\n\n- HR Department -`;
     const whatsappUrl = `https://wa.me/${approver.phone}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };

@@ -25,7 +25,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MoreHorizontal, PlusCircle, Trash2, Pen } from 'lucide-react';
-import { departments as initialDepartments, users } from '@/lib/data';
+import { departments as initialDepartments, users as initialUsers } from '@/lib/data';
 import {
   Dialog,
   DialogContent,
@@ -48,6 +48,7 @@ import { useToast } from '@/hooks/use-toast';
 
 export default function DepartmentsPage() {
   const [departments, setDepartments] = useState<Department[]>(initialDepartments);
+  const [users, setUsers] = useState(initialUsers);
   const [open, setOpen] = useState(false);
   const [newDeptName, setNewDeptName] = useState('');
   
@@ -65,7 +66,8 @@ export default function DepartmentsPage() {
         headId: '', // Head is not assigned on creation
         employeeCount: 0,
       };
-      setDepartments([...departments, newDepartment]);
+      const updatedDepartments = [...departments, newDepartment];
+      setDepartments(updatedDepartments);
       // Also update the global/mock data so it reflects on settings page
       initialDepartments.push(newDepartment); 
       setOpen(false);
@@ -112,6 +114,21 @@ export default function DepartmentsPage() {
     if (editingDepartment) {
       setEditingDepartment({ ...editingDepartment, [field]: value });
     }
+  }
+
+  const handleDeleteDepartment = (departmentId: string) => {
+    const updatedDepartments = departments.filter(d => d.id !== departmentId);
+    setDepartments(updatedDepartments);
+    
+    const index = initialDepartments.findIndex(d => d.id === departmentId);
+    if (index !== -1) {
+      initialDepartments.splice(index, 1);
+    }
+    
+    toast({
+      title: 'Department Deleted',
+      description: 'The department has been removed.',
+    });
   }
 
 
@@ -197,7 +214,7 @@ export default function DepartmentsPage() {
                           <DropdownMenuItem onClick={() => handleEditClick(department)}>
                             <Pen className="mr-2 h-4 w-4" /> Edit
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="text-destructive focus:text-destructive">
+                          <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => handleDeleteDepartment(department.id)}>
                             <Trash2 className="mr-2 h-4 w-4" /> Delete
                           </DropdownMenuItem>
                         </DropdownMenuContent>
