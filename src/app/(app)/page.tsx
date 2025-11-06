@@ -95,8 +95,8 @@ export default function DashboardPage() {
   const { toast } = useToast();
   
   // This should come from an auth context in a real app.
-  // We'll set the current user to an admin to test the logic.
-  const [currentUser, setCurrentUser] = useState<User | undefined>(users.find(u => u.role === 'Admin'));
+  // We'll set the current user to an employee who is a department head to test approval logic.
+  const [currentUser, setCurrentUser] = useState<User | undefined>(users.find(u => u.id === '2'));
 
 
   const emptyForm: Partial<LeaveRequest> & { startDate?: Date; endDate?: Date } = {
