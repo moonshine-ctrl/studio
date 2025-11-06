@@ -4,7 +4,7 @@ export type User = {
   nip: string;
   avatar: string;
   departmentId: string;
-  role: 'Admin' | 'Approver' | 'Employee';
+  role: 'Admin' | 'Employee';
   annualLeaveBalance: number;
   qrCodeSignature?: string;
   phone?: string;

@@ -20,10 +20,14 @@ import {
   getLeaveRequestById,
   getDepartmentById,
   getLeaveTypeById,
+  users,
 } from '@/lib/data';
 
 export default function NotificationsPage() {
   const [notifData, setNotifData] = useState<Notification[]>(initialNotifications);
+  
+  // This should come from auth context in a real app
+  const [currentUser, setCurrentUser] = useState<User | undefined>(users.find(u => u.role === 'Admin'));
 
   const enrichedNotifications = useMemo(() => {
     return notifData.map(notification => {
@@ -81,10 +85,6 @@ export default function NotificationsPage() {
     warning: 'bg-yellow-100 dark:bg-yellow-900/50',
     success: 'bg-green-100 dark:bg-green-900/50',
   }
-  
-  // This should come from auth context in a real app
-  const currentUserRole: User['role'] = 'Admin';
-
 
   return (
     <div className="flex flex-col gap-6">
@@ -127,7 +127,7 @@ export default function NotificationsPage() {
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
-                    {currentUserRole === 'Admin' && notification.type === 'warning' && (
+                    {currentUser?.role === 'Admin' && notification.type === 'warning' && (
                        <Button variant="outline" size="sm" onClick={() => handleWhatsAppNotification(notification)}>
                           <MessageSquare className="mr-2 h-4 w-4" />
                           Notify Approver

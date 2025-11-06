@@ -3,19 +3,19 @@ import { subDays, addDays, format } from 'date-fns';
 
 export const users: User[] = [
   { id: '1', name: 'Budi Santoso', nip: '199508172021011001', avatar: 'https://picsum.photos/seed/1/100/100', departmentId: 'hr', role: 'Employee', annualLeaveBalance: 12, phone: '6281234567890' },
-  { id: '2', name: 'Citra Lestari', nip: '199205202019032002', avatar: 'https://picsum.photos/seed/2/100/100', departmentId: 'it', role: 'Approver', annualLeaveBalance: 10, phone: '6281234567891' },
+  { id: '2', name: 'Citra Lestari', nip: '199205202019032002', avatar: 'https://picsum.photos/seed/2/100/100', departmentId: 'it', role: 'Employee', annualLeaveBalance: 10, phone: '6281234567891' },
   { id: '3', name: 'Doni Firmansyah', nip: '199811102022021003', avatar: 'https://picsum.photos/seed/3/100/100', departmentId: 'finance', role: 'Employee', annualLeaveBalance: 5, phone: '6281234567892' },
-  { id: '4', name: 'Eka Putri', nip: '199301152018052001', avatar: 'https://picsum.photos/seed/4/100/100', departmentId: 'it', role: 'Approver', annualLeaveBalance: 12, phone: '6281234567893' },
-  { id: '5', name: 'Fitriani', nip: '199003252017062002', avatar: 'https://picsum.photos/seed/5/100/100', departmentId: 'hr', role: 'Approver', annualLeaveBalance: 8, phone: '6281234567894' },
+  { id: '4', name: 'Eka Putri', nip: '199301152018052001', avatar: 'https://picsum.photos/seed/4/100/100', departmentId: 'it', role: 'Employee', annualLeaveBalance: 12, phone: '6281234567893' },
+  { id: '5', name: 'Fitriani', nip: '199003252017062002', avatar: 'https://picsum.photos/seed/5/100/100', departmentId: 'hr', role: 'Employee', annualLeaveBalance: 8, phone: '6281234567894' },
   { id: '6', name: 'Gilang Ramadhan', nip: '199609092021091004', avatar: 'https://picsum.photos/seed/6/100/100', departmentId: 'marketing', role: 'Employee', annualLeaveBalance: 15, phone: '6281234567895' },
-  { id: '7', name: 'Hana Yulita', nip: '199107212018112003', avatar: 'https://picsum.photos/seed/7/100/100', departmentId: 'finance', role: 'Approver', annualLeaveBalance: 9, phone: '6281234567896' },
-  { id: '8', name: 'Indra Wijaya', nip: '198912302015021001', avatar: 'https://picsum.photos/seed/8/100/100', departmentId: 'marketing', role: 'Approver', annualLeaveBalance: 11, phone: '6281234567897' },
+  { id: '7', name: 'Hana Yulita', nip: '199107212018112003', avatar: 'https://picsum.photos/seed/7/100/100', departmentId: 'finance', role: 'Employee', annualLeaveBalance: 9, phone: '6281234567896' },
+  { id: '8', name: 'Indra Wijaya', nip: '198912302015021001', avatar: 'https://picsum.photos/seed/8/100/100', departmentId: 'marketing', role: 'Employee', annualLeaveBalance: 11, phone: '6281234567897' },
   { id: 'admin', name: 'Admin User', nip: '199001012020121001', avatar: 'https://picsum.photos/seed/admin/100/100', departmentId: 'hr', role: 'Admin', annualLeaveBalance: 0, phone: '6281200000000'},
 ];
 
 export const departments: Department[] = [
   { id: 'hr', name: 'Human Resources', headId: '5', employeeCount: 2 },
-  { id: 'it', name: 'Information Technology', headId: '4', employeeCount: 2 },
+  { id: 'it', name: 'Information Technology', headId: '2', employeeCount: 2 },
   { id: 'finance', name: 'Finance', headId: '7', employeeCount: 2 },
   { id: 'marketing', name: 'Marketing', headId: '8', employeeCount: 2 },
 ];

@@ -291,7 +291,7 @@ export default function DashboardPage() {
                 if (!user || !leaveType) return null;
                 const department = getDepartmentById(user.departmentId);
 
-                const canApprove = currentUser?.role === 'Approver' && department?.headId === currentUser.id && request.status === 'Pending';
+                const canApprove = currentUser?.role === 'Employee' && department?.headId === currentUser.id && request.status === 'Pending';
 
                 return (
                   <TableRow key={request.id}>

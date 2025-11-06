@@ -85,7 +85,7 @@ export default function UsersPage() {
     }
   };
   
-  const handleSelectChange = (field: string, value: 'Admin' | 'Approver' | 'Employee' | string, isEditing: boolean = false) => {
+  const handleSelectChange = (field: string, value: 'Admin' | 'Employee' | string, isEditing: boolean = false) => {
     const target = isEditing ? editingUser : newUser;
     const setter = isEditing ? setEditingUser : setNewUser;
     setter({ ...target!, [field]: value });
@@ -212,13 +212,12 @@ export default function UsersPage() {
               </div>
                <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="role" className="text-right">Role</Label>
-                 <Select onValueChange={(value: 'Admin' | 'Approver' | 'Employee') => handleSelectChange('role', value)} value={newUser.role}>
+                 <Select onValueChange={(value: 'Admin' | 'Employee') => handleSelectChange('role', value)} value={newUser.role}>
                     <SelectTrigger className="col-span-3">
                         <SelectValue placeholder="Select a role" />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="Employee">Employee</SelectItem>
-                        <SelectItem value="Approver">Approver</SelectItem>
                         <SelectItem value="Admin">Admin</SelectItem>
                     </SelectContent>
                 </Select>
@@ -361,13 +360,12 @@ export default function UsersPage() {
               </div>
                <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="edit-role" className="text-right">Role</Label>
-                 <Select onValueChange={(value: 'Admin' | 'Approver' | 'Employee') => handleSelectChange('role', value, true)} value={editingUser.role}>
+                 <Select onValueChange={(value: 'Admin' | 'Employee') => handleSelectChange('role', value, true)} value={editingUser.role}>
                     <SelectTrigger className="col-span-3">
                         <SelectValue placeholder="Select a role" />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="Employee">Employee</SelectItem>
-                        <SelectItem value="Approver">Approver</SelectItem>
                         <SelectItem value="Admin">Admin</SelectItem>
                     </SelectContent>
                 </Select>
