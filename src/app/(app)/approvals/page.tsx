@@ -43,11 +43,14 @@ export default function ApprovalsPage() {
   const [currentUser, setCurrentUser] = useState<User | undefined>();
 
   useEffect(() => {
-    if (pathname.startsWith('/admin') || pathname === '/') {
-      // Admin user
+    // This logic simulates fetching the logged-in user based on the route
+    const isAdminRoute = pathname.startsWith('/admin') || pathname === '/';
+    if (isAdminRoute) {
       setCurrentUser(users.find(u => u.role === 'Admin'));
     } else {
-      // Regular employee/approver, for demo let's use user '2' who is a department head
+      // For employee/approver view, we'll use a user who is a department head.
+      // User '2' (Citra Lestari) is head of IT. Let's use her for demo.
+      // In a real app, you would get the single authenticated user.
       setCurrentUser(users.find(u => u.id === '2'));
     }
   }, [pathname]);
@@ -55,20 +58,23 @@ export default function ApprovalsPage() {
   const requestsToApprove = useMemo(() => {
     if (!currentUser) return [];
 
+    // Admins see all pending requests
     if (currentUser.role === 'Admin') {
       return leaveRequests.filter(req => req.status === 'Pending');
     }
     
-    // Find departments where the current user is the head
+    // For non-admins, check if they are a department head
     const headedDepartments = initialDepartments.filter(dept => dept.headId === currentUser.id);
     if (headedDepartments.length === 0) {
+      // This user is not a department head, so they have nothing to approve.
       return [];
     }
     const headedDeptIds = headedDepartments.map(d => d.id);
 
-    // Filter requests from employees in those departments that are pending
+    // Filter requests from employees in the departments they head
     return leaveRequests.filter(req => {
       const employee = getUserById(req.userId);
+      // Show request if the employee exists, belongs to a department headed by the current user, and status is Pending
       return employee && headedDeptIds.includes(employee.departmentId) && req.status === 'Pending';
     });
   }, [currentUser, leaveRequests]);
