@@ -26,8 +26,8 @@ const adminLinks = [
   { href: '/admin/users', label: 'Users', icon: Users },
   { href: '/admin/departments', label: 'Departments', icon: Building },
   { href: '/admin/notifications', label: 'Notifications', icon: Bell },
-  { href: '/admin/logs', label: 'Log History', icon: History },
   { href: '/admin/print', label: 'Cetak Surat', icon: Printer },
+  { href: '/admin/logs', label: 'Log History', icon: History },
   { href: '/admin/settings', label: 'Settings', icon: Settings },
   { href: '/admin/reports', label: 'Reports', icon: FileDown },
 ];
