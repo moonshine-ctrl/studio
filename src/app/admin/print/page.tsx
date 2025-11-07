@@ -34,7 +34,7 @@ export default function PrintPage() {
   const [letterNumbers, setLetterNumbers] = useState<{ [key: string]: string }>({});
 
   const handleLetterNumberChange = (requestId: string, value: string) => {
-    setLetterNumbers(prev => ({...prev, [requestId]: value}));
+    setLetterNumbers(prev => ({ ...prev, [requestId]: value }));
   };
 
   const handlePrint = (request: LeaveRequest, user: User) => {
