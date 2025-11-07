@@ -25,13 +25,13 @@ const styles = {
 
 const PrintHeaderContent = () => (
     <header className="text-center mb-2 border-b-2 border-black pb-2">
-        <div className="flex items-center justify-center gap-4">
+        <div className="flex items-center justify-start gap-4 pl-12">
              {settings.logoUrl && <Image src={settings.logoUrl} alt="Logo" width={80} height={80} className="object-contain" />}
             <div className="text-center leading-tight">
-                <h1 className="font-bold text-[16px]">{settings.letterhead[0]}</h1>
-                <h2 className="font-bold text-[16px]">{settings.letterhead[1]}</h2>
-                <h3 className="font-bold text-[16px]">{settings.letterhead[2]}</h3>
-                <h3 className="font-bold text-[16px]">{settings.letterhead[3]}</h3>
+                <h1 className="font-bold text-[18px]">{settings.letterhead[0]}</h1>
+                <h2 className="font-bold text-[18px]">{settings.letterhead[1]}</h2>
+                <h3 className="font-bold text-[18px]">{settings.letterhead[2]}</h3>
+                <h3 className="font-bold text-[18px]">{settings.letterhead[3]}</h3>
                 <p className="text-sm">{settings.letterhead[4]}</p>
                 <p className="text-sm">{settings.letterhead[5]}</p>
             </div>
@@ -287,15 +287,13 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                     <div className="section-container mt-1">
                         <p className="font-bold pl-1">VII. PERTIMBANGAN ATASAN LANGSUNG **</p>
                         <table className={styles.table}>
-                            <thead>
+                           <tbody>
                                 <tr>
                                     <td className={styles.cellCenter}>DISETUJUI</td>
                                     <td className={styles.cellCenter}>PERUBAHAN****</td>
                                     <td className={styles.cellCenter}>DITANGGUHKAN****</td>
                                     <td className={styles.cellCenter}>TIDAK DISETUJUI****</td>
                                 </tr>
-                            </thead>
-                            <tbody>
                                 <tr style={{ height: '2rem' }}>
                                     <td className={styles.cellCenter}>
                                         <span className='font-bold text-lg'>{request.status === 'Approved' ? '✓' : ''}</span>
@@ -323,15 +321,13 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                     <div className="section-container mt-1">
                         <p className="font-bold pl-1">VIII. KEPUTUSAN PEJABAT YANG BERWENANG MEMBERIKAN CUTI **</p>
                         <table className={styles.table}>
-                            <thead>
+                            <tbody>
                                 <tr>
                                     <td className={styles.cellCenter}>DISETUJUI</td>
                                     <td className={styles.cellCenter}>PERUBAHAN****</td>
                                     <td className={styles.cellCenter}>DITANGGUHKAN****</td>
                                     <td className={styles.cellCenter}>TIDAK DISETUJUI****</td>
                                 </tr>
-                            </thead>
-                            <tbody>
                                 <tr style={{ height: '2rem' }}>
                                     <td className={styles.cellCenter}>
                                         <span className='font-bold text-lg'>{request.status === 'Approved' ? '✓' : ''}</span>
