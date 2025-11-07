@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -17,12 +17,20 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    // Redirect if already logged in
+    if (sessionStorage.getItem('adminLoggedIn') === 'true') {
+      router.replace('/admin/dashboard');
+    }
+  }, [router]);
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     // In a real app, you'd verify admin credentials
     if (email && password) {
+      sessionStorage.setItem('adminLoggedIn', 'true');
       toast({
         title: 'Admin Login Successful',
         description: 'Welcome back, Admin!',

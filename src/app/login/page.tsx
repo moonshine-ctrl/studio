@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -17,11 +17,20 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    // Redirect if already logged in
+    if (sessionStorage.getItem('employeeLoggedIn') === 'true') {
+      router.replace('/employee/dashboard');
+    }
+  }, [router]);
+
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     if (nip && password) {
+      sessionStorage.setItem('employeeLoggedIn', 'true');
       toast({
         title: 'Login Successful',
         description: 'Welcome back!',

@@ -14,9 +14,11 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { User } from '@/types';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export function UserProfile() {
   const pathname = usePathname();
+  const router = useRouter();
   const [currentUser, setCurrentUser] = useState<User | undefined>();
   
   useEffect(() => {
@@ -35,9 +37,18 @@ export function UserProfile() {
     }
   }, [pathname]);
 
+  const handleLogout = () => {
+    if (currentUser?.role === 'Admin') {
+      sessionStorage.removeItem('adminLoggedIn');
+      router.push('/admin/login');
+    } else {
+      sessionStorage.removeItem('employeeLoggedIn');
+      router.push('/login');
+    }
+  };
+
   if (!currentUser) return null;
 
-  const logoutLink = currentUser.role === 'Admin' ? '/admin/login' : '/login';
   const profileName = currentUser.name || 'User';
   const profileAvatar = currentUser.avatar || 'https://picsum.photos/seed/user/100/100';
   const profileLink = currentUser.role === 'Admin' ? '/admin/settings' : '#'; // Employee profile page doesn't exist yet
@@ -68,11 +79,9 @@ export function UserProfile() {
                     <span>Profile</span>
                 </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-                <Link href={logoutLink}>
+            <DropdownMenuItem onClick={handleLogout}>
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Log out</span>
-                </Link>
             </DropdownMenuItem>
         </DropdownMenuContent>
     </DropdownMenu>
