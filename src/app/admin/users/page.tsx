@@ -312,9 +312,9 @@ export default function UsersPage() {
                 <TableHead>Name</TableHead>
                 <TableHead className="hidden md:table-cell">Department</TableHead>
                 <TableHead className="hidden lg:table-cell">Role</TableHead>
-                <TableHead>Masa Kerja</TableHead>
+                <TableHead className="hidden sm:table-cell">Masa Kerja</TableHead>
                 <TableHead>Leave Balance</TableHead>
-                <TableHead className="hidden sm:table-cell">TTD QR Code</TableHead>
+                <TableHead className="hidden md:table-cell">TTD QR Code</TableHead>
                 <TableHead>
                   <span className="sr-only">Actions</span>
                 </TableHead>
@@ -343,11 +343,11 @@ export default function UsersPage() {
                       {department?.name}
                     </TableCell>
                     <TableCell className="hidden lg:table-cell">{user.role}</TableCell>
-                    <TableCell>{calculateMasaKerja(user.joinDate)}</TableCell>
+                    <TableCell className="hidden sm:table-cell">{calculateMasaKerja(user.joinDate)}</TableCell>
                     <TableCell>
                       <span className="font-medium">{user.annualLeaveBalance}</span> days
                     </TableCell>
-                     <TableCell className="hidden sm:table-cell">
+                     <TableCell className="hidden md:table-cell">
                       {user.qrCodeSignature ? (
                         <Badge variant="secondary" className="flex items-center gap-2 w-fit">
                           <QrCode className="h-4 w-4" />

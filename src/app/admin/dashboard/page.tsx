@@ -256,15 +256,15 @@ export default function DashboardPage() {
                         An overview of the latest leave requests from all departments.
                     </CardDescription>
                  </div>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col sm:flex-row items-center gap-2">
                     <Input 
                         placeholder="Search by name, dept, type..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full md:w-[250px]"
+                        className="w-full sm:w-[250px]"
                     />
                     <Select value={selectedYear} onValueChange={setSelectedYear}>
-                        <SelectTrigger className="w-[120px]">
+                        <SelectTrigger className="w-full sm:w-[120px]">
                             <SelectValue placeholder="Year" />
                         </SelectTrigger>
                         <SelectContent>
@@ -285,9 +285,9 @@ export default function DashboardPage() {
                   <TableHead className="hidden md:table-cell">Department</TableHead>
                   <TableHead>Leave Type</TableHead>
                   <TableHead>Dates</TableHead>
-                  <TableHead>Days</TableHead>
+                  <TableHead className="hidden sm:table-cell">Days</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Attachment</TableHead>
+                  <TableHead className="hidden lg:table-cell">Attachment</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -319,14 +319,14 @@ export default function DashboardPage() {
                       <TableCell>
                         {format(new Date(request.startDate), 'MMM d, y')} - {format(new Date(request.endDate), 'MMM d, y')}
                       </TableCell>
-                      <TableCell>{request.days}</TableCell>
+                      <TableCell className="hidden sm:table-cell">{request.days}</TableCell>
                       <TableCell>
                         <Badge variant={statusColors[request.status]} className="flex items-center gap-1 w-fit">
                           {statusIcons[request.status]}
                           {request.status}
                         </Badge>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="hidden lg:table-cell">
                         {leaveType?.name === 'Cuti Sakit' ? (
                               <Badge variant="outline" className="flex items-center gap-1 w-fit">
                                   <FileWarning className="h-3 w-3" /> Required

@@ -169,11 +169,10 @@ export default function EmployeeDashboardPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Leave Type</TableHead>
-                <TableHead>Dates</TableHead>
-                <TableHead>Days</TableHead>
-                <TableHead>Reason</TableHead>
+                <TableHead className="hidden sm:table-cell">Dates</TableHead>
+                <TableHead className="hidden md:table-cell">Days</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Attachment</TableHead>
+                <TableHead className="hidden lg:table-cell">Attachment</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -186,18 +185,17 @@ export default function EmployeeDashboardPage() {
                 return (
                   <TableRow key={request.id}>
                     <TableCell className="font-medium">{leaveType.name}</TableCell>
-                    <TableCell>
+                    <TableCell className="hidden sm:table-cell">
                       {format(new Date(request.startDate), 'MMM d, y')} - {format(new Date(request.endDate), 'MMM d, y')}
                     </TableCell>
-                    <TableCell>{request.days}</TableCell>
-                    <TableCell className="max-w-[200px] truncate">{request.reason}</TableCell>
+                    <TableCell className="hidden md:table-cell">{request.days}</TableCell>
                     <TableCell>
                       <Badge variant={statusColors[request.status]} className="flex items-center gap-1 w-fit">
                         {statusIcons[request.status]}
                         {request.status}
                       </Badge>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="hidden lg:table-cell">
                        {leaveType.name === 'Cuti Sakit' ? (
                             <Badge variant="outline" className="flex items-center gap-1 w-fit">
                                 <FileWarning className="h-3 w-3" /> Required
@@ -222,7 +220,7 @@ export default function EmployeeDashboardPage() {
                 );
               }) : (
                  <TableRow>
-                    <TableCell colSpan={7} className="h-24 text-center">
+                    <TableCell colSpan={6} className="h-24 text-center">
                         You have not made any leave requests.
                     </TableCell>
                 </TableRow>

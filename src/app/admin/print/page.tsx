@@ -57,8 +57,8 @@ export default function PrintPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Karyawan</TableHead>
-                <TableHead>Jenis Cuti</TableHead>
-                <TableHead>Tanggal</TableHead>
+                <TableHead className="hidden sm:table-cell">Jenis Cuti</TableHead>
+                <TableHead className="hidden md:table-cell">Tanggal</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Aksi</TableHead>
               </TableRow>
@@ -74,8 +74,8 @@ export default function PrintPage() {
                 return (
                   <TableRow key={request.id}>
                     <TableCell className="font-medium">{user.name}</TableCell>
-                    <TableCell>{leaveType.name}</TableCell>
-                    <TableCell>
+                    <TableCell className="hidden sm:table-cell">{leaveType.name}</TableCell>
+                    <TableCell className="hidden md:table-cell">
                       {format(request.startDate, 'd MMM y')} - {format(request.endDate, 'd MMM y')}
                     </TableCell>
                     <TableCell>
@@ -87,7 +87,7 @@ export default function PrintPage() {
                        <div className="flex flex-col sm:flex-row justify-end items-stretch sm:items-center gap-2">
                         <Input 
                           placeholder="Nomor Surat" 
-                          className="w-full sm:w-[200px]" 
+                          className="w-full sm:w-auto sm:flex-1" 
                           value={letterNumbers[request.id] || ''}
                           onChange={(e) => handleLetterNumberChange(request.id, e.target.value)}
                           disabled={!isPrintable}

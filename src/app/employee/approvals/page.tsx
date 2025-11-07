@@ -153,13 +153,10 @@ export default function ApprovalsPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Employee</TableHead>
-                <TableHead>Leave Type</TableHead>
-                <TableHead>Dates</TableHead>
-                <TableHead>Days</TableHead>
-                <TableHead>Reason</TableHead>
-                <TableHead>
-                  <span className="sr-only">Actions</span>
-                </TableHead>
+                <TableHead className="hidden sm:table-cell">Leave Type</TableHead>
+                <TableHead className="hidden md:table-cell">Dates</TableHead>
+                <TableHead className="hidden lg:table-cell">Days</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -182,14 +179,13 @@ export default function ApprovalsPage() {
                           <div className="font-medium">{user.name}</div>
                         </div>
                       </TableCell>
-                      <TableCell>{leaveType.name}</TableCell>
-                      <TableCell>
+                      <TableCell className="hidden sm:table-cell">{leaveType.name}</TableCell>
+                      <TableCell className="hidden md:table-cell">
                         {format(new Date(request.startDate), 'MMM d, y')} - {format(new Date(request.endDate), 'MMM d, y')}
                       </TableCell>
-                      <TableCell>{request.days}</TableCell>
-                      <TableCell className="max-w-[200px] truncate">{request.reason}</TableCell>
+                      <TableCell className="hidden lg:table-cell">{request.days}</TableCell>
                       <TableCell>
-                        <div className="flex gap-2">
+                        <div className="flex flex-wrap gap-2">
                            <Button size="sm" onClick={() => handleDecision(request.id, 'Approved')}>
                              <Check className="mr-2 h-4 w-4" /> Approve
                            </Button>
@@ -206,7 +202,7 @@ export default function ApprovalsPage() {
                 })
               ) : (
                 <TableRow>
-                    <TableCell colSpan={6} className="h-24 text-center">
+                    <TableCell colSpan={5} className="h-24 text-center">
                         No pending requests to approve.
                     </TableCell>
                 </TableRow>
