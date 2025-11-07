@@ -127,7 +127,7 @@ export default function ApprovalsPage() {
   };
 
   return (
-    <div className="flex flex-col gap-6 max-w-7xl mx-auto">
+    <div className="flex flex-col gap-6">
       <Card>
         <CardHeader>
           <CardTitle>Pending Requests</CardTitle>

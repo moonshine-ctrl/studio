@@ -167,7 +167,7 @@ export default function AjukanCutiPage() {
 
 
   return (
-    <div className="flex flex-col gap-6 max-w-4xl mx-auto">
+    <div className="flex flex-col gap-6">
       <Card>
         <CardHeader>
           <CardTitle>Ajukan Cuti Baru</CardTitle>
