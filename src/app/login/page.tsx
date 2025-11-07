@@ -62,8 +62,8 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4 gradient-background">
-      <Card className="w-full max-w-md bg-white/30 dark:bg-black/30 backdrop-blur-lg border-white/20 text-gray-800 dark:text-white shadow-2xl">
-        <CardHeader className="text-center">
+      <Card className="w-full max-w-lg bg-white/30 dark:bg-black/30 backdrop-blur-lg border-white/20 text-gray-800 dark:text-white shadow-2xl">
+        <CardHeader className="text-center pt-8">
           <div className="flex justify-center mb-4">
               <Logo logoUrl={settings.logoUrl} isLogin={true} />
           </div>

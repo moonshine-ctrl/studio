@@ -5,12 +5,12 @@ import Image from 'next/image';
 export function Logo({ className, logoUrl, useText = false, isLogin = false }: { className?: string, logoUrl?: string, useText?: boolean, isLogin?: boolean }) {
   const showText = useText || !logoUrl;
 
-  const logoContainerSize = isLogin ? 'h-16 w-16' : 'h-10 w-10';
-  const logoIconSizeClass = isLogin ? 'h-8 w-8' : 'h-5 w-5';
-  const logoImageSize = isLogin ? 64 : 40;
+  const logoContainerSize = isLogin ? 'h-20 w-20' : 'h-10 w-10';
+  const logoIconSizeClass = isLogin ? 'h-10 w-10' : 'h-5 w-5';
+  const logoImageSize = isLogin ? 80 : 40;
 
 
-  const backgroundClass = logoUrl ? 'bg-transparent' : 'bg-gradient-to-tr from-pink-500 to-violet-500';
+  const backgroundClass = 'bg-transparent';
 
   return (
     <div
@@ -25,9 +25,9 @@ export function Logo({ className, logoUrl, useText = false, isLogin = false }: {
         backgroundClass
         )}>
         {logoUrl ? (
-          <Image src={logoUrl} alt="Logo" width={logoImageSize} height={logoImageSize} className="rounded-lg object-contain" />
+          <Image src={logoUrl} alt="Logo" width={logoImageSize} height={logoImageSize} className="object-contain" />
         ) : (
-          <CalendarCheck className={cn("text-white", logoIconSizeClass)} />
+          <CalendarCheck className={cn("text-slate-800 dark:text-white", logoIconSizeClass)} />
         )}
       </div>
       {showText && (

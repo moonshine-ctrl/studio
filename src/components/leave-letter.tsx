@@ -30,9 +30,9 @@ const Cell = ({ children, className = '', colSpan = 1, isHeader = false, rowSpan
 );
 
 const PrintHeader = () => (
-    <header className="text-center mb-4 border-b-2 border-black pb-2 print-header">
+    <header className="text-center mb-4 border-b-2 border-black pb-2">
         <div className="flex items-center justify-center gap-4">
-             {settings.logoUrl && <Image src={settings.logoUrl} alt="Logo" width={70} height={70} className="object-contain" />}
+             {settings.logoUrl && <Image src={settings.logoUrl} alt="Logo" width={80} height={80} className="object-contain" />}
             <div>
                 <h1 className="font-bold text-sm">{settings.letterhead[0]}</h1>
                 <h2 className="font-bold text-sm">{settings.letterhead[1]}</h2>
@@ -44,12 +44,6 @@ const PrintHeader = () => (
         </div>
     </header>
 );
-
-const RepeatingPrintHeader = () => (
-    <div className="repeating-header hidden print:block">
-        <PrintHeader />
-    </div>
-)
 
 export function LeaveLetter({ request, user, department, leaveType, letterNumber, approver, headOfAgency }: LeaveLetterProps) {
     
@@ -68,8 +62,6 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
         return `${months} bulan`;
     }
 
-    // In a real app, you would fetch multiple approvers based on settings.
-    // For this demo, we'll just use the single 'approver' prop.
     const allApprovers = approver ? [approver] : [];
 
 
@@ -83,7 +75,7 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
 
                 <div className={styles.outerBorder}>
                     {/* SECTION I */}
-                    <div className={styles.sectionContainer}>
+                    <section className={styles.sectionContainer}>
                         <p className="font-bold">I. DATA PEGAWAI</p>
                         <table className={styles.table}>
                             <tbody>
@@ -107,11 +99,10 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                 </tr>
                             </tbody>
                         </table>
-                    </div>
+                    </section>
                     
-                    <RepeatingPrintHeader />
                     {/* SECTION II */}
-                     <div className={`${styles.sectionContainer} mt-4`}>
+                     <section className={`${styles.sectionContainer} mt-4`}>
                         <p className="font-bold">II. JENIS CUTI YANG DIAMBIL **</p>
                          <table className={styles.table}>
                             <tbody>
@@ -129,18 +120,16 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                 </tr>
                             </tbody>
                         </table>
-                    </div>
+                    </section>
 
-                    <RepeatingPrintHeader />
                     {/* SECTION III */}
-                    <div className={`${styles.sectionContainer} mt-4`}>
+                    <section className={`${styles.sectionContainer} mt-4`}>
                         <p className="font-bold">III. ALASAN CUTI</p>
                         <div className={`${styles.cell} h-10`}>{request.reason}</div>
-                    </div>
+                    </section>
 
-                    <RepeatingPrintHeader />
                     {/* SECTION IV */}
-                     <div className={`${styles.sectionContainer} mt-4`}>
+                     <section className={`${styles.sectionContainer} mt-4`}>
                         <p className="font-bold">IV. LAMANYA CUTI</p>
                         <table className={styles.table}>
                              <tbody>
@@ -154,11 +143,10 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                 </tr>
                             </tbody>
                         </table>
-                    </div>
+                    </section>
                     
-                    <RepeatingPrintHeader />
                     {/* SECTION V */}
-                    <div className={`${styles.sectionContainer} mt-4`}>
+                    <section className={`${styles.sectionContainer} mt-4`}>
                         <p className="font-bold">V. CATATAN CUTI ***</p>
                          <table className={styles.table}>
                             <tbody>
@@ -179,11 +167,10 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                 </tr>
                             </tbody>
                         </table>
-                    </div>
+                    </section>
                     
-                    <RepeatingPrintHeader />
                      {/* SECTION VI */}
-                    <div className="grid grid-cols-2 gap-4 mt-4 break-inside-avoid">
+                    <section className="grid grid-cols-2 gap-4 mt-4 break-inside-avoid">
                         <div>
                             <p className="font-bold">VI. ALAMAT SELAMA MENJALANKAN CUTI</p>
                             <table className={styles.table}>
@@ -202,14 +189,13 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                             ) : (
                                 <div className="h-[70px]"></div>
                             )}
-                            <p>({user.name})</p>
+                            <p className="underline">({user.name})</p>
                             <p>NIP. {user.nip}</p>
                         </div>
-                    </div>
+                    </section>
                     
-                    <RepeatingPrintHeader />
                     {/* SECTION VII */}
-                    <div className={`${styles.sectionContainer} mt-4`}>
+                    <section className={`${styles.sectionContainer} mt-4`}>
                         <p className="font-bold">VII. PERTIMBANGAN ATASAN LANGSUNG</p>
                          {allApprovers.map((approverItem, index) => (
                             <div key={index} className="break-inside-avoid mt-2">
@@ -230,7 +216,7 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                                     ) : (
                                                         <div className="h-[70px]"></div>
                                                     )}
-                                                    <p>({approverItem?.name || '.......................'})</p>
+                                                    <p className="underline">({approverItem?.name || '.......................'})</p>
                                                     <p>NIP. {approverItem?.nip || '.......................'}</p>
                                                 </div>
                                             </td>
@@ -239,11 +225,10 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                 </table>
                             </div>
                         ))}
-                    </div>
+                    </section>
 
-                    <RepeatingPrintHeader />
                     {/* SECTION VIII */}
-                    <div className={`${styles.sectionContainer} mt-4`}>
+                    <section className={`${styles.sectionContainer} mt-4`}>
                         <p className="font-bold">VIII. KEPUTUSAN PEJABAT YANG BERWENANG MEMBERIKAN CUTI **</p>
                          <table className={styles.table}>
                             <tbody>
@@ -262,14 +247,14 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                             ) : (
                                                 <div className="h-[70px]"></div>
                                             )}
-                                            <p>({headOfAgency?.name || '.......................'})</p>
+                                            <p className="underline">({headOfAgency?.name || '.......................'})</p>
                                             <p>NIP. {headOfAgency?.nip || '.......................'}</p>
                                         </div>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
-                    </div>
+                    </section>
                 </div>
 
                 <footer className="mt-4 text-xs break-before-page">
@@ -296,23 +281,6 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                     </table>
                 </footer>
             </div>
-            <style jsx global>{`
-                .repeating-header {
-                    break-before: page;
-                }
-                @media print {
-                    body {
-                        -webkit-print-color-adjust: exact;
-                        print-color-adjust: exact;
-                    }
-                    .no-print {
-                        display: none;
-                    }
-                    .repeating-header {
-                        display: block;
-                    }
-                }
-            `}</style>
         </div>
     );
 }
