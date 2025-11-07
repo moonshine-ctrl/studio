@@ -22,11 +22,13 @@ export function UserProfile() {
   const [currentUser, setCurrentUser] = useState<User | undefined>();
   
   useEffect(() => {
-    // This logic determines the user based on the route structure.
+    const loggedInUserId = sessionStorage.getItem('loggedInUserId');
+    // This logic determines the user based on the route structure or session.
     if (pathname.startsWith('/admin')) {
       setCurrentUser(users.find(u => u.role === 'Admin'));
     } else if (pathname.startsWith('/employee')) {
-       setCurrentUser(users.find(u => u.id === '1')); // Budi Santoso, regular employee
+       const user = users.find(u => u.id === (loggedInUserId || '1')); // Fallback to '1' if not in session
+       setCurrentUser(user);
     }
   }, [pathname]);
 
@@ -36,6 +38,7 @@ export function UserProfile() {
       router.push('/admin-login');
     } else {
       sessionStorage.removeItem('employeeLoggedIn');
+      sessionStorage.removeItem('loggedInUserId');
       router.push('/login');
     }
   };

@@ -29,6 +29,7 @@ import {
   leaveRequests as initialLeaveRequests,
   users as allUsers,
   getLeaveTypeById,
+  getUserById
 } from '@/lib/data';
 import { format } from 'date-fns';
 import { useState, useMemo, useEffect } from 'react';
@@ -55,8 +56,8 @@ export default function EmployeeDashboardPage() {
   const { toast } = useToast();
 
   useEffect(() => {
-    // In a real app, this would come from an auth context.
-    const user = allUsers.find(u => u.id === '1'); 
+    const loggedInUserId = sessionStorage.getItem('loggedInUserId');
+    const user = getUserById(loggedInUserId || '1'); // Fallback for safety
     setCurrentUser(user);
     if (user) {
       setLeaveRequests(initialLeaveRequests.filter(req => req.userId === user.id));

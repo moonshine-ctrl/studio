@@ -38,9 +38,9 @@ export default function ApprovalsPage() {
   const [currentUser, setCurrentUser] = useState<User | undefined>();
 
   useEffect(() => {
-    // In a real app, this would come from an auth context.
-    // For this demo, let's assume the approver is Citra Lestari (user '2')
-    setCurrentUser(users.find(u => u.id === '2'));
+    const loggedInUserId = sessionStorage.getItem('loggedInUserId');
+    const user = users.find(u => u.id === (loggedInUserId || '2')); // fallback to citra
+    setCurrentUser(user);
   }, []);
 
   const requestsToApprove = useMemo(() => {

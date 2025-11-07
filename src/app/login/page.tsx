@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Logo } from '@/components/logo';
-import { settings } from '@/lib/data';
+import { settings, users } from '@/lib/data';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -37,8 +37,11 @@ export default function LoginPage() {
     e.preventDefault();
     setIsLoading(true);
 
-    if (nip && password) {
+    const employeeUser = users.find(u => u.nip === nip && u.role === 'Employee');
+
+    if (employeeUser && password === employeeUser.password) {
       sessionStorage.setItem('employeeLoggedIn', 'true');
+      sessionStorage.setItem('loggedInUserId', employeeUser.id);
       toast({
         title: 'Login Successful',
         description: 'Welcome back!',
@@ -50,7 +53,7 @@ export default function LoginPage() {
       toast({
         variant: 'destructive',
         title: 'Login Failed',
-        description: 'Please enter your NIP and password.',
+        description: 'Invalid NIP or password. Please try again.',
       });
       setIsLoading(false);
     }

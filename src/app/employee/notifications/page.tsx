@@ -26,8 +26,9 @@ export default function NotificationsPage() {
   const [currentUser, setCurrentUser] = useState<User | undefined>();
 
   useEffect(() => {
-    // For employee pages, always set the employee user.
-    setCurrentUser(users.find(u => u.id === '1'));
+    const loggedInUserId = sessionStorage.getItem('loggedInUserId');
+    const user = getUserById(loggedInUserId || '1'); // Fallback for safety
+    setCurrentUser(user);
   }, []);
 
 

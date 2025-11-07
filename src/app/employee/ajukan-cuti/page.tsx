@@ -26,7 +26,7 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { DateRange } from 'react-day-picker';
 import { useToast } from '@/hooks/use-toast';
-import { leaveTypes, users, leaveRequests as initialLeaveRequests, notifications as initialNotifications, getLeaveTypeById, settings as appSettings } from '@/lib/data';
+import { leaveTypes, users, leaveRequests as initialLeaveRequests, notifications as initialNotifications, getLeaveTypeById, settings as appSettings, getUserById } from '@/lib/data';
 import type { LeaveRequest, User, Notification } from '@/types';
 import Link from 'next/link';
 
@@ -40,8 +40,9 @@ export default function AjukanCutiPage() {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Simulate getting logged-in employee. In a real app, this would be from an auth context.
-    setCurrentUser(users.find(u => u.id === '1'));
+    const loggedInUserId = sessionStorage.getItem('loggedInUserId');
+    const user = getUserById(loggedInUserId || '1'); // Fallback for safety
+    setCurrentUser(user);
   }, []);
 
   const handleSubmit = (e: React.FormEvent) => {

@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Logo } from '@/components/logo';
 import Link from 'next/link';
-import { settings } from '@/lib/data';
+import { settings, users } from '@/lib/data';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -37,8 +37,9 @@ export default function AdminLoginPage() {
     e.preventDefault();
     setIsLoading(true);
 
-    // In a real app, you'd verify admin credentials
-    if (email && password) {
+    const adminUser = users.find(u => u.role === 'Admin');
+
+    if (adminUser && email === adminUser.nip && password === adminUser.password) {
       sessionStorage.setItem('adminLoggedIn', 'true');
       toast({
         title: 'Admin Login Successful',
@@ -46,13 +47,12 @@ export default function AdminLoginPage() {
       });
       setTimeout(() => {
         router.push('/admin/dashboard');
-        // No need to set isLoading(false) as we are navigating away
       }, 1000);
     } else {
       toast({
         variant: 'destructive',
         title: 'Login Failed',
-        description: 'Please enter your email and password.',
+        description: 'Invalid email or password. Please try again.',
       });
       setIsLoading(false);
     }

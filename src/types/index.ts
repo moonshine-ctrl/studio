@@ -11,6 +11,7 @@ export type User = {
   golongan?: string;
   joinDate?: Date;
   address?: string;
+  password?: string;
 };
 
 export type Department = {

@@ -52,7 +52,8 @@ import { differenceInYears, differenceInMonths, format } from 'date-fns';
 const updateDepartmentCount = (departmentId: string, amount: number) => {
     const dept = initialDepartments.find(d => d.id === departmentId);
     if (dept) {
-        dept.employeeCount += amount;
+        // Ensure employeeCount doesn't go below zero
+        dept.employeeCount = Math.max(0, dept.employeeCount + amount);
     }
 }
 
@@ -66,6 +67,7 @@ export default function UsersPage() {
   const [newUser, setNewUser] = useState<Partial<User>>({
     name: '',
     nip: '',
+    password: '',
     departmentId: '',
     role: 'Employee',
     annualLeaveBalance: 12,
@@ -104,11 +106,12 @@ export default function UsersPage() {
   };
 
   const handleAddUser = () => {
-    if (newUser.name && newUser.nip && newUser.departmentId && newUser.role) {
+    if (newUser.name && newUser.nip && newUser.departmentId && newUser.role && newUser.password) {
       const user: User = {
         id: `user-${Date.now()}`,
         name: newUser.name,
         nip: newUser.nip,
+        password: newUser.password,
         avatar: `https://picsum.photos/seed/${Date.now()}/100/100`,
         departmentId: newUser.departmentId,
         role: newUser.role as User['role'],
@@ -129,6 +132,7 @@ export default function UsersPage() {
       setNewUser({
         name: '',
         nip: '',
+        password: '',
         departmentId: '',
         role: 'Employee',
         annualLeaveBalance: 12,
@@ -145,7 +149,7 @@ export default function UsersPage() {
         toast({
             variant: 'destructive',
             title: 'Error',
-            description: 'Please fill all required fields.',
+            description: 'Please fill all required fields, including password.',
         });
     }
   };
@@ -237,6 +241,10 @@ export default function UsersPage() {
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="nip" className="text-right">NIP</Label>
                 <Input id="nip" value={newUser.nip} onChange={(e) => handleInputChange('nip', e.target.value)} className="col-span-3" />
+              </div>
+               <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="password-add" className="text-right">Password</Label>
+                <Input id="password-add" type="password" value={newUser.password} onChange={(e) => handleInputChange('password', e.target.value)} className="col-span-3" />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="phone" className="text-right">Phone</Label>
@@ -393,6 +401,10 @@ export default function UsersPage() {
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="edit-nip" className="text-right">NIP</Label>
                 <Input id="edit-nip" value={editingUser.nip} onChange={(e) => handleInputChange('nip', e.target.value, true)} className="col-span-3" />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="edit-password" className="text-right">Password</Label>
+                <Input id="edit-password" type="password" value={editingUser.password} onChange={(e) => handleInputChange('password', e.target.value, true)} className="col-span-3" placeholder="Enter new password" />
               </div>
                <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="edit-phone" className="text-right">Phone</Label>
