@@ -10,9 +10,9 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  if (pathname.startsWith('/admin/print')) {
-    return <>{children}</>;
-  }
+  
+  // The print layout is handled by the (print) route group layout.
+  // No special logic is needed here anymore.
 
   return (
     <SidebarProvider>

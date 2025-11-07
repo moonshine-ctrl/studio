@@ -35,11 +35,40 @@ import { useToast } from '@/hooks/use-toast';
 export default function ApprovalsPage() {
   const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>(initialLeaveRequests);
   const { toast } = useToast();
-  
-  // For admin, we show all pending requests.
+  const [currentUser, setCurrentUser] = useState<User | undefined>();
+
+  useEffect(() => {
+    // In a real app, this would come from an auth context.
+    // For this demo, we simulate a user. We check if they are a department head.
+    // Let's assume the approver is Citra Lestari (user '2') who is head of IT.
+    // An admin would see all requests.
+    const loggedInUser = users.find(u => u.id === '2'); // Simulate Citra Lestari
+    // const loggedInUser = users.find(u => u.role === 'Admin'); // Simulate Admin
+    setCurrentUser(loggedInUser);
+  }, []);
+
   const requestsToApprove = useMemo(() => {
-    return leaveRequests.filter(req => req.status === 'Pending');
-  }, [leaveRequests]);
+    if (!currentUser) return [];
+
+    // If user is Admin, show all pending requests
+    if (currentUser.role === 'Admin') {
+      return leaveRequests.filter(req => req.status === 'Pending');
+    }
+
+    // If user is an employee, check if they are a department head
+    const userDepartment = initialDepartments.find(d => d.headId === currentUser.id);
+    if (userDepartment) {
+      // It's a department head, show pending requests from their department
+      return leaveRequests.filter(req => {
+        const requestUser = getUserById(req.userId);
+        return requestUser?.departmentId === userDepartment.id && req.status === 'Pending';
+      });
+    }
+
+    // Regular employee, no requests to approve
+    return [];
+
+  }, [leaveRequests, currentUser]);
 
 
   const handleApprove = (requestId: string) => {
