@@ -111,7 +111,7 @@ export default function LoginPage() {
         </CardFooter>
       </Card>
       <div className="fixed bottom-4 left-4 text-sm font-script text-slate-700 dark:text-slate-300">
-        Crafted with ❤️ by KodeSoul
+        Made with ❤️ by Moonshine | © 2025.
       </div>
     </div>
   );
