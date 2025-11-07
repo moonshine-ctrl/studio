@@ -56,6 +56,7 @@ export default function SettingsPage() {
       title: 'Changes Saved!',
       description: `Approval flow for the department has been updated.`,
     });
+    setActiveAccordionItem(undefined); // Close the accordion item
   };
   
   const handleGeneralSave = () => {
