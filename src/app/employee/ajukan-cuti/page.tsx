@@ -114,6 +114,18 @@ export default function AjukanCutiPage() {
         leaveRequestId: newRequestId,
       };
       initialNotifications.unshift(userNotification, adminNotification);
+    } else {
+        // Generic notification for other leave types
+        const adminNotification: Notification = {
+            id: `notif-${Date.now()}-admin`,
+            userId: 'admin',
+            message: `Ada pengajuan cuti baru dari ${currentUser.name} (${selectedLeaveType?.name}) yang menunggu persetujuan.`,
+            type: 'info',
+            isRead: false,
+            createdAt: new Date(),
+            leaveRequestId: newRequestId,
+        };
+        initialNotifications.unshift(adminNotification);
     }
     
     // Add to log history

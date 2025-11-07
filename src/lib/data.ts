@@ -43,12 +43,12 @@ export const leaveRequests: LeaveRequest[] = [
 ];
 
 export const notifications: Notification[] = [
-    { id: 'notif1', userId: '3', message: 'Reminder: Jangan lupa untuk melengkapi dokumen pendukung cuti Anda.', type: 'warning', isRead: true, createdAt: subDays(now, 1), leaveRequestId: 'req2' },
+    { id: 'notif1', userId: '3', message: `Pengajuan Cuti Sakit Anda pada ${format(subDays(now, 2), 'd MMM y')} menunggu kelengkapan dokumen.`, type: 'warning', isRead: true, createdAt: subDays(now, 1), leaveRequestId: 'req2' },
     { id: 'notif2', userId: '1', message: 'Permintaan cuti tahunan Anda telah disetujui.', type: 'success', isRead: true, createdAt: subDays(now, 9), leaveRequestId: 'req1' },
-    { id: 'notif3', userId: 'admin', message: 'Doni Firmansyah belum melengkapi dokumen untuk cuti pada ' + format(subDays(now, 2), 'd MMM y'), type: 'warning', isRead: true, createdAt: subDays(now, 0), leaveRequestId: 'req2' },
-    { id: 'notif4', userId: '8', message: 'Permintaan cuti dari Gilang Ramadhan menunggu persetujuan Anda.', type: 'warning', isRead: false, createdAt: subDays(now, 1), leaveRequestId: 'req3' },
+    { id: 'notif3', userId: 'admin', message: 'Doni Firmansyah mengajukan Cuti Sakit. Ingatkan untuk melengkapi dokumen.', type: 'warning', isRead: false, createdAt: subDays(now, 2), leaveRequestId: 'req2' },
+    { id: 'notif4', userId: 'admin', message: 'Ada pengajuan cuti baru dari Gilang Ramadhan (Cuti Tahunan) yang menunggu persetujuan.', type: 'info', isRead: false, createdAt: subDays(now, 1), leaveRequestId: 'req3' },
     { id: 'notif5', userId: '2', message: 'Permintaan cuti Anda ditolak.', type: 'info', isRead: false, createdAt: subDays(now, 29), leaveRequestId: 'req5' },
-    { id: 'notif6', userId: '2', message: 'Permintaan cuti dari Eka Putri menunggu persetujuan Anda.', type: 'warning', isRead: false, createdAt: subDays(now, 1), leaveRequestId: 'req6' },
+    { id: 'notif6', userId: 'admin', message: 'Ada pengajuan cuti baru dari Eka Putri (Cuti Sakit) yang menunggu persetujuan.', type: 'info', isRead: false, createdAt: subDays(now, 1), leaveRequestId: 'req6' },
 ];
 
 export const logHistory: LogEntry[] = [

@@ -38,7 +38,7 @@ export default function NotificationsPage() {
     if (!currentUser) return [];
 
     // Admin should only see notifications where userId is 'admin'
-    return notifData.filter(n => n.userId === 'admin');
+    return notifData.filter(n => n.userId === 'admin').sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
   }, [notifData, currentUser]);
 
@@ -72,20 +72,14 @@ export default function NotificationsPage() {
     if (!leaveRequest) return;
     
     const employee = getUserById(leaveRequest.userId);
-    if (!employee) return;
-    
-    // This logic is now simplified as we don't have a direct "head". 
-    // In a real app, this would get the designated approver for the department.
-    // For now, we'll find a default approver to notify.
-    const approver = users.find(u => u.id === '2'); // Let's assume Citra is the default approver to notify
-    if (!approver || !approver.phone) {
-      alert('Approver contact not found.');
+    if (!employee || !employee.phone) {
+      alert('Kontak karyawan tidak ditemukan atau tidak valid.');
       return;
     }
     
     const leaveType = getLeaveTypeById(leaveRequest.leaveTypeId);
-    const message = `Yth. Bapak/Ibu ${approver.name},\n\nDengan ini kami memberitahukan bahwa ada pengajuan cuti dari Sdr/i ${employee.name} (NIP: ${employee.nip}) yang memerlukan persetujuan Anda.\n\nDetail pengajuan:\nJenis Cuti: ${leaveType?.name}\nTanggal: ${format(leaveRequest.startDate, 'dd-MM-yyyy')} s/d ${format(leaveRequest.endDate, 'dd-MM-yyyy')}\n\nMohon untuk segera ditindaklanjuti. Terima kasih.\n\n- Admin Kepegawaian -`;
-    const whatsappUrl = `https://wa.me/${approver.phone}?text=${encodeURIComponent(message)}`;
+    const message = `Yth. Sdr/i ${employee.name},\n\nMengingatkan untuk segera melengkapi dokumen surat keterangan sakit untuk pengajuan cuti Anda pada tanggal ${format(leaveRequest.startDate, 'd MMMM yyyy')}.\n\nTerima kasih atas perhatiannya dan semoga lekas sembuh.\n\n- Admin Kepegawaian -`;
+    const whatsappUrl = `https://wa.me/${employee.phone}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
 
@@ -137,10 +131,10 @@ export default function NotificationsPage() {
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
-                    {currentUser?.role === 'Admin' && notification.type === 'warning' && (
+                    {notification.type === 'warning' && notification.leaveRequestId && (
                        <Button variant="outline" size="sm" onClick={() => handleWhatsAppNotification(notification)}>
                           <MessageSquare className="mr-2 h-4 w-4" />
-                          Notify Approver
+                          Ingatkan Karyawan
                        </Button>
                     )}
                     {!notification.isRead && (
