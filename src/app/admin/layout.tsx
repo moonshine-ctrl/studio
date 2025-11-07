@@ -2,12 +2,18 @@
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/app-sidebar';
 import { AppHeader } from '@/components/app-header';
+import { usePathname } from 'next/navigation';
 
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+  if (pathname.startsWith('/admin/print')) {
+    return <>{children}</>;
+  }
+
   return (
     <SidebarProvider>
       <div className="flex">

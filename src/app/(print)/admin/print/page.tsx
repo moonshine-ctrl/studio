@@ -44,7 +44,7 @@ export default function PrintPage() {
   };
 
   return (
-    <div className="flex flex-col gap-6 max-w-7xl mx-auto">
+    <div className="flex flex-col gap-6 max-w-7xl mx-auto p-4 sm:p-6">
       <h1 className="text-2xl font-bold font-headline">Cetak Surat</h1>
       
       <Card>

@@ -50,8 +50,11 @@ export function Nav({ role }: NavProps) {
     if (href.endsWith('/dashboard')) {
         return pathname === href;
     }
+    if (href.endsWith('/admin/print')) {
+        return pathname.startsWith('/admin/print');
+    }
     // Starts with for other pages to handle sub-routes
-    return pathname.startsWith(href);
+    return pathname.startsWith(href) && href.length > pathname.length ? pathname === href : pathname.startsWith(href);
   }
 
   return (
