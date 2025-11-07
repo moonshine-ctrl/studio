@@ -19,7 +19,8 @@ const styles = {
   cell: "border border-black p-1",
   cellHeader: "border border-black p-1 text-left",
   cellCenter: "border border-black p-1 text-center",
-  outerBorder: "border-2 border-black p-4"
+  outerBorder: "border-2 border-black p-4",
+  sectionContainer: "break-inside-avoid",
 };
 
 const Cell = ({ children, className = '', colSpan = 1, isHeader = false, rowSpan = 1 }: { children: React.ReactNode, className?: string, colSpan?: number, rowSpan?: number, isHeader?: boolean }) => (
@@ -45,6 +46,11 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
         return `${months} bulan`;
     }
 
+    // In a real app, you would fetch multiple approvers based on settings.
+    // For this demo, we'll just use the single 'approver' prop.
+    const allApprovers = approver ? [approver] : [];
+
+
     return (
         <div className="bg-white p-8 font-serif text-xs">
             <div className="max-w-4xl mx-auto">
@@ -67,92 +73,102 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
 
                 <div className={styles.outerBorder}>
                     {/* SECTION I */}
-                    <p className="font-bold">I. DATA PEGAWAI</p>
-                    <table className={styles.table}>
-                        <tbody>
-                            <tr>
-                                <Cell isHeader>Nama</Cell>
-                                <Cell>{user.name}</Cell>
-                                <Cell isHeader>NIP</Cell>
-                                <Cell>{user.nip}</Cell>
-                            </tr>
-                            <tr>
-                                <Cell isHeader>Jabatan</Cell>
-                                <Cell>{user.role}</Cell>
-                                <Cell isHeader>Gol. Ruang</Cell>
-                                <Cell>{user.golongan || '.......................'}</Cell>
-                            </tr>
-                            <tr>
-                                <Cell isHeader>Unit Kerja</Cell>
-                                <Cell>{department.name}</Cell>
-                                <Cell isHeader>Masa Kerja</Cell>
-                                <Cell>{calculateMasaKerja(user.joinDate)}</Cell>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div className={styles.sectionContainer}>
+                        <p className="font-bold">I. DATA PEGAWAI</p>
+                        <table className={styles.table}>
+                            <tbody>
+                                <tr>
+                                    <Cell isHeader>Nama</Cell>
+                                    <Cell>{user.name}</Cell>
+                                    <Cell isHeader>NIP</Cell>
+                                    <Cell>{user.nip}</Cell>
+                                </tr>
+                                <tr>
+                                    <Cell isHeader>Jabatan</Cell>
+                                    <Cell>{user.role}</Cell>
+                                    <Cell isHeader>Gol. Ruang</Cell>
+                                    <Cell>{user.golongan || '.......................'}</Cell>
+                                </tr>
+                                <tr>
+                                    <Cell isHeader>Unit Kerja</Cell>
+                                    <Cell>{department.name}</Cell>
+                                    <Cell isHeader>Masa Kerja</Cell>
+                                    <Cell>{calculateMasaKerja(user.joinDate)}</Cell>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
 
                     {/* SECTION II */}
-                    <p className="font-bold mt-4">II. JENIS CUTI YANG DIAMBIL **</p>
-                     <table className={styles.table}>
-                        <tbody>
-                            <tr>
-                                <Cell>1. Cuti Tahunan <span className="float-right">{leaveTypeCheck('Cuti Tahunan')}</span></Cell>
-                                <Cell>2. Cuti Besar <span className="float-right">{leaveTypeCheck('Cuti Besar')}</span></Cell>
-                            </tr>
-                             <tr>
-                                <Cell>3. Cuti Sakit <span className="float-right">{leaveTypeCheck('Cuti Sakit')}</span></Cell>
-                                <Cell>4. Cuti Melahirkan <span className="float-right">{leaveTypeCheck('Cuti Melahirkan')}</span></Cell>
-                            </tr>
-                            <tr>
-                                <Cell>5. Cuti Karena Alasan Penting <span className="float-right">{leaveTypeCheck('Cuti Alasan Penting')}</span></Cell>
-                                <Cell>6. Cuti di Luar Tanggungan Negara <span className="float-right">{leaveTypeCheck('Cuti di Luar Tanggungan Negara')}</span></Cell>
-                            </tr>
-                        </tbody>
-                    </table>
+                     <div className={`${styles.sectionContainer} mt-4`}>
+                        <p className="font-bold">II. JENIS CUTI YANG DIAMBIL **</p>
+                         <table className={styles.table}>
+                            <tbody>
+                                <tr>
+                                    <Cell>1. Cuti Tahunan <span className="float-right">{leaveTypeCheck('Cuti Tahunan')}</span></Cell>
+                                    <Cell>2. Cuti Besar <span className="float-right">{leaveTypeCheck('Cuti Besar')}</span></Cell>
+                                </tr>
+                                 <tr>
+                                    <Cell>3. Cuti Sakit <span className="float-right">{leaveTypeCheck('Cuti Sakit')}</span></Cell>
+                                    <Cell>4. Cuti Melahirkan <span className="float-right">{leaveTypeCheck('Cuti Melahirkan')}</span></Cell>
+                                </tr>
+                                <tr>
+                                    <Cell>5. Cuti Karena Alasan Penting <span className="float-right">{leaveTypeCheck('Cuti Alasan Penting')}</span></Cell>
+                                    <Cell>6. Cuti di Luar Tanggungan Negara <span className="float-right">{leaveTypeCheck('Cuti di Luar Tanggungan Negara')}</span></Cell>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
 
                     {/* SECTION III */}
-                    <p className="font-bold mt-4">III. ALASAN CUTI</p>
-                    <div className={`${styles.cell} h-10`}>{request.reason}</div>
+                    <div className={`${styles.sectionContainer} mt-4`}>
+                        <p className="font-bold">III. ALASAN CUTI</p>
+                        <div className={`${styles.cell} h-10`}>{request.reason}</div>
+                    </div>
 
                     {/* SECTION IV */}
-                    <p className="font-bold mt-4">IV. LAMANYA CUTI</p>
-                    <table className={styles.table}>
-                         <tbody>
-                            <tr>
-                                <Cell>Selama</Cell>
-                                <Cell>{duration} (hari/bulan/tahun)*</Cell>
-                                <Cell>mulai tanggal</Cell>
-                                <Cell>{format(request.startDate, 'dd-MM-yyyy')}</Cell>
-                                <Cell>s/d</Cell>
-                                <Cell>{format(request.endDate, 'dd-MM-yyyy')}</Cell>
-                            </tr>
-                        </tbody>
-                    </table>
+                     <div className={`${styles.sectionContainer} mt-4`}>
+                        <p className="font-bold">IV. LAMANYA CUTI</p>
+                        <table className={styles.table}>
+                             <tbody>
+                                <tr>
+                                    <Cell>Selama</Cell>
+                                    <Cell>{duration} (hari/bulan/tahun)*</Cell>
+                                    <Cell>mulai tanggal</Cell>
+                                    <Cell>{format(request.startDate, 'dd-MM-yyyy')}</Cell>
+                                    <Cell>s/d</Cell>
+                                    <Cell>{format(request.endDate, 'dd-MM-yyyy')}</Cell>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
 
                     {/* SECTION V */}
-                    <p className="font-bold mt-4">V. CATATAN CUTI ***</p>
-                     <table className={styles.table}>
-                        <tbody>
-                            <tr>
-                                <Cell colSpan={3}>1. CUTI TAHUNAN</Cell>
-                                <Cell rowSpan={2} className="align-top">PARAF PETUGAS CUTI</Cell>
-                            </tr>
-                            <tr>
-                                <Cell>Tahun</Cell>
-                                <Cell>Sisa</Cell>
-                                <Cell>Keterangan</Cell>
-                            </tr>
-                            <tr>
-                                <Cell>{currentYear}</Cell>
-                                <Cell>{user.annualLeaveBalance}</Cell>
-                                <Cell></Cell>
-                                <Cell></Cell>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div className={`${styles.sectionContainer} mt-4`}>
+                        <p className="font-bold">V. CATATAN CUTI ***</p>
+                         <table className={styles.table}>
+                            <tbody>
+                                <tr>
+                                    <Cell colSpan={3}>1. CUTI TAHUNAN</Cell>
+                                    <Cell rowSpan={2} className="align-top">PARAF PETUGAS CUTI</Cell>
+                                </tr>
+                                <tr>
+                                    <Cell>Tahun</Cell>
+                                    <Cell>Sisa</Cell>
+                                    <Cell>Keterangan</Cell>
+                                </tr>
+                                <tr>
+                                    <Cell>{currentYear}</Cell>
+                                    <Cell>{user.annualLeaveBalance}</Cell>
+                                    <Cell></Cell>
+                                    <Cell></Cell>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
 
                      {/* SECTION VI */}
-                    <div className="grid grid-cols-2 gap-4 mt-4">
+                    <div className="grid grid-cols-2 gap-4 mt-4 break-inside-avoid">
                         <div>
                             <p className="font-bold">VI. ALAMAT SELAMA MENJALANKAN CUTI</p>
                             <table className={styles.table}>
@@ -177,69 +193,103 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                     </div>
                     
                     {/* SECTION VII */}
-                    <p className="font-bold mt-4">VII. PERTIMBANGAN ATASAN LANGSUNG</p>
-                    <table className={styles.table}>
-                        <tbody>
-                            <tr>
-                                <Cell className={styles.cellCenter}>DISETUJUI</Cell>
-                                <Cell className={styles.cellCenter}>PERUBAHAN****</Cell>
-                                <Cell className={styles.cellCenter}>DITANGGUHKAN****</Cell>
-                                <Cell className={styles.cellCenter}>TIDAK DISETUJUI****</Cell>
-                            </tr>
-                            <tr>
-                                <td colSpan={4} className={`${styles.cell}`}>
-                                    <div className="text-center float-right w-1/2">
-                                        <p>Atasan Langsung,</p>
-                                        {approver?.qrCodeSignature ? (
-                                            <Image src={approver.qrCodeSignature} alt="QR Code" width={70} height={70} className="mx-auto my-1" />
-                                        ) : (
-                                            <div className="h-[70px]"></div>
-                                        )}
-                                        <p>({approver?.name || '.......................'})</p>
-                                        <p>NIP. {approver?.nip || '.......................'}</p>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div className={`${styles.sectionContainer} mt-4`}>
+                        <p className="font-bold">VII. PERTIMBANGAN ATASAN LANGSUNG</p>
+                         {allApprovers.map((approverItem, index) => (
+                            <div key={index} className="break-inside-avoid mt-2">
+                                <table className={styles.table}>
+                                    <tbody>
+                                        <tr>
+                                            <Cell className={styles.cellCenter}>DISETUJUI</Cell>
+                                            <Cell className={styles.cellCenter}>PERUBAHAN****</Cell>
+                                            <Cell className={styles.cellCenter}>DITANGGUHKAN****</Cell>
+                                            <Cell className={styles.cellCenter}>TIDAK DISETUJUI****</Cell>
+                                        </tr>
+                                        <tr>
+                                            <td colSpan={4} className={`${styles.cell}`}>
+                                                <div className="text-center float-right w-1/2">
+                                                    <p>Atasan Langsung {allApprovers.length > 1 ? index + 1 : ''},</p>
+                                                    {approverItem?.qrCodeSignature ? (
+                                                        <Image src={approverItem.qrCodeSignature} alt="QR Code" width={70} height={70} className="mx-auto my-1" />
+                                                    ) : (
+                                                        <div className="h-[70px]"></div>
+                                                    )}
+                                                    <p>({approverItem?.name || '.......................'})</p>
+                                                    <p>NIP. {approverItem?.nip || '.......................'}</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        ))}
+                    </div>
+
 
                     {/* SECTION VIII */}
-                    <p className="font-bold mt-4">VIII. KEPUTUSAN PEJABAT YANG BERWENANG MEMBERIKAN CUTI **</p>
-                     <table className={styles.table}>
-                        <tbody>
-                            <tr>
-                                <Cell className={styles.cellCenter}>DISETUJUI</Cell>
-                                <Cell className={styles.cellCenter}>PERUBAHAN****</Cell>
-                                <Cell className={styles.cellCenter}>DITANGGUHKAN****</Cell>
-                                <Cell className={styles.cellCenter}>TIDAK DISETUJUI****</Cell>
-                            </tr>
-                            <tr>
-                                <td colSpan={4} className={`${styles.cell}`}>
-                                    <div className="text-center float-right w-1/2">
-                                        <p>Ketua,</p>
-                                        {headOfAgency?.qrCodeSignature ? (
-                                            <Image src={headOfAgency.qrCodeSignature} alt="QR Code" width={70} height={70} className="mx-auto my-1" />
-                                        ) : (
-                                            <div className="h-[70px]"></div>
-                                        )}
-                                        <p>({headOfAgency?.name || '.......................'})</p>
-                                        <p>NIP. {headOfAgency?.nip || '.......................'}</p>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div className={`${styles.sectionContainer} mt-4`}>
+                        <p className="font-bold">VIII. KEPUTUSAN PEJABAT YANG BERWENANG MEMBERIKAN CUTI **</p>
+                         <table className={styles.table}>
+                            <tbody>
+                                <tr>
+                                    <Cell className={styles.cellCenter}>DISETUJUI</Cell>
+                                    <Cell className={styles.cellCenter}>PERUBAHAN****</Cell>
+                                    <Cell className={styles.cellCenter}>DITANGGUHKAN****</Cell>
+                                    <Cell className={styles.cellCenter}>TIDAK DISETUJUI****</Cell>
+                                </tr>
+                                <tr>
+                                    <td colSpan={4} className={`${styles.cell}`}>
+                                        <div className="text-center float-right w-1/2">
+                                            <p>Ketua,</p>
+                                            {headOfAgency?.qrCodeSignature ? (
+                                                <Image src={headOfAgency.qrCodeSignature} alt="QR Code" width={70} height={70} className="mx-auto my-1" />
+                                            ) : (
+                                                <div className="h-[70px]"></div>
+                                            )}
+                                            <p>({headOfAgency?.name || '.......................'})</p>
+                                            <p>NIP. {headOfAgency?.nip || '.......................'}</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <footer className="mt-4 text-xs">
-                    <p>Catatan:</p>
-                    <ul className="list-disc list-inside">
-                        <li>* Coret yang tidak perlu</li>
-                        <li>** Pilih salah satu dengan memberi tanda centang (V)</li>
-                        <li>*** diisi oleh pejabat yang menangani bidang kepegawaian sebelum PNS mengajukan cuti</li>
-                        <li>**** diberi tanda centang dan alasan</li>
-                        <li>N = Cuti tahun berjalan</li>
-                    </ul>
+                    <p className="font-bold">Catatan:</p>
+                    <table className="w-full">
+                        <tbody>
+                            <tr>
+                                <td className="align-top w-10">*</td>
+                                <td>Coret yang tidak perlu</td>
+                            </tr>
+                             <tr>
+                                <td className="align-top">**</td>
+                                <td>Pilih salah satu dengan memberi tanda centang (V)</td>
+                            </tr>
+                            <tr>
+                                <td className="align-top">***</td>
+                                <td>Diisi oleh pejabat yang menangani bidang kepegawaian sebelum PNS mengajukan cuti</td>
+                            </tr>
+                             <tr>
+                                <td className="align-top">****</td>
+                                <td>Diberi tanda centang dan alasan</td>
+                            </tr>
+                             <tr>
+                                <td className="align-top">N</td>
+                                <td>= Cuti tahun berjalan</td>
+                            </tr>
+                             <tr>
+                                <td className="align-top">N-1</td>
+                                <td>= Sisa cuti 1 tahun sebelumnya</td>
+                            </tr>
+                            <tr>
+                                <td className="align-top">N-2</td>
+                                <td>= Sisa cuti 2 tahun sebelumnya</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </footer>
             </div>
             <style jsx global>{`
