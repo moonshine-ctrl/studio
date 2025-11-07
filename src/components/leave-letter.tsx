@@ -23,8 +23,8 @@ const styles = {
 };
 
 
-const PrintHeaderContent = ({ isRepeating = false }: { isRepeating?: boolean }) => (
-    <header className={`text-center mb-2 border-b-2 border-black pb-2 ${isRepeating ? 'print-header-repeating' : ''}`}>
+const PrintHeaderContent = () => (
+    <header className="text-center mb-2 border-b-2 border-black pb-2">
         <div className="flex items-center justify-center gap-4">
              {settings.logoUrl && <Image src={settings.logoUrl} alt="Logo" width={70} height={70} className="object-contain" />}
             <div>
@@ -40,21 +40,25 @@ const PrintHeaderContent = ({ isRepeating = false }: { isRepeating?: boolean }) 
 );
 
 const SignatureBlock = ({ user, title, signatureDate }: { user?: User, title?: string, signatureDate?: Date }) => {
-    if (!user) return null;
-    const dateToDisplay = signatureDate ? format(signatureDate, 'dd MMMM yyyy', { timeZone: 'Asia/Jakarta' }) : '...................';
+    if (!user) return <div className="h-full"></div>;
+    const dateToDisplay = signatureDate ? format(signatureDate, 'dd MMMM yyyy') : '...................';
 
     return (
-        <div className="text-center">
-            <p className="mb-1">Solok, {dateToDisplay}</p>
+        <div className="text-center h-full flex flex-col justify-between">
+            <div>
+                <p className="mb-1">Solok, {dateToDisplay}</p>
+            </div>
             <div className="h-16 w-32 mx-auto my-1 flex items-center justify-center">
                 {user.qrCodeSignature ? (
-                    <Image src={user.qrCodeSignature} alt="QR Code" width={100} height={100} className="mx-auto object-contain" />
+                    <Image src={user.qrCodeSignature} alt="QR Code" width={80} height={80} className="mx-auto object-contain" />
                 ) : (
                     <div className="h-16"></div>
                 )}
             </div>
-            <p className="underline font-bold mt-1">{user.name}</p>
-            <p>NIP. {user.nip}</p>
+            <div>
+                <p className="underline font-bold mt-1">{user.name}</p>
+                <p>NIP. {user.nip}</p>
+            </div>
         </div>
     );
 };
@@ -81,37 +85,17 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
         <div className="bg-white p-4 font-serif text-xs" id="print-area">
             <style jsx global>{`
                 @media print {
-                    @page {
-                        size: A4;
-                        margin: 1.5cm;
-                    }
-                    body {
-                        -webkit-print-color-adjust: exact;
-                        print-color-adjust: exact;
-                    }
-                    .print-header-repeating {
-                        display: block !important;
-                        position: fixed;
-                        top: 1.5cm;
-                        left: 1.5cm;
-                        right: 1.5cm;
-                        background-color: white;
-                        z-index: 10;
-                    }
-                    .section-container {
-                        break-inside: avoid;
-                        page-break-inside: avoid;
-                    }
-                    .main-header {
-                        visibility: hidden;
-                        height: 100px; /* Match header height */
-                    }
-                }
-                .print-header-repeating {
-                    display: none;
+                  body {
+                    -webkit-print-color-adjust: exact;
+                    print-color-adjust: exact;
+                  }
+                  .section-container {
+                    break-inside: avoid;
+                    page-break-inside: avoid;
+                  }
                 }
             `}</style>
-
+            
             <div className="max-w-4xl mx-auto">
                 <PrintHeaderContent />
                 
@@ -197,7 +181,7 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                     <td className={`${styles.cell} font-bold`} colSpan={3}>1. CUTI TAHUNAN</td>
                                     <td className={`${styles.cellCenter} align-middle`} rowSpan={4}>
                                         <div className="h-full flex flex-col justify-between">
-                                            <p>PARAF PETUGAS CUTI</p>
+                                            <p>✓</p>
                                             <div className="h-12"></div>
                                         </div>
                                     </td>
@@ -243,9 +227,9 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                     <p>..................................</p>
                                 </td>
                                 <td className={`${styles.cell} w-1/3 align-top text-center`}>
-                                    <div className='flex flex-col h-full'>
+                                     <div className='flex flex-col h-full'>
                                         <p>Hormat saya,</p>
-                                        <div className="flex-grow" style={{ minHeight: '50px' }}></div>
+                                        <div className="flex-grow min-h-[50px]"></div>
                                         <p className="underline font-bold">{user.name}</p>
                                         <p>NIP. {user.nip}</p>
                                     </div>
@@ -264,12 +248,12 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                     <td className={styles.cellCenter}>DISETUJUI</td>
                                     <td className={styles.cellCenter}>PERUBAHAN****</td>
                                     <td className={styles.cellCenter}>DITANGGUHKAN****</td>
-                                    <td className={`${styles.cell} w-1/3 text-center align-top`} rowSpan={2}>
+                                    <td className={`${styles.cell} w-1/3 text-center align-top`} rowSpan={2} style={{height: '140px'}}>
                                         {approver && <SignatureBlock user={approver} signatureDate={request.createdAt} />}
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td colSpan={3} className={`${styles.cell} h-[100px] align-top`}>
+                                    <td colSpan={3} className={`${styles.cell} h-full align-top`}>
                                          <span className='font-bold text-lg pl-2'>{request.status === 'Approved' ? '✓' : ''}</span>
                                     </td>
                                 </tr>
@@ -286,12 +270,12 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                     <td className={styles.cellCenter}>DISETUJUI</td>
                                     <td className={styles.cellCenter}>PERUBAHAN****</td>
                                     <td className={styles.cellCenter}>DITANGGUHKAN****</td>
-                                    <td className={`${styles.cell} w-1/3 text-center align-top`} rowSpan={2}>
+                                    <td className={`${styles.cell} w-1/3 text-center align-top`} rowSpan={2} style={{height: '140px'}}>
                                          {headOfAgency && <SignatureBlock user={headOfAgency} signatureDate={request.createdAt} />}
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td colSpan={3} className={`${styles.cell} h-[100px] align-top`}>
+                                    <td colSpan={3} className={`${styles.cell} h-full align-top`}>
                                         <span className='font-bold text-lg pl-2'>{request.status === 'Approved' ? '✓' : ''}</span>
                                     </td>
                                 </tr>
