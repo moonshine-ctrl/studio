@@ -39,24 +39,22 @@ const PrintHeaderContent = ({ isRepeating = false }: { isRepeating?: boolean }) 
     </header>
 );
 
-const SignatureBlock = ({ user, qrCode, name, nip, signatureDate, title, align = 'center' }: { user?: User, qrCode?: string, name?: string, nip?: string, signatureDate?: Date, title?: string, align?: 'left' | 'center' | 'right' }) => {
-    const signatureQr = qrCode || user?.qrCodeSignature;
-    const signatureName = name || user?.name || '.......................';
-    const signatureNip = nip || user?.nip || '.......................';
-    const dateToDisplay = signatureDate ? format(signatureDate, 'dd-MM-yyyy') : '...................';
+const SignatureBlock = ({ user, title, signatureDate }: { user?: User, title?: string, signatureDate?: Date }) => {
+    if (!user) return null;
+    const dateToDisplay = signatureDate ? format(signatureDate, 'dd MMMM yyyy', { timeZone: 'Asia/Jakarta' }) : '...................';
 
     return (
-        <div className={`text-${align}`}>
-            <p className="mb-1">{dateToDisplay}</p>
-            <div className="h-16 w-16 mx-auto my-1 flex items-center justify-center">
-                {signatureQr ? (
-                    <Image src={signatureQr} alt="QR Code" width={64} height={64} className="mx-auto" />
+        <div className="text-center">
+            <p className="mb-1">Solok, {dateToDisplay}</p>
+            <div className="h-16 w-32 mx-auto my-1 flex items-center justify-center">
+                {user.qrCodeSignature ? (
+                    <Image src={user.qrCodeSignature} alt="QR Code" width={100} height={100} className="mx-auto object-contain" />
                 ) : (
-                    <div className="h-[64px]"></div>
+                    <div className="h-16"></div>
                 )}
             </div>
-            <p className="underline font-bold mt-1">{signatureName}</p>
-            <p>NIP. {signatureNip}</p>
+            <p className="underline font-bold mt-1">{user.name}</p>
+            <p>NIP. {user.nip}</p>
         </div>
     );
 };
@@ -65,7 +63,7 @@ const SignatureBlock = ({ user, qrCode, name, nip, signatureDate, title, align =
 export function LeaveLetter({ request, user, department, leaveType, letterNumber, approver, headOfAgency }: LeaveLetterProps) {
     
     const duration = request.days;
-    const leaveTypeCheck = (type: string) => leaveType?.name === type ? 'V' : '';
+    const leaveTypeCheck = (type: string) => leaveType?.name === type ? '✓' : '';
     const currentYear = new Date().getFullYear();
     
     const calculateMasaKerja = (joinDate?: Date): string => {
@@ -122,7 +120,7 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
 
                 <div className={styles.outerBorder}>
                     {/* SECTION I */}
-                    <div className="section-container">
+                    <div className="section-container mt-2">
                         <p className="font-bold pl-1">I. DATA PEGAWAI</p>
                         <table className={styles.table}>
                             <tbody>
@@ -243,14 +241,11 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                               <tr>
                                 <td className={`${styles.cell} w-2/3 align-top`} style={{height: '110px'}}>
                                     <p>..................................</p>
-                                    <p>Catatan Kepegawaian:</p>
                                 </td>
                                 <td className={`${styles.cell} w-1/3 align-top text-center`}>
                                     <div className='flex flex-col h-full'>
                                         <p>Hormat saya,</p>
-                                        <div className='flex-grow'>
-                                            {/* This div pushes the name to the bottom */}
-                                        </div>
+                                        <div className="flex-grow" style={{ minHeight: '50px' }}></div>
                                         <p className="underline font-bold">{user.name}</p>
                                         <p>NIP. {user.nip}</p>
                                     </div>
@@ -270,12 +265,12 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                     <td className={styles.cellCenter}>PERUBAHAN****</td>
                                     <td className={styles.cellCenter}>DITANGGUHKAN****</td>
                                     <td className={`${styles.cell} w-1/3 text-center align-top`} rowSpan={2}>
-                                        {approver && <SignatureBlock user={approver} signatureDate={new Date()} />}
+                                        {approver && <SignatureBlock user={approver} signatureDate={request.createdAt} />}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td colSpan={3} className={`${styles.cell} h-[100px] align-top`}>
-                                         <span className='font-bold text-lg pl-2'>{request.status === 'Approved' ? 'V' : ''}</span>
+                                         <span className='font-bold text-lg pl-2'>{request.status === 'Approved' ? '✓' : ''}</span>
                                     </td>
                                 </tr>
                             </tbody>
@@ -292,12 +287,12 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                     <td className={styles.cellCenter}>PERUBAHAN****</td>
                                     <td className={styles.cellCenter}>DITANGGUHKAN****</td>
                                     <td className={`${styles.cell} w-1/3 text-center align-top`} rowSpan={2}>
-                                         {headOfAgency && <SignatureBlock user={headOfAgency} signatureDate={new Date()} />}
+                                         {headOfAgency && <SignatureBlock user={headOfAgency} signatureDate={request.createdAt} />}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td colSpan={3} className={`${styles.cell} h-[100px] align-top`}>
-                                        <span className='font-bold text-lg pl-2'>{request.status === 'Approved' ? 'V' : ''}</span>
+                                        <span className='font-bold text-lg pl-2'>{request.status === 'Approved' ? '✓' : ''}</span>
                                     </td>
                                 </tr>
                             </tbody>
