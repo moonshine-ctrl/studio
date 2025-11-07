@@ -35,7 +35,7 @@ import {
   logHistory,
 } from '@/lib/data';
 import { format } from 'date-fns';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import type { LeaveRequest, User } from '@/types';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -86,12 +86,29 @@ export default function DashboardPage() {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedYear, setSelectedYear] = useState<string>('all');
+  
+  const fetchData = () => {
+    // In a real app, this would be an API call.
+    // For now, we'll just re-set the state from the master data source.
+    setLeaveRequests([...initialLeaveRequests]);
+    setUsers([...initialUsers]);
+  };
 
-  const stats = {
+  useEffect(() => {
+    fetchData(); // Initial fetch
+    window.addEventListener('focus', fetchData);
+
+    return () => {
+      window.removeEventListener('focus', fetchData);
+    };
+  }, []);
+
+
+  const stats = useMemo(() => ({
     pending: leaveRequests.filter((r) => r.status === 'Pending').length,
     approved: leaveRequests.filter((r) => r.status === 'Approved').length,
     total: leaveRequests.length,
-  };
+  }), [leaveRequests]);
 
   const availableYears = useMemo(() => {
     const years = new Set(leaveRequests.map(req => format(req.createdAt, 'yyyy')));
@@ -300,7 +317,7 @@ export default function DashboardPage() {
                       </TableCell>
                       <TableCell>{leaveType.name}</TableCell>
                       <TableCell>
-                        {format(request.startDate, 'MMM d, y')} - {format(request.endDate, 'MMM d, y')}
+                        {format(new Date(request.startDate), 'MMM d, y')} - {format(new Date(request.endDate), 'MMM d, y')}
                       </TableCell>
                       <TableCell>{request.days}</TableCell>
                       <TableCell>

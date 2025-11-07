@@ -59,26 +59,21 @@ export default function EmployeeDashboardPage() {
   const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>([]);
   const { toast } = useToast();
 
-  const fetchLeaveRequests = () => {
+  const fetchData = () => {
     const loggedInUserId = sessionStorage.getItem('loggedInUserId');
     const user = getUserById(loggedInUserId || '1'); // Fallback for safety
     if (user) {
-      setLeaveRequests(initialLeaveRequests.filter(req => req.userId === user.id));
+      setCurrentUser({ ...user }); // Create a new object to trigger re-render
+      setLeaveRequests([...initialLeaveRequests.filter(req => req.userId === user.id)]);
     }
   };
 
   useEffect(() => {
-    const loggedInUserId = sessionStorage.getItem('loggedInUserId');
-    const user = getUserById(loggedInUserId || '1'); // Fallback for safety
-    setCurrentUser(user);
-    if (user) {
-      setLeaveRequests(initialLeaveRequests.filter(req => req.userId === user.id));
-    }
-
-    window.addEventListener('focus', fetchLeaveRequests);
+    fetchData(); // Initial fetch
+    window.addEventListener('focus', fetchData);
 
     return () => {
-      window.removeEventListener('focus', fetchLeaveRequests);
+      window.removeEventListener('focus', fetchData);
     };
   }, []);
 
@@ -192,7 +187,7 @@ export default function EmployeeDashboardPage() {
                   <TableRow key={request.id}>
                     <TableCell className="font-medium">{leaveType.name}</TableCell>
                     <TableCell>
-                      {format(request.startDate, 'MMM d, y')} - {format(request.endDate, 'MMM d, y')}
+                      {format(new Date(request.startDate), 'MMM d, y')} - {format(new Date(request.endDate), 'MMM d, y')}
                     </TableCell>
                     <TableCell>{request.days}</TableCell>
                     <TableCell className="max-w-[200px] truncate">{request.reason}</TableCell>
