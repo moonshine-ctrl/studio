@@ -45,6 +45,28 @@ const PrintHeader = () => (
     </header>
 );
 
+const SignatureBlock = ({ title, user, qrCode, name, nip }: { title?: string, user?: User, qrCode?: string, name?: string, nip?: string }) => {
+    const signatureQr = qrCode || user?.qrCodeSignature;
+    const signatureName = name || user?.name || '.......................';
+    const signatureNip = nip || user?.nip || '.......................';
+
+    return (
+        <div className="text-center">
+            {title && <p>{title}</p>}
+            <div className="h-20 w-20 mx-auto my-1 flex items-center justify-center">
+                {signatureQr ? (
+                    <Image src={signatureQr} alt="QR Code" width={70} height={70} className="mx-auto" />
+                ) : (
+                    <div className="h-[70px]"></div>
+                )}
+            </div>
+            <p className="underline font-bold">({signatureName})</p>
+            <p>NIP. {signatureNip}</p>
+        </div>
+    );
+};
+
+
 export function LeaveLetter({ request, user, department, leaveType, letterNumber, approver, headOfAgency }: LeaveLetterProps) {
     
     const duration = request.days;
@@ -169,9 +191,9 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                         </table>
                     </section>
                     
-                     {/* SECTION VI */}
-                    <section className="grid grid-cols-2 gap-4 mt-4 break-inside-avoid">
-                        <div>
+                    {/* SECTION VI */}
+                    <section className="flex mt-4 break-inside-avoid">
+                        <div className="w-1/2">
                             <p className="font-bold">VI. ALAMAT SELAMA MENJALANKAN CUTI</p>
                             <table className={styles.table}>
                                 <tbody>
@@ -182,15 +204,8 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                 </tbody>
                             </table>
                         </div>
-                         <div className="text-center">
-                            <p>Hormat saya,</p>
-                            {user.qrCodeSignature ? (
-                                <Image src={user.qrCodeSignature} alt="QR Code" width={70} height={70} className="mx-auto my-1" />
-                            ) : (
-                                <div className="h-[70px]"></div>
-                            )}
-                            <p className="underline">({user.name})</p>
-                            <p>NIP. {user.nip}</p>
+                        <div className="w-1/2 text-center">
+                            <SignatureBlock title="Hormat saya," user={user} />
                         </div>
                     </section>
                     
@@ -208,16 +223,14 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                             <Cell className={styles.cellCenter}>TIDAK DISETUJUI****</Cell>
                                         </tr>
                                         <tr>
-                                            <td colSpan={4} className={`${styles.cell}`}>
-                                                <div className="float-right w-1/2 text-center h-28">
-                                                    <p>Atasan Langsung {allApprovers.length > 1 ? index + 1 : ''},</p>
-                                                    {approverItem?.qrCodeSignature ? (
-                                                        <Image src={approverItem.qrCodeSignature} alt="QR Code" width={70} height={70} className="mx-auto my-1" />
-                                                    ) : (
-                                                        <div className="h-[70px]"></div>
-                                                    )}
-                                                    <p className="underline">({approverItem?.name || '.......................'})</p>
-                                                    <p>NIP. {approverItem?.nip || '.......................'}</p>
+                                            <td colSpan={4} className={`${styles.cell} p-2`}>
+                                                <div className="flex justify-end">
+                                                    <div className="w-1/2">
+                                                        {/* Empty space for comments */}
+                                                    </div>
+                                                    <div className="w-1/2 text-center">
+                                                        <SignatureBlock title={`Atasan Langsung ${allApprovers.length > 1 ? index + 1 : ''},`} user={approverItem} />
+                                                    </div>
                                                 </div>
                                             </td>
                                         </tr>
@@ -239,16 +252,14 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                     <Cell className={styles.cellCenter}>TIDAK DISETUJUI****</Cell>
                                 </tr>
                                 <tr>
-                                    <td colSpan={4} className={`${styles.cell}`}>
-                                        <div className="float-right w-1/2 text-center h-28">
-                                            <p>Ketua,</p>
-                                            {headOfAgency?.qrCodeSignature ? (
-                                                <Image src={headOfAgency.qrCodeSignature} alt="QR Code" width={70} height={70} className="mx-auto my-1" />
-                                            ) : (
-                                                <div className="h-[70px]"></div>
-                                            )}
-                                            <p className="underline">({headOfAgency?.name || '.......................'})</p>
-                                            <p>NIP. {headOfAgency?.nip || '.......................'}</p>
+                                    <td colSpan={4} className={`${styles.cell} p-2`}>
+                                         <div className="flex justify-end">
+                                             <div className="w-1/2">
+                                                 {/* Empty space for comments */}
+                                             </div>
+                                            <div className="w-1/2 text-center">
+                                                <SignatureBlock title="Ketua," user={headOfAgency} />
+                                            </div>
                                         </div>
                                     </td>
                                 </tr>
@@ -257,7 +268,7 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                     </section>
                 </div>
 
-                <footer className="mt-4 text-xs break-before-page">
+                <footer className="mt-4 text-xs">
                     <p className="font-bold">Catatan:</p>
                     <table className="w-full">
                         <tbody>
