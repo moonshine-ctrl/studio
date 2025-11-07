@@ -46,7 +46,7 @@ const SignatureBlock = ({ user, title, signatureDate }: { user?: User, title?: s
     return (
         <div className="text-center h-full flex flex-col justify-between p-1">
             <div>
-                <p className="mb-1">{title || `Solok, ${dateToDisplay}`}</p>
+                <p className="mb-1">{title || dateToDisplay}</p>
             </div>
             <div className="h-16 w-16 mx-auto my-1 flex items-center justify-center">
                 {user.qrCodeSignature ? (
@@ -307,7 +307,7 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td colSpan={3} className={`${styles.cell} p-0 w-2/3`}></td>
+                                    <td className={`${styles.cell} p-0 w-2/3`} colSpan={3}></td>
                                     <td className={`${styles.cell} text-center align-top p-0 w-1/3`} style={{ height: '140px' }}>
                                         {approver && <SignatureBlock user={approver} title="Atasan Langsung," signatureDate={request.createdAt} />}
                                     </td>
@@ -341,7 +341,7 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td colSpan={3} className={`${styles.cell} p-0 w-2/3`}></td>
+                                    <td className={`${styles.cell} p-0 w-2/3`} colSpan={3}></td>
                                     <td className={`${styles.cell} text-center align-top p-0 w-1/3`} style={{ height: '140px' }}>
                                          {headOfAgency && <SignatureBlock user={headOfAgency} signatureDate={request.createdAt} />}
                                     </td>
