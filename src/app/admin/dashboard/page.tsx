@@ -85,7 +85,7 @@ export default function DashboardPage() {
 
   const handleCancelClick = (request: LeaveRequest) => {
     setRequestToCancel(request);
-    if (request.status === 'Approved') {
+    if (request.status === 'Approved' || request.status === 'Suspended') {
       setIsCancelAlertOpen(true);
     } else if (request.status === 'Pending') {
       // For pending requests, cancel directly without password
@@ -290,7 +290,7 @@ export default function DashboardPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action will cancel an approved leave request. The employee's leave balance will be restored. This action cannot be undone. Please enter your password to confirm.
+              This action will cancel an approved or suspended leave request. The employee's leave balance (if applicable) will be restored. This action cannot be undone. Please enter your password to confirm.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="py-4">

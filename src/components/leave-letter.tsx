@@ -286,40 +286,65 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                     <div className="section-container mt-1">
                         <p className="font-bold pl-1">VII. PERTIMBANGAN ATASAN LANGSUNG **</p>
                         <table className={styles.table}>
+                            <thead>
+                                <tr>
+                                    <td className={styles.cellCenter}>DISETUJUI</td>
+                                    <td className={styles.cellCenter}>PERUBAHAN****</td>
+                                    <td className={styles.cellCenter}>DITANGGUHKAN****</td>
+                                    <td className={styles.cellCenter}>TIDAK DISETUJUI****</td>
+                                </tr>
+                            </thead>
                             <tbody>
                                 <tr>
-                                    <td className={styles.cellCenter}>DISETUJUI <span className='font-bold text-lg pl-2'>{request.status === 'Approved' ? '✓' : ''}</span></td>
-                                    <td className={styles.cellCenter}>PERUBAHAN****</td>
-                                    <td className={styles.cellCenter}>DITANGGUHKAN**** <span className='font-bold text-lg pl-2'>{request.status === 'Suspended' ? '✓' : ''}</span></td>
-                                    <td className={`${styles.cell} w-1/3 text-center align-top`} rowSpan={2} style={{height: '140px'}}>
-                                        {approver && <SignatureBlock user={approver} signatureDate={request.createdAt} />}
+                                    <td className={styles.cellCenter} style={{ height: '2rem' }}>
+                                        <span className='font-bold text-lg'>{request.status === 'Approved' ? '✓' : ''}</span>
+                                    </td>
+                                    <td className={styles.cellCenter}></td>
+                                    <td className={styles.cellCenter}>
+                                        <span className='font-bold text-lg'>{request.status === 'Suspended' ? '✓' : ''}</span>
+                                    </td>
+                                    <td className={styles.cellCenter}>
+                                        <span className='font-bold text-lg'>{request.status === 'Rejected' ? '✓' : ''}</span>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td colSpan={3} className={`${styles.cell} h-full align-top`}>
-                                         <p>Ditolak: <span className='font-bold text-lg pl-2'>{request.status === 'Rejected' ? '✓' : ''}</span></p>
+                                    <td colSpan={4} className={`${styles.cell} text-center align-top`} style={{ height: '140px' }}>
+                                        {approver && <SignatureBlock user={approver} title="Atasan Langsung," signatureDate={request.createdAt} />}
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
 
+
                     {/* SECTION VIII */}
                     <div className="section-container mt-1">
                         <p className="font-bold pl-1">VIII. KEPUTUSAN PEJABAT YANG BERWENANG MEMBERIKAN CUTI **</p>
                         <table className={styles.table}>
+                            <thead>
+                                <tr>
+                                    <td className={styles.cellCenter}>DISETUJUI</td>
+                                    <td className={styles.cellCenter}>PERUBAHAN****</td>
+                                    <td className={styles.cellCenter}>DITANGGUHKAN****</td>
+                                    <td className={styles.cellCenter}>TIDAK DISETUJUI****</td>
+                                </tr>
+                            </thead>
                             <tbody>
                                 <tr>
-                                    <td className={styles.cellCenter}>DISETUJUI <span className='font-bold text-lg pl-2'>{request.status === 'Approved' ? '✓' : ''}</span></td>
-                                    <td className={styles.cellCenter}>PERUBAHAN****</td>
-                                    <td className={styles.cellCenter}>DITANGGUHKAN**** <span className='font-bold text-lg pl-2'>{request.status === 'Suspended' ? '✓' : ''}</span></td>
-                                    <td className={`${styles.cell} w-1/3 text-center align-top`} rowSpan={2} style={{height: '140px'}}>
-                                         {headOfAgency && <SignatureBlock user={headOfAgency} signatureDate={request.createdAt} />}
+                                    <td className={styles.cellCenter} style={{ height: '2rem' }}>
+                                        <span className='font-bold text-lg'>{request.status === 'Approved' ? '✓' : ''}</span>
+                                    </td>
+                                    <td className={styles.cellCenter}></td>
+                                    <td className={styles.cellCenter}>
+                                        <span className='font-bold text-lg'>{request.status === 'Suspended' ? '✓' : ''}</span>
+                                    </td>
+                                    <td className={styles.cellCenter}>
+                                         <span className='font-bold text-lg'>{request.status === 'Rejected' ? '✓' : ''}</span>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td colSpan={3} className={`${styles.cell} h-full align-top`}>
-                                         <p>Ditolak: <span className='font-bold text-lg pl-2'>{request.status === 'Rejected' ? '✓' : ''}</span></p>
+                                    <td colSpan={4} className={`${styles.cell} text-center align-top`} style={{ height: '140px' }}>
+                                         {headOfAgency && <SignatureBlock user={headOfAgency} signatureDate={request.createdAt} />}
                                     </td>
                                 </tr>
                             </tbody>
