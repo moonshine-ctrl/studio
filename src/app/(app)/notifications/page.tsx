@@ -12,7 +12,7 @@ import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Check, Mail, MessageSquare } from 'lucide-react';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import type { Notification, User } from '@/types';
 import {
@@ -21,36 +21,57 @@ import {
   getDepartmentById,
   getLeaveTypeById,
   users,
-  departments,
 } from '@/lib/data';
+import { usePathname } from 'next/navigation';
 
 export default function NotificationsPage() {
   const [notifData, setNotifData] = useState<Notification[]>(initialNotifications);
+  const pathname = usePathname();
   
   // This should come from auth context in a real app
-  const [currentUser, setCurrentUser] = useState<User | undefined>(users.find(u => u.id === '2'));
+  const [currentUser, setCurrentUser] = useState<User | undefined>();
+
+  useEffect(() => {
+    if (pathname.startsWith('/admin') || pathname === '/') {
+      setCurrentUser(users.find(u => u.role === 'Admin'));
+    } else {
+      setCurrentUser(users.find(u => u.id === '1'));
+    }
+  }, [pathname]);
+
 
   const enrichedNotifications = useMemo(() => {
+    if (!currentUser) return [];
     // Filter notifications for the current user (or all for admin)
     const userNotifications = currentUser?.role === 'Admin' 
       ? notifData 
-      : notifData.filter(n => n.userId === currentUser?.id || (
-          n.type === 'warning' && (getUserById(getLeaveRequestById(n.leaveRequestId!)?.userId || '')?.departmentId === departments.find(d => d.headId === currentUser?.id)?.id)
-      ));
+      : notifData.filter(n => {
+        if (n.userId === currentUser.id) return true;
+        
+        const approverDept = getDepartmentById(currentUser.departmentId);
+        if (approverDept?.headId === currentUser.id) {
+            const request = getLeaveRequestById(n.leaveRequestId || '');
+            if (request) {
+                const employee = getUserById(request.userId);
+                return employee?.departmentId === approverDept.id;
+            }
+        }
+        return false;
+      });
 
     return userNotifications.map(notification => {
-      let message = notification.message;
-      if (notification.type === 'warning' && notification.leaveRequestId) {
-        const leaveRequest = getLeaveRequestById(notification.leaveRequestId);
-        if (leaveRequest) {
-          const employee = getUserById(leaveRequest.userId);
-          const approver = getUserById(notification.userId); // Approver is the recipient of the warning
-          if (employee && approver) {
-             message = `Permintaan cuti dari ${employee?.name} menunggu persetujuan Anda.`;
-          }
+      let finalMessage = notification.message;
+      const request = getLeaveRequestById(notification.leaveRequestId || '');
+      if (request) {
+        const employee = getUserById(request.userId);
+
+        if (notification.type === 'warning' && currentUser?.role === 'Admin') {
+            finalMessage = `${employee?.name} mengajukan cuti sakit. Ingatkan untuk mengisi form surat keterangan.`;
+        } else if (notification.type === 'warning' && currentUser?.id === getDepartmentById(employee?.departmentId || '')?.headId) {
+            finalMessage = `Permintaan cuti dari ${employee?.name} menunggu persetujuan Anda.`;
         }
       }
-      return { ...notification, message };
+      return { ...notification, message: finalMessage };
     });
   }, [notifData, currentUser]);
 
