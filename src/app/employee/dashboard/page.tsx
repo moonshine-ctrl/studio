@@ -16,39 +16,43 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
 import {
   CalendarDays,
   CheckCircle,
   FileWarning,
   Hourglass,
   XCircle,
+  Ban,
 } from 'lucide-react';
 import {
-  getLeaveTypeById,
-  getUserById,
   leaveRequests as initialLeaveRequests,
-  users as allUsers
+  users as allUsers,
+  getLeaveTypeById,
 } from '@/lib/data';
 import { format } from 'date-fns';
 import { useState, useMemo, useEffect } from 'react';
 import type { LeaveRequest, User } from '@/types';
+import { useToast } from '@/hooks/use-toast';
 
 const statusColors: { [key: string]: 'default' | 'secondary' | 'destructive' | 'outline' } = {
   Pending: 'secondary',
   Approved: 'default',
   Rejected: 'destructive',
+  Cancelled: 'outline',
 };
 
-const statusIcons = {
+const statusIcons: { [key: string]: React.ReactNode } = {
   Pending: <Hourglass className="h-4 w-4 text-yellow-500" />,
   Approved: <CheckCircle className="h-4 w-4 text-green-500" />,
   Rejected: <XCircle className="h-4 w-4 text-red-500" />,
+  Cancelled: <Ban className="h-4 w-4 text-gray-500" />,
 };
 
 export default function EmployeeDashboardPage() {
   const [currentUser, setCurrentUser] = useState<User | undefined>();
   const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>([]);
+  const { toast } = useToast();
 
   useEffect(() => {
     // In a real app, this would come from an auth context.
@@ -58,6 +62,30 @@ export default function EmployeeDashboardPage() {
       setLeaveRequests(initialLeaveRequests.filter(req => req.userId === user.id));
     }
   }, []);
+
+  const handleCancelRequest = (requestId: string) => {
+    const requestToCancel = leaveRequests.find(r => r.id === requestId);
+    if (!requestToCancel || !currentUser) return;
+    
+    // Update request status
+    const updatedRequests = leaveRequests.map(r => 
+      r.id === requestId ? { ...r, status: 'Cancelled' as const } : r
+    );
+    setLeaveRequests(updatedRequests);
+    const originalRequest = initialLeaveRequests.find(r => r.id === requestId);
+    if(originalRequest) originalRequest.status = 'Cancelled';
+
+    // Restore leave balance
+    const updatedUser = { ...currentUser, annualLeaveBalance: currentUser.annualLeaveBalance + requestToCancel.days };
+    setCurrentUser(updatedUser);
+    const originalUser = allUsers.find(u => u.id === currentUser.id);
+    if (originalUser) originalUser.annualLeaveBalance += requestToCancel.days;
+
+    toast({
+      title: 'Request Cancelled',
+      description: 'Your leave request has been cancelled and your leave balance has been restored.',
+    });
+  };
 
   const stats = useMemo(() => {
     if (!currentUser) return { pending: 0, approved: 0, balance: 0 };
@@ -132,12 +160,14 @@ export default function EmployeeDashboardPage() {
                 <TableHead>Reason</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Attachment</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
              {leaveRequests.length > 0 ? leaveRequests.map((request) => {
                 const leaveType = getLeaveTypeById(request.leaveTypeId);
                 if (!leaveType) return null;
+                const isCancellable = request.status === 'Pending' || request.status === 'Approved';
 
                 return (
                   <TableRow key={request.id}>
@@ -162,11 +192,23 @@ export default function EmployeeDashboardPage() {
                          <span className="text-muted-foreground">-</span>
                        )}
                     </TableCell>
+                    <TableCell className="text-right">
+                       {isCancellable && (
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            onClick={() => handleCancelRequest(request.id)}
+                          >
+                             <Ban className="mr-2 h-4 w-4" />
+                            Cancel
+                          </Button>
+                        )}
+                    </TableCell>
                   </TableRow>
                 );
               }) : (
                  <TableRow>
-                    <TableCell colSpan={6} className="h-24 text-center">
+                    <TableCell colSpan={7} className="h-24 text-center">
                         You have not made any leave requests.
                     </TableCell>
                 </TableRow>

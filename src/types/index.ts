@@ -32,7 +32,7 @@ export type LeaveRequest = {
   endDate: Date;
   days: number;
   reason: string;
-  status: 'Pending' | 'Approved' | 'Rejected';
+  status: 'Pending' | 'Approved' | 'Rejected' | 'Cancelled';
   attachment?: 'uploaded' | undefined;
   createdAt: Date;
 };

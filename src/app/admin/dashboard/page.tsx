@@ -23,33 +23,70 @@ import {
   XCircle,
   MoreHorizontal,
   FileWarning,
-  FileCheck2,
+  Ban,
 } from 'lucide-react';
 import {
   getDepartmentById,
   getLeaveTypeById,
   getUserById,
   leaveRequests as initialLeaveRequests,
+  users as initialUsers,
 } from '@/lib/data';
 import { format } from 'date-fns';
 import { useState } from 'react';
-import type { LeaveRequest } from '@/types';
-
+import type { LeaveRequest, User } from '@/types';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
 
 const statusColors: { [key: string]: 'default' | 'secondary' | 'destructive' | 'outline' } = {
   Pending: 'secondary',
   Approved: 'default',
   Rejected: 'destructive',
+  Cancelled: 'outline',
 };
 
 export default function DashboardPage() {
   const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>(initialLeaveRequests);
+  const [users, setUsers] = useState<User[]>(initialUsers);
+  const { toast } = useToast();
   
   const stats = {
     pending: leaveRequests.filter((r) => r.status === 'Pending').length,
     approved: leaveRequests.filter((r) => r.status === 'Approved').length,
     total: leaveRequests.length,
   };
+
+  const handleCancelRequest = (requestId: string) => {
+    const requestToCancel = leaveRequests.find(r => r.id === requestId);
+    if (!requestToCancel) return;
+
+    // Update leave request status
+    const updatedRequests = leaveRequests.map(r => 
+      r.id === requestId ? { ...r, status: 'Cancelled' as const } : r
+    );
+    setLeaveRequests(updatedRequests);
+    const originalRequest = initialLeaveRequests.find(r => r.id === requestId);
+    if (originalRequest) originalRequest.status = 'Cancelled';
+
+    // Restore leave balance
+    const userToUpdate = users.find(u => u.id === requestToCancel.userId);
+    if (userToUpdate) {
+      const updatedUsers = users.map(u =>
+        u.id === userToUpdate.id 
+        ? { ...u, annualLeaveBalance: u.annualLeaveBalance + requestToCancel.days }
+        : u
+      );
+      setUsers(updatedUsers);
+      const originalUser = initialUsers.find(u => u.id === userToUpdate.id);
+      if (originalUser) originalUser.annualLeaveBalance += requestToCancel.days;
+
+      toast({
+        title: 'Leave Request Cancelled',
+        description: `${userToUpdate.name}'s request has been cancelled and their leave balance has been restored.`,
+      });
+    }
+  };
+
 
   return (
     <div className="flex flex-col gap-6 max-w-7xl mx-auto">
@@ -112,6 +149,7 @@ export default function DashboardPage() {
                 <TableHead>Days</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Attachment</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -120,6 +158,7 @@ export default function DashboardPage() {
                 const leaveType = getLeaveTypeById(request.leaveTypeId);
                 if (!user || !leaveType) return null;
                 const department = getDepartmentById(user.departmentId);
+                const isCancellable = request.status === 'Pending' || request.status === 'Approved';
 
                 return (
                   <TableRow key={request.id}>
@@ -155,6 +194,18 @@ export default function DashboardPage() {
                        ) : (
                          <span className="text-muted-foreground">-</span>
                        )}
+                    </TableCell>
+                    <TableCell className="text-right">
+                       {isCancellable && (
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            onClick={() => handleCancelRequest(request.id)}
+                          >
+                            <Ban className="mr-2 h-4 w-4" />
+                            Cancel
+                          </Button>
+                        )}
                     </TableCell>
                   </TableRow>
                 );
