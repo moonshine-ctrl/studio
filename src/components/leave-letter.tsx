@@ -27,11 +27,11 @@ const PrintHeaderContent = () => (
     <header className="text-center mb-2 border-b-2 border-black pb-2">
         <div className="flex items-center justify-center gap-4">
              {settings.logoUrl && <Image src={settings.logoUrl} alt="Logo" width={80} height={80} className="object-contain" />}
-            <div>
-                <h1 className="font-bold text-lg">{settings.letterhead[0]}</h1>
-                <h2 className="font-bold text-lg">{settings.letterhead[1]}</h2>
-                <h3 className="font-bold text-xl">{settings.letterhead[2]}</h3>
-                <h3 className="font-bold text-2xl">{settings.letterhead[3]}</h3>
+            <div className="text-center leading-tight">
+                <h1 className="font-bold text-[13px]">{settings.letterhead[0]}</h1>
+                <h2 className="font-bold text-[13px]">{settings.letterhead[1]}</h2>
+                <h3 className="font-bold text-[13px]">{settings.letterhead[2]}</h3>
+                <h3 className="font-bold text-[13px]">{settings.letterhead[3]}</h3>
                 <p className="text-sm">{settings.letterhead[4]}</p>
                 <p className="text-sm">{settings.letterhead[5]}</p>
             </div>
@@ -48,7 +48,7 @@ const SignatureBlock = ({ user, title, signatureDate }: { user?: User, title?: s
             <div>
                 <p className="mb-1">{title || `Solok, ${dateToDisplay}`}</p>
             </div>
-            <div className="h-16 w-16 mx-auto my-1 flex items-center justify-center">
+            <div className="h-16 w-16 mx-auto flex items-center justify-center">
                 {user.qrCodeSignature ? (
                     <Image src={user.qrCodeSignature} alt="QR Code" width={64} height={64} className="mx-auto object-contain" />
                 ) : (
@@ -89,7 +89,7 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
 
 
     return (
-        <div className="bg-white p-4 font-serif text-xs" id="print-area">
+        <div className="bg-white p-4 font-headline text-xs" id="print-area">
             <style jsx global>{`
                 @media print {
                   body {
