@@ -67,13 +67,13 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                 <Cell isHeader>Jabatan</Cell>
                                 <Cell>{user.role}</Cell>
                                 <Cell isHeader>Gol. Ruang</Cell>
-                                <Cell></Cell>
+                                <Cell>.......................</Cell>
                             </tr>
                             <tr>
                                 <Cell isHeader>Unit Kerja</Cell>
                                 <Cell>{department.name}</Cell>
                                 <Cell isHeader>Masa Kerja</Cell>
-                                <Cell></Cell>
+                                <Cell>.......................</Cell>
                             </tr>
                         </tbody>
                     </table>
@@ -153,8 +153,8 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                             <table className={styles.table}>
                                 <tbody>
                                     <tr>
-                                        <td className={`${styles.cell} h-24 align-top`}></td>
-                                        <td className={styles.cell}>TELP:</td>
+                                        <td className={`${styles.cell} h-24 align-top`}>..................................</td>
+                                        <td className={styles.cell}>TELP: ....................</td>
                                     </tr>
                                 </tbody>
                             </table>
