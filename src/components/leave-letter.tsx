@@ -17,7 +17,7 @@ interface LeaveLetterProps {
 const styles = {
   table: "w-full border-collapse border border-black",
   cell: "border border-black p-1",
-  cellHeader: "border border-black p-1 font-bold",
+  cellHeader: "border border-black p-1 font-bold text-center",
   cellCenter: "border border-black p-1 text-center",
   outerBorder: "border-2 border-black",
 };
@@ -26,29 +26,29 @@ const styles = {
 const PrintHeaderContent = () => (
     <header className="text-center mb-2 border-b-2 border-black pb-2">
         <div className="flex items-center justify-center gap-4">
-             {settings.logoUrl && <Image src={settings.logoUrl} alt="Logo" width={70} height={70} className="object-contain" />}
-            <div>
-                <h1 className="font-bold text-base">{settings.letterhead[0]}</h1>
-                <h2 className="font-bold text-base">{settings.letterhead[1]}</h2>
-                <h3 className="font-bold text-lg">{settings.letterhead[2]}</h3>
-                <h3 className="font-bold text-xl">{settings.letterhead[3]}</h3>
-                <p className="text-xs">{settings.letterhead[4]}</p>
-                <p className="text-xs">{settings.letterhead[5]}</p>
+             {settings.logoUrl && <Image src={settings.logoUrl} alt="Logo" width={80} height={80} className="object-contain" />}
+            <div className="text-center">
+                <h1 className="font-bold text-lg">{settings.letterhead[0]}</h1>
+                <h2 className="font-bold text-lg">{settings.letterhead[1]}</h2>
+                <h3 className="font-bold text-xl">{settings.letterhead[2]}</h3>
+                <h3 className="font-bold text-2xl">{settings.letterhead[3]}</h3>
+                <p className="text-sm">{settings.letterhead[4]}</p>
+                <p className="text-sm">{settings.letterhead[5]}</p>
             </div>
         </div>
     </header>
 );
 
-const SignatureBlock = ({ user, title, signatureDate }: { user?: User, title?: string, signatureDate?: Date }) => {
+const SignatureBlock = ({ user, signatureDate }: { user?: User, signatureDate?: Date }) => {
     if (!user) return <div className="h-full"></div>;
-    const dateToDisplay = signatureDate ? format(signatureDate, 'dd MMMM yyyy') : '...................';
+    const dateToDisplay = signatureDate ? format(signatureDate, 'dd-MM-yyyy') : '...................';
 
     return (
-        <div className="text-center h-full flex flex-col justify-between">
+        <div className="text-center h-full flex flex-col justify-between p-1">
             <div>
                 <p className="mb-1">Solok, {dateToDisplay}</p>
             </div>
-            <div className="h-20 w-32 mx-auto my-1 flex items-center justify-center">
+            <div className="h-20 w-20 mx-auto my-1 flex items-center justify-center">
                 {user.qrCodeSignature ? (
                     <Image src={user.qrCodeSignature} alt="QR Code" width={80} height={80} className="mx-auto object-contain" />
                 ) : (
@@ -93,10 +93,32 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                     break-inside: avoid;
                     page-break-inside: avoid;
                   }
+                  .repeating-header {
+                      position: fixed;
+                      top: 1.5cm;
+                      left: 2cm;
+                      right: 2cm;
+                      display: none;
+                  }
+
+                  @page {
+                     margin-top: 8cm; /* Make space for the fixed header */
+                  }
+
+                  @page :first {
+                     margin-top: 1.5cm;
+                  }
+
+                  .print-header-placeholder {
+                      height: 120px; /* Adjust to match header height */
+                  }
                 }
             `}</style>
             
             <div className="max-w-4xl mx-auto">
+                <div className="repeating-header print:block">
+                   <PrintHeaderContent />
+                </div>
                 <PrintHeaderContent />
                 
                 <h4 className="font-bold text-center underline mb-1 mt-2">FORMULIR PERMINTAAN DAN PEMBERIAN CUTI</h4>
@@ -175,46 +197,64 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                     {/* SECTION V */}
                     <div className="section-container mt-1">
                         <p className="font-bold pl-1">V. CATATAN CUTI ***</p>
-                         <table className={styles.table}>
+                        <table className={styles.table}>
                             <tbody>
                                 <tr>
-                                    <td className={`${styles.cell} font-bold`} colSpan={3}>1. CUTI TAHUNAN</td>
-                                    <td className={`${styles.cellCenter} align-middle`} rowSpan={4}>
-                                        <div className="h-full flex flex-col justify-between">
-                                            <p>✓</p>
-                                            <div className="h-12"></div>
-                                        </div>
+                                    {/* Left Column */}
+                                    <td className={`${styles.cell} align-top`} style={{width: '50%'}}>
+                                        <table className="w-full">
+                                            <tbody>
+                                                <tr>
+                                                    <td colSpan={3} className="font-bold">1. CUTI TAHUNAN <span className="font-bold text-lg pr-2">{leaveTypeCheck('Cuti Tahunan')}</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td className={styles.cellHeader} style={{width: '25%'}}>Tahun</td>
+                                                    <td className={styles.cellHeader} style={{width: '25%'}}>Sisa</td>
+                                                    <td className={styles.cellHeader} style={{width: '50%'}}>Keterangan</td>
+                                                </tr>
+                                                <tr>
+                                                    <td className={styles.cellCenter}>{currentYear - 1}</td>
+                                                    <td className={styles.cellCenter}>-</td>
+                                                    <td className={styles.cell}>Sisa cuti tahun {currentYear-1}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td className={styles.cellCenter}>{currentYear}</td>
+                                                    <td className={styles.cellCenter}>{user.annualLeaveBalance}</td>
+                                                    <td className={styles.cell}>Sisa cuti tahun {currentYear}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td className={styles.cellCenter}>&nbsp;</td>
+                                                    <td className={styles.cellCenter}>&nbsp;</td>
+                                                    <td className={styles.cell}>&nbsp;</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </td>
-                                </tr>
-                                <tr>
-                                    <td className={styles.cellCenter}>Tahun</td>
-                                    <td className={styles.cellCenter}>Sisa</td>
-                                    <td className={styles.cellCenter}>Keterangan</td>
-                                </tr>
-                                <tr>
-                                    <td className={styles.cellCenter}>{currentYear - 2}</td>
-                                    <td className={styles.cellCenter}>-</td>
-                                    <td className={styles.cell}></td>
-                                </tr>
-                                 <tr>
-                                    <td className={styles.cellCenter}>{currentYear - 1}</td>
-                                    <td className={styles.cellCenter}>-</td>
-                                    <td className={styles.cell}></td>
-                                </tr>
-                                 <tr>
-                                    <td className={styles.cellCenter}>{currentYear}</td>
-                                    <td className={styles.cellCenter}>{user.annualLeaveBalance}</td>
-                                    <td className={styles.cell}></td>
+                                    {/* Right Column */}
+                                    <td className={`${styles.cell} align-top`} style={{width: '50%'}}>
+                                         <table className="w-full">
+                                            <tbody>
+                                                <tr>
+                                                    <td className={`${styles.cell} text-center`} style={{width: '30%', height: '5rem'}}>
+                                                        PARAF PETUGAS CUTI
+                                                        <div className="h-16 flex items-center justify-center">
+                                                            <Image src="/signature-placeholder.svg" alt="Paraf" width={40} height={40}/>
+                                                        </div>
+                                                    </td>
+                                                    <td className={`${styles.cell} align-top`}>
+                                                        <div className="pl-1">2. Cuti Besar</div>
+                                                        <div className="pl-1 border-t border-black mt-1 pt-1">3. Cuti Sakit</div>
+                                                        <div className="pl-1 border-t border-black mt-1 pt-1">4. Cuti Melahirkan</div>
+                                                        <div className="pl-1 border-t border-black mt-1 pt-1">5. Cuti Karena Alasan Penting</div>
+                                                        <div className="pl-1 border-t border-black mt-1 pt-1">6. Cuti di Luar Tanggungan Negara</div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
-                         <div className="pl-1">
-                            <p className="font-bold">2. Cuti Besar</p>
-                            <p className="font-bold">3. Cuti Sakit</p>
-                            <p className="font-bold">4. Cuti Melahirkan</p>
-                            <p className="font-bold">5. Cuti Karena Alasan Penting</p>
-                            <p className="font-bold">6. Cuti di Luar Tanggungan Negara</p>
-                        </div>
                     </div>
                     
                     {/* SECTION VI */}
@@ -225,12 +265,15 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                               <tr>
                                 <td className={`${styles.cell} w-2/3 align-top`} style={{height: '110px'}}>
                                     <p>..................................</p>
+                                    <p className="mt-2">Catatan Kepegawaian:</p>
+                                    <p>Sisa cuti ybs. adalah {user.annualLeaveBalance + request.days} hari, apabila diambil {request.days} hari, maka sisa cuti ybs. tersisa {user.annualLeaveBalance} hari</p>
+
                                 </td>
                                 <td className={`${styles.cell} w-1/3 align-top text-center`}>
-                                     <div className='flex flex-col h-full'>
+                                    <div className='flex flex-col h-full'>
                                         <p>Hormat saya,</p>
                                         <div className="flex-grow min-h-[50px]"></div>
-                                        <p className="underline font-bold">{user.name}</p>
+                                        <p className="underline font-bold mt-2">{user.name}</p>
                                         <p>NIP. {user.nip}</p>
                                     </div>
                                 </td>
