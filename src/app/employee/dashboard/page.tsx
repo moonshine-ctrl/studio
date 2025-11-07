@@ -29,7 +29,7 @@ import {
   leaveRequests as initialLeaveRequests,
   users as allUsers,
   getLeaveTypeById,
-  getUserById
+  getUserById,
 } from '@/lib/data';
 import { format } from 'date-fns';
 import { useState, useMemo, useEffect } from 'react';
@@ -78,8 +78,8 @@ export default function EmployeeDashboardPage() {
     const originalRequest = initialLeaveRequests.find(r => r.id === requestId);
     if(originalRequest) originalRequest.status = 'Cancelled';
 
-    if (leaveType?.name === 'Cuti Tahunan') {
-      // Restore leave balance only for annual leave
+    if (leaveType?.name === 'Cuti Tahunan' && requestToCancel.status === 'Approved') {
+      // Restore leave balance only for annual leave that was already approved
       const updatedUser = { ...currentUser, annualLeaveBalance: currentUser.annualLeaveBalance + requestToCancel.days };
       setCurrentUser(updatedUser);
       const originalUser = allUsers.find(u => u.id === currentUser.id);

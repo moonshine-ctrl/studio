@@ -70,9 +70,10 @@ export default function DashboardPage() {
     const originalRequest = initialLeaveRequests.find(r => r.id === requestId);
     if (originalRequest) originalRequest.status = 'Cancelled';
 
-    if (leaveType?.name === 'Cuti Tahunan') {
-        // Restore leave balance only for annual leave
-        const userToUpdate = users.find(u => u.id === requestToCancel.userId);
+    const userToUpdate = users.find(u => u.id === requestToCancel.userId);
+
+    if (leaveType?.name === 'Cuti Tahunan' && (requestToCancel.status === 'Approved')) {
+        // Restore leave balance only for annual leave that was already approved
         if (userToUpdate) {
           const updatedUsers = users.map(u =>
             u.id === userToUpdate.id 
@@ -91,7 +92,7 @@ export default function DashboardPage() {
     } else {
          toast({
             title: 'Leave Request Cancelled',
-            description: `The request has been cancelled.`,
+            description: `The request from ${userToUpdate?.name} has been cancelled.`,
           });
     }
   };
