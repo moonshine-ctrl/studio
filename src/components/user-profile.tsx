@@ -11,26 +11,47 @@ import {
 import { LogOut, User as UserIcon } from 'lucide-react';
 import { users } from '@/lib/data';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import type { User } from '@/types';
+import { useState, useEffect } from 'react';
 
 export function UserProfile() {
-  const adminUser = users.find(u => u.role === 'Admin');
+  const pathname = usePathname();
+  const [currentUser, setCurrentUser] = useState<User | undefined>();
+  
+  useEffect(() => {
+     // In a real app, this would come from an auth context.
+     // For now, we simulate by picking a user based on the route.
+    if (pathname.startsWith('/admin') || pathname === '/') {
+      setCurrentUser(users.find(u => u.role === 'Admin'));
+    } else {
+      // Simulate a logged-in employee, e.g., 'Budi Santoso'
+      setCurrentUser(users.find(u => u.id === '1'));
+    }
+  }, [pathname]);
+
+  const logoutLink = currentUser?.role === 'Admin' ? '/admin/login' : '/login';
+  const profileName = currentUser?.name || 'User';
+  const profileNip = currentUser?.nip || '123456789';
+  const profileAvatar = currentUser?.avatar || 'https://picsum.photos/seed/user/100/100';
+
 
   return (
     <div className="flex w-full items-center gap-3 p-2">
       <Avatar className="h-9 w-9">
         <AvatarImage
-          src={adminUser?.avatar || "https://picsum.photos/seed/admin/100/100"}
-          alt={adminUser?.name || "Admin"}
+          src={profileAvatar}
+          alt={profileName}
           data-ai-hint="profile person"
         />
-        <AvatarFallback>{adminUser?.name.charAt(0) || 'A'}</AvatarFallback>
+        <AvatarFallback>{profileName.charAt(0)}</AvatarFallback>
       </Avatar>
       <div className="hidden flex-1 flex-col group-data-[collapsible=icon]:hidden">
         <span className="text-sm font-medium text-sidebar-foreground">
-          {adminUser?.name || 'Admin User'}
+          {profileName}
         </span>
         <span className="text-xs text-muted-foreground">
-          NIP: {adminUser?.nip || '199001012020121001'}
+          NIP: {profileNip}
         </span>
       </div>
       <div className="hidden group-data-[collapsible=icon]:hidden">
@@ -48,7 +69,7 @@ export function UserProfile() {
               <span>Profile</span>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-                <Link href="/login">
+                <Link href={logoutLink}>
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Log out</span>
                 </Link>
