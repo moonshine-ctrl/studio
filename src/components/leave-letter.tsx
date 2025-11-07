@@ -23,11 +23,6 @@ const styles = {
   sectionContainer: "break-inside-avoid",
 };
 
-const RepeatingPrintHeader = () => (
-  <div className="pt-8 print-header hidden print:block">
-      <PrintHeaderContent />
-  </div>
-);
 
 const PrintHeaderContent = () => (
     <header className="text-center mb-2 border-b-2 border-black pb-2">
@@ -46,7 +41,7 @@ const PrintHeaderContent = () => (
 );
 
 
-const SignatureBlock = ({ user, qrCode, name, nip, signatureDate }: { user?: User, qrCode?: string, name?: string, nip?: string, signatureDate?: Date }) => {
+const SignatureBlock = ({ user, qrCode, name, nip, signatureDate, title }: { user?: User, qrCode?: string, name?: string, nip?: string, signatureDate?: Date, title?: string }) => {
     const signatureQr = qrCode || user?.qrCodeSignature;
     const signatureName = name || user?.name || '.......................';
     const signatureNip = nip || user?.nip || '.......................';
@@ -54,12 +49,13 @@ const SignatureBlock = ({ user, qrCode, name, nip, signatureDate }: { user?: Use
 
     return (
         <div className="text-center">
+            {title && <p className="mb-1">{title}</p>}
             <p className='mb-1'>{dateToDisplay}</p>
-            <div className="h-16 w-16 mx-auto flex items-center justify-center">
+            <div className="h-16 w-16 mx-auto my-1 flex items-center justify-center">
                 {signatureQr ? (
-                    <Image src={signatureQr} alt="QR Code" width={60} height={60} className="mx-auto" />
+                    <Image src={signatureQr} alt="QR Code" width={64} height={64} className="mx-auto" />
                 ) : (
-                    <div className="h-[60px]"></div>
+                    <div className="h-[64px]"></div>
                 )}
             </div>
             <p className="underline font-bold mt-1">({signatureName})</p>
@@ -92,15 +88,9 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
     return (
         <div className="bg-white p-8 font-serif text-xs">
             <div className="max-w-4xl mx-auto" id="print-area">
-                <div className="print-only-header print:block hidden">
-                    <PrintHeaderContent />
-                </div>
-                <div className="no-print print:hidden">
-                    <PrintHeaderContent />
-                </div>
+                <PrintHeaderContent />
                 
-
-                <h4 className="font-bold text-center underline mb-1">FORMULIR PERMINTAAN DAN PEMBERIAN CUTI</h4>
+                <h4 className="font-bold text-center underline mb-1 mt-2">FORMULIR PERMINTAAN DAN PEMBERIAN CUTI</h4>
                 <p className="text-center mb-2">Nomor: {letterNumber}</p>
 
                 <div className={styles.outerBorder}>
@@ -155,7 +145,7 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                     {/* SECTION III */}
                     <section className={`${styles.sectionContainer} mt-2`}>
                         <p className="font-bold">III. ALASAN CUTI</p>
-                        <div className={`${styles.cell} h-8`}>{request.reason}</div>
+                        <div className={`${styles.cell} min-h-[2rem]`}>{request.reason}</div>
                     </section>
 
                     {/* SECTION IV */}
@@ -200,58 +190,43 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                     </section>
                     
                     {/* SECTION VI */}
-                    <section className="flex mt-2 break-inside-avoid">
+                    <section className={`${styles.sectionContainer} mt-2`}>
+                      <div className="flex">
                         <div className="w-2/3">
-                            <p className="font-bold">VI. ALAMAT SELAMA MENJALANKAN CUTI</p>
-                            <table className={styles.table}>
-                                <tbody>
-                                    <tr>
-                                        <td className={`${styles.cell} h-16 align-top`}>..................................</td>
-                                        <td className={styles.cell}>TELP: ....................</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                          <p className="font-bold">VI. ALAMAT SELAMA MENJALANKAN CUTI</p>
+                          <table className={styles.table}>
+                            <tbody>
+                              <tr>
+                                <td className={`${styles.cell} h-[140px] align-top`}>..................................</td>
+                                <td className={styles.cell}>TELP: ....................</td>
+                              </tr>
+                            </tbody>
+                          </table>
                         </div>
                         <div className="w-1/3 text-center">
-                            <p className="font-bold">Hormat saya,</p>
-                            <SignatureBlock user={user} signatureDate={request.createdAt} />
+                          <SignatureBlock user={user} signatureDate={request.createdAt} title="Hormat saya,"/>
                         </div>
+                      </div>
                     </section>
                     
-                    <RepeatingPrintHeader />
                     {/* SECTION VII */}
                     <section className={`${styles.sectionContainer} mt-2`}>
                         <p className="font-bold">VII. PERTIMBANGAN ATASAN LANGSUNG</p>
-                         {allApprovers.map((approverItem, index) => (
-                            <div key={index} className="break-inside-avoid">
-                                <table className={styles.table}>
-                                    <tbody>
-                                        <tr>
-                                            <td className={styles.cellCenter}>DISETUJUI</td>
-                                            <td className={styles.cellCenter}>PERUBAHAN****</td>
-                                            <td className={styles.cellCenter}>DITANGGUHKAN****</td>
-                                            <td className={styles.cellCenter}>TIDAK DISETUJUI****</td>
-                                        </tr>
-                                        <tr>
-                                            <td colSpan={4} className={`${styles.cell} p-1`}>
-                                                <div className="flex justify-end">
-                                                    <div className="w-2/3">
-                                                         {/* Empty space for comments */}
-                                                         <div className="h-24"></div>
-                                                    </div>
-                                                    <div className="w-1/3 text-center">
-                                                        <SignatureBlock user={approverItem} signatureDate={new Date()} />
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        ))}
+                        <div className="flex">
+                             {allApprovers.map((approverItem, index) => (
+                                <div key={index} className="w-1/3 text-center">
+                                    <SignatureBlock user={approverItem} signatureDate={new Date()} />
+                                </div>
+                            ))}
+                             {/* Placeholders for up to 3 approvers */}
+                            {[...Array(3 - allApprovers.length)].map((_, i) => (
+                               <div key={`placeholder-${i}`} className="w-1/3 p-2">
+                                  <div className="h-full border border-dashed"></div>
+                               </div>
+                            ))}
+                        </div>
                     </section>
 
-                    <RepeatingPrintHeader />
                     {/* SECTION VIII */}
                     <section className={`${styles.sectionContainer} mt-2`}>
                         <p className="font-bold">VIII. KEPUTUSAN PEJABAT YANG BERWENANG MEMBERIKAN CUTI **</p>
@@ -308,3 +283,5 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
         </div>
     );
 }
+
+    
