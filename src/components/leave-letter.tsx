@@ -53,8 +53,8 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
 
     return (
         <div className="bg-white p-8 font-serif text-xs">
-            <div className="max-w-4xl mx-auto">
-                <header className="text-center mb-4 border-b-2 border-black pb-2">
+            <div className="max-w-4xl mx-auto" id="print-area">
+                <header className="text-center mb-4 border-b-2 border-black pb-2 print-header">
                     <div className="flex items-center justify-center gap-4">
                          {settings.logoUrl && <Image src={settings.logoUrl} alt="Logo" width={70} height={70} className="object-contain" />}
                         <div>
@@ -276,18 +276,6 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                 <td className="align-top">****</td>
                                 <td>Diberi tanda centang dan alasan</td>
                             </tr>
-                             <tr>
-                                <td className="align-top">N</td>
-                                <td>= Cuti tahun berjalan</td>
-                            </tr>
-                             <tr>
-                                <td className="align-top">N-1</td>
-                                <td>= Sisa cuti 1 tahun sebelumnya</td>
-                            </tr>
-                            <tr>
-                                <td className="align-top">N-2</td>
-                                <td>= Sisa cuti 2 tahun sebelumnya</td>
-                            </tr>
                         </tbody>
                     </table>
                 </footer>
@@ -301,6 +289,15 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                     .no-print {
                         display: none;
                     }
+                    .print-header {
+                        position: running(doc_header);
+                    }
+                }
+                 @page {
+                    @top-center {
+                        content: element(doc_header);
+                    }
+                    margin-bottom: 2cm;
                 }
             `}</style>
         </div>
