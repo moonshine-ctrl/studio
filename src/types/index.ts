@@ -22,7 +22,7 @@ export type Department = {
 
 export type LeaveType = {
   id: string;
-  name: 'Cuti Tahunan' | 'Cuti Besar' | 'Cuti Melahirkan' | 'Cuti Alasan Penting' | 'Cuti di Luar Tanggungan Negara' | 'Cuti Lainnya';
+  name: 'Cuti Tahunan' | 'Cuti Besar' | 'Cuti Melahirkan' | 'Cuti Alasan Penting' | 'Cuti di Luar Tanggungan Negara' | 'Cuti Sakit' | 'Cuti Lainnya';
 };
 
 export type LeaveRequest = {

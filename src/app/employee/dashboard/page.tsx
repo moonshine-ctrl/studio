@@ -194,7 +194,7 @@ export default function EmployeeDashboardPage() {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                       {leaveType.name !== 'Cuti Tahunan' ? (
+                       {leaveType.name === 'Cuti Sakit' ? (
                             <Badge variant="outline" className="flex items-center gap-1 w-fit">
                                 <FileWarning className="h-3 w-3" /> Required
                             </Badge>

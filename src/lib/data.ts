@@ -22,6 +22,7 @@ export const departments: Department[] = [
 
 export const leaveTypes: LeaveType[] = [
   { id: 'annual', name: 'Cuti Tahunan' },
+  { id: 'sick', name: 'Cuti Sakit' },
   { id: 'big', name: 'Cuti Besar' },
   { id: 'maternity', name: 'Cuti Melahirkan' },
   { id: 'important', name: 'Cuti Alasan Penting' },
@@ -33,11 +34,11 @@ const now = new Date();
 
 export const leaveRequests: LeaveRequest[] = [
   { id: 'req1', userId: '1', leaveTypeId: 'annual', startDate: subDays(now, 5), endDate: subDays(now, 4), days: 2, reason: 'Family vacation', status: 'Approved', createdAt: subDays(now, 10) },
-  { id: 'req2', userId: '3', leaveTypeId: 'other', startDate: subDays(now, 2), endDate: subDays(now, 1), days: 2, reason: 'Sakit, butuh istirahat', status: 'Approved', createdAt: subDays(now, 3), attachment: undefined },
+  { id: 'req2', userId: '3', leaveTypeId: 'sick', startDate: subDays(now, 2), endDate: subDays(now, 1), days: 2, reason: 'Sakit, butuh istirahat', status: 'Approved', createdAt: subDays(now, 3), attachment: undefined },
   { id: 'req3', userId: '6', leaveTypeId: 'annual', startDate: addDays(now, 10), endDate: addDays(now, 14), days: 5, reason: 'Trip to Bali', status: 'Pending', createdAt: subDays(now, 1) },
   { id: 'req4', userId: '1', leaveTypeId: 'important', startDate: subDays(now, 20), endDate: subDays(now, 19), days: 2, reason: 'Family emergency', status: 'Approved', createdAt: subDays(now, 22) },
   { id: 'req5', userId: '2', leaveTypeId: 'annual', startDate: subDays(now, 30), endDate: subDays(now, 28), days: 3, reason: 'Personal matters', status: 'Rejected', createdAt: subDays(now, 35) },
-  { id: 'req6', userId: '4', leaveTypeId: 'other', startDate: subDays(now, 12), endDate: subDays(now, 11), days: 2, reason: 'Medical Checkup', status: 'Approved', createdAt: subDays(now, 15), attachment: 'uploaded' },
+  { id: 'req6', userId: '4', leaveTypeId: 'sick', startDate: subDays(now, 12), endDate: subDays(now, 11), days: 2, reason: 'Medical Checkup', status: 'Approved', createdAt: subDays(now, 15), attachment: 'uploaded' },
   { id: 'req7', userId: '7', leaveTypeId: 'maternity', startDate: addDays(now, 30), endDate: addDays(now, 120), days: 90, reason: 'Maternity Leave', status: 'Pending', createdAt: subDays(now, 2) },
 ];
 
@@ -53,7 +54,7 @@ export const notifications: Notification[] = [
 
 export const settings = {
     sickLeaveFormUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSc_b_a-M9bA9gQlLd6v_iJbA4J/viewform',
-    logoUrl: '/qr-code-placeholder.png',
+    logoUrl: '/logo.png',
     letterhead: [
         'MAHKAMAH AGUNG REPUBLIK INDONESIA',
         'DIREKTORAT JENDERAL BADAN PERADILAN AGAMA',

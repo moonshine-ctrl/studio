@@ -93,8 +93,8 @@ export default function AjukanCutiPage() {
     setLeaveRequests([newRequest, ...leaveRequests]);
     initialLeaveRequests.unshift(newRequest);
 
-    // Notification logic for non-annual leave
-    if (selectedLeaveType?.name !== 'Cuti Tahunan') {
+    // Notification logic for sick leave
+    if (selectedLeaveType?.name === 'Cuti Sakit') {
       const userNotification: Notification = {
         id: `notif-${Date.now()}-user`,
         userId: currentUser.id,
@@ -214,7 +214,7 @@ export default function AjukanCutiPage() {
                 />
               </div>
 
-              {selectedLeaveType && selectedLeaveType.name !== 'Cuti Tahunan' && (
+              {selectedLeaveType && selectedLeaveType.name === 'Cuti Sakit' && (
                 <div className="space-y-2">
                     <Label htmlFor="attachment">Dokumen Pendukung</Label>
                     <Button asChild variant="outline" className="w-full">
