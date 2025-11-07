@@ -48,9 +48,9 @@ const SignatureBlock = ({ user, signatureDate }: { user?: User, signatureDate?: 
             <div>
                 <p className="mb-1">Solok, {dateToDisplay}</p>
             </div>
-            <div className="h-20 w-20 mx-auto my-1 flex items-center justify-center">
+            <div className="h-16 w-16 mx-auto my-1 flex items-center justify-center">
                 {user.qrCodeSignature ? (
-                    <Image src={user.qrCodeSignature} alt="QR Code" width={80} height={80} className="mx-auto object-contain" />
+                    <Image src={user.qrCodeSignature} alt="QR Code" width={64} height={64} className="mx-auto object-contain" />
                 ) : (
                     <div className="h-16"></div>
                 )}
@@ -149,8 +149,7 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                     <td className={styles.cell}>4. Cuti Karena Alasan Penting <span className="float-right font-bold text-lg pr-2">{leaveTypeCheck('Cuti Alasan Penting')}</span></td>
                                 </tr>
                                 <tr>
-                                    <td className={styles.cell}>5. Cuti di Luar Tanggungan Negara <span className="float-right font-bold text-lg pr-2">{leaveTypeCheck('Cuti di Luar Tanggungan Negara')}</span></td>
-                                    <td className={styles.cell}>6. Cuti Lainnya <span className="float-right font-bold text-lg pr-2">{leaveTypeCheck('Cuti Lainnya')}</span></td>
+                                    <td className={styles.cell} colSpan={2}>5. Cuti di Luar Tanggungan Negara <span className="float-right font-bold text-lg pr-2">{leaveTypeCheck('Cuti di Luar Tanggungan Negara')}</span></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -235,11 +234,7 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                                     <td className={`${styles.cell} border-r-0`}></td>
                                                 </tr>
                                                  <tr>
-                                                    <td className={`${styles.cell} border-l-0`}>5. Cuti di Luar Tanggungan Negara</td>
-                                                    <td className={`${styles.cell} border-r-0`}></td>
-                                                </tr>
-                                                <tr>
-                                                    <td className={`${styles.cell} border-l-0 border-b-0`}>6. Cuti Lainnya</td>
+                                                    <td className={`${styles.cell} border-l-0 border-b-0`}>5. Cuti di Luar Tanggungan Negara</td>
                                                     <td className={`${styles.cell} border-r-0 border-b-0`}></td>
                                                 </tr>
                                             </tbody>
