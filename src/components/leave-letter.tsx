@@ -185,15 +185,19 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                             <tbody>
                                 <tr>
                                     {/* Kolom Kiri - Cuti Tahunan & Paraf */}
-                                    <td className={`${styles.cell} align-top`} style={{width: '50%'}}>
-                                        <table className="w-full">
-                                            <tbody>
-                                                <tr><td colSpan={3} className="font-bold">1. CUTI TAHUNAN</td></tr>
+                                    <td className={`${styles.cell} align-top p-0`} style={{width: '50%'}}>
+                                        <table className="w-full h-full border-collapse">
+                                            <thead>
+                                                <tr>
+                                                    <th colSpan={3} className="font-bold text-left p-1 border-b border-black">1. CUTI TAHUNAN</th>
+                                                </tr>
                                                 <tr>
                                                     <td className={styles.cellHeader} style={{width: '25%'}}>Tahun</td>
                                                     <td className={styles.cellHeader} style={{width: '25%'}}>Sisa</td>
                                                     <td className={styles.cellHeader} style={{width: '50%'}}>Keterangan</td>
                                                 </tr>
+                                            </thead>
+                                            <tbody>
                                                 <tr>
                                                     <td className={styles.cellCenter}>{currentYear - 2}</td>
                                                     <td className={styles.cellCenter}>-</td>
@@ -209,17 +213,19 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                                     <td className={styles.cellCenter}>{user.annualLeaveBalance}</td>
                                                     <td className={styles.cell}></td>
                                                 </tr>
+                                            </tbody>
+                                            <tfoot>
                                                 <tr>
-                                                    <td colSpan={3} className={`${styles.cell} text-center font-bold`}>
+                                                    <td colSpan={3} className={`${styles.cell} text-center font-bold border-t-0`}>
                                                         Paraf Petugas Cuti: ✓
                                                     </td>
                                                 </tr>
-                                            </tbody>
+                                            </tfoot>
                                         </table>
                                     </td>
                                     {/* Kolom Kanan - Jenis Cuti Lainnya */}
                                     <td className={`${styles.cell} align-top p-0`} style={{width: '50%'}}>
-                                         <table className="w-full h-full">
+                                         <table className="w-full h-full border-collapse">
                                             <tbody>
                                                 <tr>
                                                     <td className={`${styles.cell} border-t-0 border-l-0`}>2. Cuti Besar</td>
@@ -252,10 +258,10 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                          <table className={styles.table}>
                             <tbody>
                               <tr>
-                                <td className={`${styles.cell} w-2/3 align-top`} style={{height: '110px'}}>
+                                <td className={`${styles.cell} w-2/3 align-top`} style={{height: '140px'}}>
                                     <div className="min-h-[50px]">{user.address || '..................................'}</div>
                                     {leaveType?.name === 'Cuti Tahunan' && (
-                                      <div className="text-xs">
+                                      <div className="text-xs mt-2">
                                         <p className="font-bold">Catatan Kepegawaian:</p>
                                         <p>
                                           Sisa cuti ybs. adalah {leaveBalanceBefore} hari, apabila
@@ -266,12 +272,7 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                     )}
                                 </td>
                                 <td className={`${styles.cell} w-1/3 align-top text-center`}>
-                                    <div className='flex flex-col h-full'>
-                                        <p>Hormat saya,</p>
-                                        <div className="flex-grow min-h-[50px]"></div>
-                                        <p className="underline font-bold mt-2">{user.name}</p>
-                                        <p>NIP. {user.nip}</p>
-                                    </div>
+                                   <SignatureBlock user={user} signatureDate={request.createdAt} />
                                 </td>
                               </tr>
                             </tbody>
