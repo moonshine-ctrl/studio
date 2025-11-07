@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Sidebar,
   SidebarHeader,
@@ -10,6 +12,7 @@ import { Button } from './ui/button';
 import Link from 'next/link';
 import { LogOut } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 
 interface AppSidebarProps {
   role: 'Admin' | 'Employee';
@@ -17,9 +20,10 @@ interface AppSidebarProps {
 
 export function AppSidebar({ role }: AppSidebarProps) {
     const router = useRouter();
+    const pathname = usePathname();
 
     const handleLogout = () => {
-        if (role === 'Admin') {
+        if (pathname.startsWith('/admin')) {
           sessionStorage.removeItem('adminLoggedIn');
           router.push('/admin/login');
         } else {

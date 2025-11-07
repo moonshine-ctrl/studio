@@ -26,19 +26,12 @@ export function UserProfile() {
     if (pathname.startsWith('/admin')) {
       setCurrentUser(users.find(u => u.role === 'Admin'));
     } else if (pathname.startsWith('/employee')) {
-      // In a real app, this would be based on auth state
-      // For demo, we check if they are an approver by checking the department heads
-      const isApprover = !!users.find(u => u.id === '2'); // Example approver
-      if (pathname.includes('/approvals') && isApprover) {
-         setCurrentUser(users.find(u => u.id === '2')); // Citra Lestari, approver
-      } else {
-         setCurrentUser(users.find(u => u.id === '1')); // Budi Santoso, regular employee
-      }
+       setCurrentUser(users.find(u => u.id === '1')); // Budi Santoso, regular employee
     }
   }, [pathname]);
 
   const handleLogout = () => {
-    if (currentUser?.role === 'Admin') {
+    if (pathname.startsWith('/admin')) {
       sessionStorage.removeItem('adminLoggedIn');
       router.push('/admin/login');
     } else {
