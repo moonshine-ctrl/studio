@@ -15,7 +15,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Check, X, PauseCircle } from 'lucide-react';
@@ -27,6 +26,7 @@ import {
   users as initialUsers,
   users,
   logHistory,
+  departmentApprovalFlows,
 } from '@/lib/data';
 import { format } from 'date-fns';
 import { useState, useMemo, useEffect } from 'react';
@@ -47,56 +47,82 @@ export default function ApprovalsPage() {
 
   const requestsToApprove = useMemo(() => {
     if (!currentUser) return [];
-    
-    // In a real app, this logic should be based on the approval flow settings.
-    // This is a simplified mock logic: user '2' can approve for IT department.
-    const isApproverForAnyDept = currentUser.id === '2'; // Simplified check
-    if (!isApproverForAnyDept) return [];
-    
-    const approverDepartments = ['it']; // User '2' approves for IT
-
-    return leaveRequests.filter(req => {
-        const requestUser = getUserById(req.userId);
-        return requestUser && approverDepartments.includes(requestUser.departmentId) && req.status === 'Pending';
-    });
-
+    // An employee sees requests where they are the nextApproverId
+    return leaveRequests.filter(req => req.status === 'Pending' && req.nextApproverId === currentUser.id);
   }, [leaveRequests, currentUser]);
 
-  const handleDecision = (requestId: string, status: 'Approved' | 'Rejected' | 'Suspended') => {
-    const updatedRequests = leaveRequests.map(r => r.id === requestId ? { ...r, status } : r);
-    setLeaveRequests(updatedRequests);
+  const handleDecision = (requestId: string, decision: 'Approved' | 'Rejected' | 'Suspended') => {
+    const requestIndex = leaveRequests.findIndex(r => r.id === requestId);
+    if (requestIndex === -1 || !currentUser) return;
     
-    const originalRequest = initialLeaveRequests.find(r => r.id === requestId);
-    if (originalRequest) originalRequest.status = status;
+    const originalRequest = leaveRequests[requestIndex];
 
-    const requestDetails = initialLeaveRequests.find(r => r.id === requestId);
-    const employee = requestDetails ? getUserById(requestDetails.userId) : null;
-    const leaveType = requestDetails ? getLeaveTypeById(requestDetails.leaveTypeId) : null;
+    // If rejected or suspended, the flow stops.
+    if (decision === 'Rejected' || decision === 'Suspended') {
+        const updatedRequests = leaveRequests.map(r => r.id === requestId ? { ...r, status: decision, nextApproverId: undefined } : r);
+        setLeaveRequests(updatedRequests);
+        const masterRequest = initialLeaveRequests.find(r => r.id === requestId);
+        if (masterRequest) {
+            masterRequest.status = decision;
+            masterRequest.nextApproverId = undefined;
+        }
 
-    // Restore leave balance if suspended and it's an annual leave
-    if (status === 'Suspended' && employee && leaveType?.name === 'Cuti Tahunan') {
-        const updatedUsers = allUsers.map(u => 
-            u.id === employee.id 
-            ? { ...u, annualLeaveBalance: u.annualLeaveBalance + requestDetails.days } 
-            : u
+    } else if (decision === 'Approved') {
+        const employee = getUserById(originalRequest.userId);
+        if (!employee) return;
+
+        const approvalFlow = departmentApprovalFlows[employee.departmentId] || [];
+        const currentApproverIndex = approvalFlow.indexOf(currentUser.id);
+        
+        const nextApproverId = (currentApproverIndex !== -1 && currentApproverIndex < approvalFlow.length - 1)
+            ? approvalFlow[currentApproverIndex + 1]
+            : undefined;
+
+        const newStatus = nextApproverId ? 'Pending' : 'Approved';
+
+        const updatedRequests = leaveRequests.map(r => 
+            r.id === requestId 
+            ? { ...r, status: newStatus, nextApproverId: nextApproverId } 
+            : r
         );
-        setAllUsers(updatedUsers);
-        const originalUser = initialUsers.find(u => u.id === employee.id);
-        if (originalUser) originalUser.annualLeaveBalance += requestDetails.days;
+        setLeaveRequests(updatedRequests);
+
+        const masterRequest = initialLeaveRequests.find(r => r.id === requestId);
+        if (masterRequest) {
+            masterRequest.status = newStatus;
+            masterRequest.nextApproverId = nextApproverId;
+        }
+
+        // Deduct leave balance only on final approval
+        if (newStatus === 'Approved') {
+            const leaveType = getLeaveTypeById(originalRequest.leaveTypeId);
+            if (leaveType?.name === 'Cuti Tahunan') {
+                 const updatedUsers = allUsers.map(u => 
+                    u.id === employee.id 
+                    ? { ...u, annualLeaveBalance: u.annualLeaveBalance - originalRequest.days } 
+                    : u
+                );
+                setAllUsers(updatedUsers);
+                const originalUser = initialUsers.find(u => u.id === employee.id);
+                if (originalUser) originalUser.annualLeaveBalance -= originalRequest.days;
+            }
+        }
     }
     
+    const employee = getUserById(originalRequest.userId);
+
     // Add to log
     logHistory.unshift({
       id: `log-${Date.now()}`,
       date: new Date(),
       user: currentUser?.name || 'Approver',
-      activity: `${status} leave request for ${employee?.name || 'N/A'}.`,
+      activity: `${decision} leave request for ${employee?.name || 'N/A'}.`,
     });
 
     toast({
-      title: `Request ${status}`,
-      description: `The leave request has been ${status.toLowerCase()}.`,
-      variant: status === 'Rejected' ? 'destructive' : 'default',
+      title: `Request ${decision}`,
+      description: `The leave request has been ${decision.toLowerCase()}.`,
+      variant: decision === 'Rejected' ? 'destructive' : 'default',
     });
   };
 

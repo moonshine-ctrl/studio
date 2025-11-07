@@ -20,6 +20,13 @@ export const departments: Department[] = [
   { id: 'marketing', name: 'Marketing', employeeCount: 2 },
 ];
 
+export const departmentApprovalFlows: { [key: string]: string[] } = {
+  'hr': ['5', 'admin'], // Fitriani -> Admin
+  'it': ['2', 'admin'], // Citra -> Admin
+  'finance': ['7', 'admin'], // Hana -> Admin
+  'marketing': ['8', 'admin'], // Indra -> Admin
+};
+
 export const leaveTypes: LeaveType[] = [
   { id: 'annual', name: 'Cuti Tahunan' },
   { id: 'sick', name: 'Cuti Sakit' },
@@ -33,13 +40,13 @@ export const leaveTypes: LeaveType[] = [
 const now = new Date();
 
 export const leaveRequests: LeaveRequest[] = [
-  { id: 'req1', userId: '1', leaveTypeId: 'annual', startDate: subDays(now, 5), endDate: subDays(now, 4), days: 2, reason: 'Family vacation', status: 'Approved', createdAt: subDays(now, 10) },
-  { id: 'req2', userId: '3', leaveTypeId: 'sick', startDate: subDays(now, 2), endDate: subDays(now, 1), days: 2, reason: 'Sakit, butuh istirahat', status: 'Approved', createdAt: subDays(now, 3), attachment: undefined },
-  { id: 'req3', userId: '6', leaveTypeId: 'annual', startDate: addDays(now, 10), endDate: addDays(now, 14), days: 5, reason: 'Trip to Bali', status: 'Pending', createdAt: subDays(now, 1) },
-  { id: 'req4', userId: '1', leaveTypeId: 'important', startDate: subDays(now, 20), endDate: subDays(now, 19), days: 2, reason: 'Family emergency', status: 'Approved', createdAt: subDays(now, 22) },
-  { id: 'req5', userId: '2', leaveTypeId: 'annual', startDate: subDays(now, 30), endDate: subDays(now, 28), days: 3, reason: 'Personal matters', status: 'Rejected', createdAt: subDays(now, 35) },
-  { id: 'req6', userId: '4', leaveTypeId: 'sick', startDate: subDays(now, 12), endDate: subDays(now, 11), days: 2, reason: 'Medical Checkup', status: 'Approved', createdAt: subDays(now, 15), attachment: 'uploaded' },
-  { id: 'req7', userId: '7', leaveTypeId: 'maternity', startDate: addDays(now, 30), endDate: addDays(now, 120), days: 90, reason: 'Maternity Leave', status: 'Pending', createdAt: subDays(now, 2) },
+  { id: 'req1', userId: '1', leaveTypeId: 'annual', startDate: subDays(now, 5), endDate: subDays(now, 4), days: 2, reason: 'Family vacation', status: 'Approved', createdAt: subDays(now, 10), nextApproverId: undefined },
+  { id: 'req2', userId: '3', leaveTypeId: 'sick', startDate: subDays(now, 2), endDate: subDays(now, 1), days: 2, reason: 'Sakit, butuh istirahat', status: 'Approved', createdAt: subDays(now, 3), attachment: undefined, nextApproverId: undefined },
+  { id: 'req3', userId: '6', leaveTypeId: 'annual', startDate: addDays(now, 10), endDate: addDays(now, 14), days: 5, reason: 'Trip to Bali', status: 'Pending', createdAt: subDays(now, 1), nextApproverId: '8' }, // Waiting for Indra
+  { id: 'req4', userId: '1', leaveTypeId: 'important', startDate: subDays(now, 20), endDate: subDays(now, 19), days: 2, reason: 'Family emergency', status: 'Approved', createdAt: subDays(now, 22), nextApproverId: undefined },
+  { id: 'req5', userId: '2', leaveTypeId: 'annual', startDate: subDays(now, 30), endDate: subDays(now, 28), days: 3, reason: 'Personal matters', status: 'Rejected', createdAt: subDays(now, 35), nextApproverId: undefined },
+  { id: 'req6', userId: '4', leaveTypeId: 'sick', startDate: subDays(now, 12), endDate: subDays(now, 11), days: 2, reason: 'Medical Checkup', status: 'Pending', createdAt: subDays(now, 15), attachment: 'uploaded', nextApproverId: '2' }, // Waiting for Citra
+  { id: 'req7', userId: '7', leaveTypeId: 'maternity', startDate: addDays(now, 30), endDate: addDays(now, 120), days: 90, reason: 'Maternity Leave', status: 'Pending', createdAt: subDays(now, 2), nextApproverId: 'admin' }, // Waiting for Admin
 ];
 
 export const notifications: Notification[] = [

@@ -36,6 +36,7 @@ export type LeaveRequest = {
   status: 'Pending' | 'Approved' | 'Rejected' | 'Cancelled' | 'Suspended';
   attachment?: 'uploaded' | undefined;
   createdAt: Date;
+  nextApproverId?: string;
 };
 
 export type Notification = {

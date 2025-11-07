@@ -26,7 +26,7 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { DateRange } from 'react-day-picker';
 import { useToast } from '@/hooks/use-toast';
-import { leaveTypes, users, leaveRequests as initialLeaveRequests, notifications as initialNotifications, getLeaveTypeById, settings as appSettings, getUserById, logHistory } from '@/lib/data';
+import { leaveTypes, users, leaveRequests as initialLeaveRequests, notifications as initialNotifications, getLeaveTypeById, settings as appSettings, getUserById, logHistory, departmentApprovalFlows } from '@/lib/data';
 import type { LeaveRequest, User, Notification } from '@/types';
 import Link from 'next/link';
 
@@ -76,6 +76,19 @@ export default function AjukanCutiPage() {
         return;
     }
 
+    // Determine the first approver from the approval flow
+    const approvalFlow = departmentApprovalFlows[currentUser.departmentId];
+    const firstApproverId = approvalFlow && approvalFlow.length > 0 ? approvalFlow[0] : undefined;
+
+    if (!firstApproverId) {
+        toast({
+            variant: 'destructive',
+            title: 'Gagal Mengirim',
+            description: 'Alur persetujuan untuk departemen Anda belum diatur. Hubungi Admin.',
+        });
+        return;
+    }
+
     const newRequestId = `req-${Date.now()}`;
     const newRequest: LeaveRequest = {
       id: newRequestId,
@@ -88,6 +101,7 @@ export default function AjukanCutiPage() {
       status: 'Pending',
       createdAt: new Date(),
       attachment: undefined,
+      nextApproverId: firstApproverId, // Set the first approver
     };
 
     setLeaveRequests([newRequest, ...leaveRequests]);
