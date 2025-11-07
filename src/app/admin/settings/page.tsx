@@ -95,7 +95,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6 max-w-7xl mx-auto">
+    <div className="flex flex-col gap-6">
       <Tabs defaultValue="approval">
         <TabsList>
           <TabsTrigger value="general">General</TabsTrigger>

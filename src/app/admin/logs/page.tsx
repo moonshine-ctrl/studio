@@ -25,7 +25,7 @@ export default function LogsPage() {
   const [logHistory, setLogHistory] = useState<LogEntry[]>(initialLogHistory);
 
   return (
-    <div className="flex flex-col gap-6 max-w-7xl mx-auto">
+    <div className="flex flex-col gap-6">
       <Card>
         <CardHeader>
           <CardTitle>System Activity Log</CardTitle>

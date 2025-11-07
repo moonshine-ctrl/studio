@@ -192,7 +192,7 @@ export default function DashboardPage() {
 
   return (
     <>
-      <div className="flex flex-col gap-6 max-w-7xl mx-auto">
+      <div className="flex flex-col gap-6">
         <div className="grid gap-4 md:grid-cols-3">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

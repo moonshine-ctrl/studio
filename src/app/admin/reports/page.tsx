@@ -66,7 +66,7 @@ export default function ReportsPage() {
 
 
   return (
-    <div className="flex flex-col gap-6 max-w-7xl mx-auto">
+    <div className="flex flex-col gap-6">
       <Card>
         <CardHeader>
           <CardTitle>Export Leave Data</CardTitle>
