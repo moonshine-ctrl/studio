@@ -3,7 +3,7 @@ import { subDays, addDays, format } from 'date-fns';
 
 export const users: User[] = [
   { id: '1', name: 'Budi Santoso', nip: '199508172021011001', avatar: 'https://picsum.photos/seed/1/100/100', departmentId: 'hr', role: 'Employee', annualLeaveBalance: 12, phone: '6281234567890', golongan: 'III/a', joinDate: new Date('2021-01-15') },
-  { id: '2', name: 'Citra Lestari', nip: '199205202019032002', avatar: 'https://picsum.photos/seed/2/100/100', departmentId: 'it', role: 'Employee', annualLeaveBalance: 10, phone: '6281234567891', golongan: 'III/d', joinDate: new Date('2019-03-01') },
+  { id: '2', name: 'Citra Lestari', nip: '199205202019032002', avatar: 'https://picsum.photos/seed/2/100/100', departmentId: 'it', role: 'Employee', annualLeaveBalance: 10, phone: '6281234567891', golongan: 'III/d', joinDate: new Date('2019-03-01'), qrCodeSignature: '/qr-code-placeholder.png' },
   { id: '3', name: 'Doni Firmansyah', nip: '199811102022021003', avatar: 'https://picsum.photos/seed/3/100/100', departmentId: 'finance', role: 'Employee', annualLeaveBalance: 5, phone: '6281234567892', golongan: 'II/c', joinDate: new Date('2022-02-01'), qrCodeSignature: '/qr-code-placeholder.png' },
   { id: '4', name: 'Eka Putri', nip: '199301152018052001', avatar: 'https://picsum.photos/seed/4/100/100', departmentId: 'it', role: 'Employee', annualLeaveBalance: 12, phone: '6281234567893', golongan: 'III/b', joinDate: new Date('2018-05-10') },
   { id: '5', name: 'Fitriani', nip: '199003252017062002', avatar: 'https://picsum.photos/seed/5/100/100', departmentId: 'hr', role: 'Employee', annualLeaveBalance: 8, phone: '6281234567894', golongan: 'IV/a', joinDate: new Date('2017-06-15'), qrCodeSignature: '/qr-code-placeholder.png' },
