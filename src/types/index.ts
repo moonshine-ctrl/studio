@@ -10,6 +10,7 @@ export type User = {
   phone?: string;
   golongan?: string;
   joinDate?: Date;
+  address?: string;
 };
 
 export type Department = {

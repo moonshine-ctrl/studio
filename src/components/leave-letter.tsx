@@ -185,12 +185,11 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                         <table className={styles.table}>
                             <tbody>
                                 <tr>
-                                    {/* Left Column */}
                                     <td className={`${styles.cell} align-top`} style={{width: '50%'}}>
                                         <table className="w-full">
                                             <tbody>
                                                 <tr>
-                                                    <td colSpan={3} className="font-bold">1. CUTI TAHUNAN</td>
+                                                    <td colSpan={3} className="font-bold">1. CUTI TAHUNAN <span className="font-bold text-lg">{leaveTypeCheck('Cuti Tahunan')}</span></td>
                                                 </tr>
                                                 <tr>
                                                     <td className={styles.cellHeader} style={{width: '25%'}}>Tahun</td>
@@ -215,39 +214,38 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                             </tbody>
                                         </table>
                                     </td>
-                                    {/* Right Column */}
-                                    <td className={`${styles.cell} align-top`} style={{width: '50%'}}>
-                                         <table className="w-full">
+                                    <td className={`${styles.cell} align-top p-0`} style={{width: '50%'}}>
+                                         <table className="w-full h-full">
                                             <tbody>
                                                 <tr>
-                                                    <td className="w-2/3">2. Cuti Besar</td>
-                                                    <td className="w-1/3 text-center"></td>
+                                                    <td className={`${styles.cell} border-t-0 border-l-0`}>2. Cuti Besar</td>
+                                                    <td className={`${styles.cell} border-t-0 border-r-0 w-1/4`}></td>
                                                 </tr>
                                                 <tr>
-                                                    <td>3. Cuti Sakit</td>
-                                                    <td className="text-center"></td>
+                                                    <td className={`${styles.cell} border-l-0`}>3. Cuti Sakit</td>
+                                                    <td className={`${styles.cell} border-r-0`}></td>
                                                 </tr>
                                                 <tr>
-                                                    <td>4. Cuti Melahirkan</td>
-                                                    <td className="text-center"></td>
+                                                    <td className={`${styles.cell} border-l-0`}>4. Cuti Melahirkan</td>
+                                                    <td className={`${styles.cell} border-r-0`}></td>
                                                 </tr>
                                                  <tr>
-                                                    <td>5. Cuti Karena Alasan Penting</td>
-                                                    <td className="text-center"></td>
+                                                    <td className={`${styles.cell} border-l-0`}>5. Cuti Karena Alasan Penting</td>
+                                                    <td className={`${styles.cell} border-r-0`}></td>
                                                 </tr>
                                                 <tr>
-                                                    <td>6. Cuti di Luar Tanggungan Negara</td>
-                                                    <td className="text-center"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td colSpan={2} className="text-center h-14 align-bottom">
-                                                        <p className='font-bold text-lg'>✓</p>
-                                                    </td>
+                                                    <td className={`${styles.cell} border-l-0 border-b-0`}>6. Cuti di Luar Tanggungan Negara</td>
+                                                    <td className={`${styles.cell} border-r-0 border-b-0`}></td>
                                                 </tr>
                                             </tbody>
                                         </table>
                                     </td>
                                 </tr>
+                                 <tr>
+                                    <td className={`${styles.cell} text-center font-bold`} colSpan={2}>
+                                        PARAF PETUGAS CUTI: ✓
+                                    </td>
+                                 </tr>
                             </tbody>
                         </table>
                     </div>
@@ -259,16 +257,16 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                             <tbody>
                               <tr>
                                 <td className={`${styles.cell} w-2/3 align-top`} style={{height: '110px'}}>
-                                    <div className="min-h-[50px]">..................................</div>
+                                    <div className="min-h-[50px]">{user.address || '..................................'}</div>
                                     {leaveType?.name === 'Cuti Tahunan' && (
-                                      <>
+                                      <div className="text-xs">
                                         <p className="font-bold">Catatan Kepegawaian:</p>
                                         <p>
                                           Sisa cuti ybs. adalah {leaveBalanceBefore} hari, apabila
                                           diambil {request.days} hari, maka sisa cuti ybs.
                                           tersisa {leaveBalanceAfter} hari
                                         </p>
-                                      </>
+                                      </div>
                                     )}
                                 </td>
                                 <td className={`${styles.cell} w-1/3 align-top text-center`}>
@@ -338,4 +336,11 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
             </div>
         </div>
     );
+}
+
+declare module 'react' {
+    interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {
+      // extends React's HTMLAttributes
+      'data-value'?: string;
+    }
 }
