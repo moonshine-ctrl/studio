@@ -309,7 +309,7 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                 <tr>
                                     <td className={`${styles.cell} p-0 w-2/3`} colSpan={3}></td>
                                     <td className={`${styles.cell} text-center align-top p-0 w-1/3`} style={{ height: '140px' }}>
-                                        {approver && <SignatureBlock user={approver} title="Atasan Langsung," signatureDate={request.createdAt} />}
+                                        {approver && <SignatureBlock user={approver} signatureDate={request.createdAt} />}
                                     </td>
                                 </tr>
                             </tbody>
@@ -368,5 +368,3 @@ declare module 'react' {
       'data-value'?: string;
     }
 }
-
-    
