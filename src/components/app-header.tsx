@@ -12,7 +12,8 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuFooter
+  DropdownMenuFooter,
+  DropdownMenuTrigger
 } from './ui/dropdown-menu';
 import { notifications as allNotifications, users } from '@/lib/data';
 import { Badge } from './ui/badge';
@@ -50,10 +51,13 @@ export function AppHeader() {
     return false;
   }).length;
   
-  const displayedNotifications = notifications.filter(n => {
-     if (currentUser?.role === 'Admin') return true;
-     return n.userId === currentUser?.id;
-  }).slice(0, 4);
+  const displayedNotifications = (
+    currentUser?.role === 'Admin'
+      ? notifications
+      : notifications.filter(n => n.userId === currentUser?.id)
+  )
+  .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+  .slice(0, 4);
 
   const getNotificationLink = () => {
     if (pathname.startsWith('/admin')) {
