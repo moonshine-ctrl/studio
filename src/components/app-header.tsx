@@ -21,10 +21,19 @@ import { Badge } from './ui/badge';
 import Link from 'next/link';
 import { UserProfile } from './user-profile';
 import { format } from 'date-fns';
+import { usePathname } from 'next/navigation';
 
 export function AppHeader() {
   const { isMobile } = useSidebar();
   const unreadNotifications = notifications.filter((n) => !n.isRead).length;
+  const pathname = usePathname();
+
+  const getNotificationLink = () => {
+    if (pathname.startsWith('/admin')) {
+      return '/admin/notifications';
+    }
+    return '/employee/notifications';
+  }
 
   if (isMobile === undefined) return null;
 
@@ -70,7 +79,7 @@ export function AppHeader() {
            <DropdownMenuSeparator />
            <DropdownMenuFooter>
                 <Button asChild variant="outline" className="w-full">
-                    <Link href="/notifications">View All Notifications</Link>
+                    <Link href={getNotificationLink()}>View All Notifications</Link>
                 </Button>
            </DropdownMenuFooter>
         </DropdownMenuContent>

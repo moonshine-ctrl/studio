@@ -31,7 +31,7 @@ import {
   users,
 } from '@/lib/data';
 import { format } from 'date-fns';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { LeaveRequest, User } from '@/types';
 
 const statusIcons = {
@@ -47,11 +47,17 @@ const statusColors: { [key: string]: 'default' | 'secondary' | 'destructive' | '
 };
 
 export default function EmployeeDashboardPage() {
-  // This should come from an auth context in a real app.
-  const [currentUser, setCurrentUser] = useState<User | undefined>(users.find(u => u.id === '1'));
-  const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>(
-    initialLeaveRequests.filter(req => req.userId === currentUser?.id)
-  );
+  // In a real app, this would come from an auth context. For now, simulate user '1'.
+  const [currentUser, setCurrentUser] = useState<User | undefined>();
+  const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>([]);
+
+  useEffect(() => {
+    const user = users.find(u => u.id === '1');
+    setCurrentUser(user);
+    if (user) {
+      setLeaveRequests(initialLeaveRequests.filter(req => req.userId === user.id));
+    }
+  }, []);
 
   const stats = {
     sisaCuti: currentUser?.annualLeaveBalance || 0,

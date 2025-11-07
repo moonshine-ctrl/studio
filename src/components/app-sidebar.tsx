@@ -9,13 +9,13 @@ import { Nav } from '@/components/nav';
 import { Button } from './ui/button';
 import Link from 'next/link';
 import { LogOut } from 'lucide-react';
-import { usePathname } from 'next/navigation';
-import { UserProfile } from '@/components/user-profile';
 
+interface AppSidebarProps {
+  role: 'Admin' | 'Employee';
+}
 
-export function AppSidebar() {
-    const pathname = usePathname();
-    const logoutLink = (pathname.startsWith('/admin') || pathname === '/') ? '/admin/login' : '/login';
+export function AppSidebar({ role }: AppSidebarProps) {
+    const logoutLink = role === 'Admin' ? '/admin/login' : '/login';
 
   return (
     <Sidebar
@@ -27,7 +27,7 @@ export function AppSidebar() {
         <Logo />
       </SidebarHeader>
       <SidebarContent>
-        <Nav />
+        <Nav role={role} />
       </SidebarContent>
       <SidebarFooter className='items-center group-data-[collapsible=icon]:hidden'>
          <Button variant="outline" asChild className='w-full'>

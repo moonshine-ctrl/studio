@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -31,7 +31,7 @@ import type { LeaveRequest, User, Notification } from '@/types';
 import Link from 'next/link';
 
 export default function AjukanCutiPage() {
-  const [currentUser, setCurrentUser] = useState<User | undefined>(users.find(u => u.id === '1'));
+  const [currentUser, setCurrentUser] = useState<User | undefined>();
   const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>(initialLeaveRequests);
   const [date, setDate] = useState<DateRange | undefined>();
   const [leaveTypeId, setLeaveTypeId] = useState<string>('');
@@ -39,9 +39,14 @@ export default function AjukanCutiPage() {
   const [days, setDays] = useState<number | string>('');
   const { toast } = useToast();
 
+  useEffect(() => {
+    // Simulate getting logged-in employee. In a real app, this would be from an auth context.
+    setCurrentUser(users.find(u => u.id === '1'));
+  }, []);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!date?.from || !date?.to || !leaveTypeId || !reason || !days) {
+    if (!currentUser || !date?.from || !date?.to || !leaveTypeId || !reason || !days) {
       toast({
         variant: 'destructive',
         title: 'Gagal Mengirim',
@@ -63,7 +68,7 @@ export default function AjukanCutiPage() {
     const newRequestId = `req-${Date.now()}`;
     const newRequest: LeaveRequest = {
       id: newRequestId,
-      userId: currentUser!.id,
+      userId: currentUser.id,
       leaveTypeId: leaveTypeId,
       startDate: date.from,
       endDate: date.to,
@@ -71,7 +76,7 @@ export default function AjukanCutiPage() {
       reason: reason,
       status: 'Pending',
       createdAt: new Date(),
-      attachment: undefined, // Attachment handled externally
+      attachment: undefined,
     };
 
     setLeaveRequests([newRequest, ...leaveRequests]);
@@ -83,7 +88,7 @@ export default function AjukanCutiPage() {
     if (selectedLeaveType?.name === 'Cuti Sakit') {
       const userNotification: Notification = {
         id: `notif-${Date.now()}-user`,
-        userId: currentUser!.id,
+        userId: currentUser.id,
         message: `Pengajuan cuti sakit Anda pada ${format(date.from, 'd MMM y')} menunggu pengisian formulir surat keterangan dokter.`,
         type: 'warning',
         isRead: false,
@@ -92,7 +97,7 @@ export default function AjukanCutiPage() {
       };
       const adminNotification: Notification = {
         id: `notif-${Date.now()}-admin`,
-        userId: 'admin', // Or dynamically find admin user
+        userId: 'admin', // Notify admin
         message: `${currentUser?.name} mengajukan cuti sakit. Ingatkan untuk mengisi form surat keterangan.`,
         type: 'warning',
         isRead: false,

@@ -27,7 +27,7 @@ export default function LoginPage() {
         description: 'Welcome back!',
       });
       setTimeout(() => {
-        router.push('/dashboard'); 
+        router.push('/employee/dashboard'); 
         setIsLoading(false);
       }, 1000);
     } else {

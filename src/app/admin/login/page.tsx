@@ -21,13 +21,14 @@ export default function AdminLoginPage() {
     e.preventDefault();
     setIsLoading(true);
 
+    // In a real app, you'd verify admin credentials
     if (email && password) {
       toast({
         title: 'Admin Login Successful',
         description: 'Welcome back, Admin!',
       });
       setTimeout(() => {
-        router.push('/');
+        router.push('/admin');
         setIsLoading(false);
       }, 1000);
     } else {

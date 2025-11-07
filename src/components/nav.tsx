@@ -13,49 +13,37 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState, useEffect } from 'react';
 import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
 } from '@/components/ui/sidebar';
-import type { User } from '@/types';
-import { users } from '@/lib/data';
-
 
 const adminLinks = [
-  { href: '/', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/approvals', label: 'Approvals', icon: ClipboardCheck },
-  { href: '/users', label: 'Users', icon: Users },
-  { href: '/departments', label: 'Departments', icon: Building },
-  { href: '/notifications', label: 'Notifications', icon: Bell },
-  { href: '/print', label: 'Cetak Surat', icon: Printer },
-  { href: '/settings', label: 'Settings', icon: Settings },
-  { href: '/reports', label: 'Reports', icon: FileDown },
+  { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/admin/approvals', label: 'Approvals', icon: ClipboardCheck },
+  { href: '/admin/users', label: 'Users', icon: Users },
+  { href: '/admin/departments', label: 'Departments', icon: Building },
+  { href: '/admin/notifications', label: 'Notifications', icon: Bell },
+  { href: '/admin/print', label: 'Cetak Surat', icon: Printer },
+  { href: '/admin/settings', label: 'Settings', icon: Settings },
+  { href: '/admin/reports', label: 'Reports', icon: FileDown },
 ];
 
 const employeeLinks = [
-    { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/ajukan-cuti', label: 'Ajukan Cuti', icon: ClipboardPlus },
-    { href: '/approvals', label: 'Approvals', icon: ClipboardCheck },
-    { href: '/notifications', label: 'Notifications', icon: Bell },
+    { href: '/employee/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/employee/ajukan-cuti', label: 'Ajukan Cuti', icon: ClipboardPlus },
+    { href: '/employee/approvals', label: 'Approvals', icon: ClipboardCheck },
+    { href: '/employee/notifications', label: 'Notifications', icon: Bell },
 ];
 
-export function Nav() {
+interface NavProps {
+  role: 'Admin' | 'Employee';
+}
+
+export function Nav({ role }: NavProps) {
   const pathname = usePathname();
-  // In a real app, this would come from an auth context
-  const [role, setRole] = useState<'Admin' | 'Employee'>('Admin');
-  const links = pathname.startsWith('/admin') || pathname === '/' ? adminLinks : employeeLinks;
-
-  // Simple logic to switch role for demonstration
-  useEffect(() => {
-    if (pathname.startsWith('/admin') || pathname === '/') {
-        setRole('Admin');
-    } else {
-        setRole('Employee');
-    }
-  }, [pathname]);
-
+  const links = role === 'Admin' ? adminLinks : employeeLinks;
 
   return (
     <SidebarMenu>

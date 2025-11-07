@@ -32,52 +32,15 @@ import { format } from 'date-fns';
 import { useState, useMemo, useEffect } from 'react';
 import type { LeaveRequest, User } from '@/types';
 import { useToast } from '@/hooks/use-toast';
-import { usePathname } from 'next/navigation';
 
 export default function ApprovalsPage() {
   const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>(initialLeaveRequests);
   const { toast } = useToast();
-  const pathname = usePathname();
-
-  // In a real app, this would come from an auth context.
-  const [currentUser, setCurrentUser] = useState<User | undefined>();
-
-  useEffect(() => {
-    // This logic simulates fetching the logged-in user based on the route
-    const isAdminRoute = pathname.startsWith('/admin') || pathname === '/';
-    if (isAdminRoute) {
-      setCurrentUser(users.find(u => u.role === 'Admin'));
-    } else {
-      // For employee/approver view, we'll use a user who is a department head.
-      // User '2' (Citra Lestari) is head of IT. Let's use her for demo.
-      // In a real app, you would get the single authenticated user.
-      setCurrentUser(users.find(u => u.id === '2'));
-    }
-  }, [pathname]);
-
+  
+  // For admin, we show all pending requests.
   const requestsToApprove = useMemo(() => {
-    if (!currentUser) return [];
-
-    // Admins see all pending requests
-    if (currentUser.role === 'Admin') {
-      return leaveRequests.filter(req => req.status === 'Pending');
-    }
-    
-    // For non-admins, check if they are a department head
-    const headedDepartments = initialDepartments.filter(dept => dept.headId === currentUser.id);
-    if (headedDepartments.length === 0) {
-      // This user is not a department head, so they have nothing to approve.
-      return [];
-    }
-    const headedDeptIds = headedDepartments.map(d => d.id);
-
-    // Filter requests from employees in the departments they head
-    return leaveRequests.filter(req => {
-      const employee = getUserById(req.userId);
-      // Show request if the employee exists, belongs to a department headed by the current user, and status is Pending
-      return employee && headedDeptIds.includes(employee.departmentId) && req.status === 'Pending';
-    });
-  }, [currentUser, leaveRequests]);
+    return leaveRequests.filter(req => req.status === 'Pending');
+  }, [leaveRequests]);
 
 
   const handleApprove = (requestId: string) => {
@@ -111,7 +74,7 @@ export default function ApprovalsPage() {
         <CardHeader>
           <CardTitle>Pending Requests</CardTitle>
           <CardDescription>
-            Review and act on the leave requests waiting for your approval.
+            Review and act on the leave requests waiting for approval.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -175,7 +138,7 @@ export default function ApprovalsPage() {
               ) : (
                 <TableRow>
                     <TableCell colSpan={7} className="h-24 text-center">
-                        No pending requests for you to approve.
+                        No pending requests to approve.
                     </TableCell>
                 </TableRow>
               )}

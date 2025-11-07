@@ -8,7 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { LogOut, User as UserIcon, MoreVertical } from 'lucide-react';
+import { LogOut, User as UserIcon } from 'lucide-react';
 import { users } from '@/lib/data';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -20,23 +20,22 @@ export function UserProfile() {
   const [currentUser, setCurrentUser] = useState<User | undefined>();
   
   useEffect(() => {
-     // In a real app, this would come from an auth context.
-     // For now, we simulate by picking a user based on the route.
-    if (pathname.startsWith('/admin') || pathname === '/') {
+    // This logic determines the user based on the route structure.
+    if (pathname.startsWith('/admin')) {
       setCurrentUser(users.find(u => u.role === 'Admin'));
-    } else {
-      // Simulate a logged-in employee, e.g., 'Budi Santoso'
+    } else if (pathname.startsWith('/employee')) {
+      // Simulate a specific logged-in employee, e.g., 'Budi Santoso' (user '1')
+      // or an approver like 'Citra Lestari' (user '2')
+      // For this demo, we'll default to Budi Santoso.
       setCurrentUser(users.find(u => u.id === '1'));
     }
   }, [pathname]);
 
   if (!currentUser) return null;
 
-  const logoutLink = currentUser?.role === 'Admin' ? '/admin/login' : '/login';
-  const profileName = currentUser?.name || 'User';
-  const profileNip = currentUser?.nip || '123456789';
-  const profileAvatar = currentUser?.avatar || 'https://picsum.photos/seed/user/100/100';
-
+  const logoutLink = currentUser.role === 'Admin' ? '/admin/login' : '/login';
+  const profileName = currentUser.name || 'User';
+  const profileAvatar = currentUser.avatar || 'https://picsum.photos/seed/user/100/100';
 
   return (
     <DropdownMenu>

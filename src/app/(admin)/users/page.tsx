@@ -46,7 +46,7 @@ import {
 import type { User } from '@/types';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { formatDistanceToNow, differenceInYears, differenceInMonths, differenceInDays } from 'date-fns';
+import { formatDistanceToNow, differenceInYears, differenceInMonths, differenceInDays, format } from 'date-fns';
 
 export default function UsersPage() {
   const [users, setUsers] = useState<User[]>(initialUsers);
@@ -380,7 +380,7 @@ export default function UsersPage() {
               </div>
                <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="edit-joinDate" className="text-right">Tgl. Masuk</Label>
-                <Input id="edit-joinDate" type="date" value={editingUser.joinDate ? editingUser.joinDate.toISOString().split('T')[0] : ''} onChange={(e) => handleInputChange('joinDate', e.target.value, true)} className="col-span-3" />
+                <Input id="edit-joinDate" type="date" value={editingUser.joinDate ? format(editingUser.joinDate, 'yyyy-MM-dd') : ''} onChange={(e) => handleInputChange('joinDate', e.target.value, true)} className="col-span-3" />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="edit-department" className="text-right">Department</Label>

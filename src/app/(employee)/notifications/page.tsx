@@ -22,71 +22,43 @@ import {
   getLeaveTypeById,
   users,
 } from '@/lib/data';
-import { usePathname } from 'next/navigation';
 
 export default function NotificationsPage() {
   const [notifData, setNotifData] = useState<Notification[]>(initialNotifications);
-  const pathname = usePathname();
   
   const [currentUser, setCurrentUser] = useState<User | undefined>();
 
   useEffect(() => {
-    // Determine user based on path to simulate auth context
-    if (pathname.startsWith('/admin') || pathname === '/') {
-      setCurrentUser(users.find(u => u.role === 'Admin'));
-    } else {
-      // For employee view, let's use user '1' for personal notifs
-      // and user '2' (a dept head) for approval notifs.
-      // In a real app, this would be a single authenticated user.
-      // We'll use user '1' for this demo.
-      setCurrentUser(users.find(u => u.id === '1'));
-    }
-  }, [pathname]);
+    // For employee view, we can simulate user '1' or '2' (approver)
+    // In a real app, this would be a single authenticated user.
+    // We'll use user '1' for this demo to show personal notifications.
+    setCurrentUser(users.find(u => u.id === '1'));
+  }, []);
 
 
   const enrichedNotifications = useMemo(() => {
     if (!currentUser) return [];
 
-    let filteredNotifications;
+    const headedDepartments = getDepartmentById(currentUser.departmentId) ? [getDepartmentById(currentUser.departmentId)!].filter(d => d.headId === currentUser.id) : [];
+    const headedDeptIds = headedDepartments.map(d => d.id);
+    
+    const filteredNotifications = notifData.filter(n => {
+      // Is the notification for me directly?
+      if (n.userId === currentUser.id) return true;
 
-    if (currentUser.role === 'Admin') {
-      // Admin sees all notifications
-      filteredNotifications = notifData;
-    } else {
-      // Employee/Approver sees their own notifications + approval requests
-      const headedDepartments = getDepartmentById(currentUser.departmentId) ? [getDepartmentById(currentUser.departmentId)!].filter(d => d.headId === currentUser.id) : [];
-      const headedDeptIds = headedDepartments.map(d => d.id);
-      
-      filteredNotifications = notifData.filter(n => {
-        // Is the notification for me directly?
-        if (n.userId === currentUser.id) return true;
-
-        // Am I an approver for this notification's related request?
-        const request = getLeaveRequestById(n.leaveRequestId || '');
-        if (request) {
-          const employee = getUserById(request.userId);
-          if(employee && headedDeptIds.includes(employee.departmentId)) {
-            // This is a notification for a request in my department
-            return true;
-          }
-        }
-        return false;
-      });
-    }
-
-    return filteredNotifications.map(notification => {
-      let finalMessage = notification.message;
-      const request = getLeaveRequestById(notification.leaveRequestId || '');
+      // Am I an approver for this notification's related request?
+      const request = getLeaveRequestById(n.leaveRequestId || '');
       if (request) {
         const employee = getUserById(request.userId);
-        const approver = employee ? getDepartmentById(employee.departmentId) : undefined;
-
-        if (notification.type === 'warning' && (currentUser?.role === 'Admin' || (approver && approver.headId === currentUser?.id))) {
-            finalMessage = `${employee?.name} mengajukan cuti sakit. Ingatkan untuk mengisi form surat keterangan.`;
+        if(employee && headedDeptIds.includes(employee.departmentId)) {
+          // This is a notification for a request in my department
+          return true;
         }
       }
-      return { ...notification, message: finalMessage };
+      return false;
     });
+
+    return filteredNotifications;
   }, [notifData, currentUser]);
 
 
@@ -99,30 +71,6 @@ export default function NotificationsPage() {
     setNotifData(notifData.map(n => ({...n, isRead: true})));
     initialNotifications.forEach(n => n.isRead = true);
   }
-
-  const handleWhatsAppNotification = (notification: Notification) => {
-    if (!notification.leaveRequestId) return;
-
-    const leaveRequest = getLeaveRequestById(notification.leaveRequestId);
-    if (!leaveRequest) return;
-    
-    const employee = getUserById(leaveRequest.userId);
-    if (!employee) return;
-    
-    const department = getDepartmentById(employee.departmentId);
-    if (!department) return;
-
-    const approver = getUserById(department.headId);
-    if (!approver || !approver.phone) {
-      alert('Approver contact not found.');
-      return;
-    }
-    
-    const leaveType = getLeaveTypeById(leaveRequest.leaveTypeId);
-    const message = `Yth. Bapak/Ibu ${approver.name},\n\nDengan ini kami memberitahukan bahwa ada pengajuan cuti dari Sdr/i ${employee.name} (NIP: ${employee.nip}) yang memerlukan persetujuan Anda.\n\nDetail pengajuan:\nJenis Cuti: ${leaveType?.name}\nTanggal: ${format(leaveRequest.startDate, 'dd-MM-yyyy')} s/d ${format(leaveRequest.endDate, 'dd-MM-yyyy')}\n\nMohon untuk segera ditindaklanjuti. Terima kasih.\n\n- Admin Kepegawaian -`;
-    const whatsappUrl = `https://wa.me/${approver.phone}?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
-  };
 
   const notificationVariants = {
     info: 'bg-blue-100 dark:bg-blue-900/50',
@@ -144,7 +92,7 @@ export default function NotificationsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>All Notifications</CardTitle>
+          <CardTitle>Your Notifications</CardTitle>
           <CardDescription>
             Here are all your recent notifications.
           </CardDescription>
@@ -173,12 +121,6 @@ export default function NotificationsPage() {
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
-                    {currentUser?.role === 'Admin' && notification.type === 'warning' && (
-                       <Button variant="outline" size="sm" onClick={() => handleWhatsAppNotification(notification)}>
-                          <MessageSquare className="mr-2 h-4 w-4" />
-                          Notify Approver
-                       </Button>
-                    )}
                     {!notification.isRead && (
                       <Button variant="ghost" size="sm" onClick={() => markAsRead(notification.id)}>
                         Mark as read

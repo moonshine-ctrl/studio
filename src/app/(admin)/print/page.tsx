@@ -39,7 +39,7 @@ export default function PrintPage() {
 
   const handlePrint = (request: LeaveRequest, user: User) => {
     const letterNumber = letterNumbers[request.id] || '';
-    const printUrl = `/print/${request.id}?letterNumber=${encodeURIComponent(letterNumber)}`;
+    const printUrl = `/admin/print/${request.id}?letterNumber=${encodeURIComponent(letterNumber)}`;
     window.open(printUrl, '_blank');
   };
 
@@ -71,7 +71,7 @@ export default function PrintPage() {
                 const leaveType = getLeaveTypeById(request.leaveTypeId);
                 if (!user || !leaveType) return null;
 
-                const isPrintable = request.status === 'Approved' || (leaveType.name === 'Sick' && request.status !== 'Rejected');
+                const isPrintable = request.status === 'Approved' || (leaveType.name === 'Cuti Sakit' && request.status !== 'Rejected');
 
                 return (
                   <TableRow key={request.id}>
