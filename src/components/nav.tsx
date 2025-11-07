@@ -9,6 +9,7 @@ import {
   Bell,
   Printer,
   ClipboardPlus,
+  ClipboardCheck,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -24,6 +25,7 @@ import { users } from '@/lib/data';
 
 const adminLinks = [
   { href: '/', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/approvals', label: 'Approvals', icon: ClipboardCheck },
   { href: '/users', label: 'Users', icon: Users },
   { href: '/departments', label: 'Departments', icon: Building },
   { href: '/notifications', label: 'Notifications', icon: Bell },
@@ -35,6 +37,8 @@ const adminLinks = [
 const employeeLinks = [
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/ajukan-cuti', label: 'Ajukan Cuti', icon: ClipboardPlus },
+    { href: '/approvals', label: 'Approvals', icon: ClipboardCheck },
+    { href: '/notifications', label: 'Notifications', icon: Bell },
 ];
 
 export function Nav() {

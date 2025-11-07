@@ -15,69 +15,24 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   Hourglass,
   CheckCircle,
   XCircle,
   MoreHorizontal,
-  FilePen,
-  Trash2,
-  PlusCircle,
-  Calendar as CalendarIcon,
-  Upload,
-  Check,
-  X,
 } from 'lucide-react';
 import {
   getDepartmentById,
   getLeaveTypeById,
   getUserById,
   leaveRequests as initialLeaveRequests,
-  leaveTypes,
-  users,
 } from '@/lib/data';
 import { format } from 'date-fns';
-import { useState, ChangeEvent } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogFooter,
-} from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import type { LeaveRequest, User } from '@/types';
-import { cn } from '@/lib/utils';
-import { useToast } from '@/hooks/use-toast';
-import { DateRange } from 'react-day-picker';
+import { useState } from 'react';
+import type { LeaveRequest } from '@/types';
 
-const statusIcons = {
-  Pending: <Hourglass className="h-4 w-4 text-yellow-500" />,
-  Approved: <CheckCircle className="h-4 w-4 text-green-500" />,
-  Rejected: <XCircle className="h-4 w-4 text-red-500" />,
-};
 
 const statusColors: { [key: string]: 'default' | 'secondary' | 'destructive' | 'outline' } = {
   Pending: 'secondary',
@@ -87,141 +42,17 @@ const statusColors: { [key: string]: 'default' | 'secondary' | 'destructive' | '
 
 export default function DashboardPage() {
   const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>(initialLeaveRequests);
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editingRequest, setEditingRequest] = useState<LeaveRequest | null>(null);
-  const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
-  const [selectedRequestForUpload, setSelectedRequestForUpload] = useState<LeaveRequest | null>(null);
-
-  const { toast } = useToast();
   
-  // This should come from an auth context in a real app.
-  // We'll set the current user to an employee who is a department head to test approval logic.
-  const [currentUser, setCurrentUser] = useState<User | undefined>(users.find(u => u.id === '2'));
-
-
-  const emptyForm: Partial<LeaveRequest> & { startDate?: Date; endDate?: Date } = {
-    userId: currentUser?.id,
-    leaveTypeId: 'annual',
-    startDate: undefined,
-    endDate: undefined,
-    days: 1,
-    reason: '',
-    status: 'Pending',
-  };
-
-  const [formState, setFormState] = useState(emptyForm);
-
   const stats = {
     pending: leaveRequests.filter((r) => r.status === 'Pending').length,
     approved: leaveRequests.filter((r) => r.status === 'Approved').length,
     total: leaveRequests.length,
   };
 
-  const handleOpenForm = (request: LeaveRequest | null = null) => {
-    if (request) {
-      setEditingRequest(request);
-      setFormState({
-        ...request,
-        startDate: request.startDate,
-        endDate: request.endDate,
-      });
-    } else {
-      setEditingRequest(null);
-      setFormState(emptyForm);
-    }
-    setIsFormOpen(true);
-  };
-
-  const handleDateSelect = (range: DateRange | undefined) => {
-    setFormState({ ...formState, startDate: range?.from, endDate: range?.to });
-  };
-  
-  const handleFormChange = (field: keyof typeof formState, value: string | number) => {
-    setFormState({ ...formState, [field]: value });
-  };
-
-  const handleSubmit = () => {
-    if (!formState.startDate || !formState.endDate || !formState.days || !formState.reason) {
-      toast({
-        variant: 'destructive',
-        title: 'Error',
-        description: 'Please fill all required fields.',
-      });
-      return;
-    }
-
-    if (editingRequest) {
-      const updatedRequest: LeaveRequest = {
-        ...editingRequest,
-        ...formState,
-        startDate: formState.startDate,
-        endDate: formState.endDate,
-        days: Number(formState.days),
-      };
-      setLeaveRequests(leaveRequests.map(r => r.id === updatedRequest.id ? updatedRequest : r));
-      toast({ title: 'Success', description: 'Leave request updated.' });
-    } else {
-      const newRequest: LeaveRequest = {
-        id: `req-${Date.now()}`,
-        userId: formState.userId!,
-        leaveTypeId: formState.leaveTypeId!,
-        startDate: formState.startDate,
-        endDate: formState.endDate,
-        days: Number(formState.days),
-        reason: formState.reason!,
-        status: 'Pending',
-        createdAt: new Date(),
-      };
-      setLeaveRequests([newRequest, ...leaveRequests]);
-      toast({ title: 'Success', description: 'Leave request submitted.' });
-    }
-    setIsFormOpen(false);
-  };
-
-  const handleOpenUploadDialog = (request: LeaveRequest) => {
-    setSelectedRequestForUpload(request);
-    setIsUploadDialogOpen(true);
-  };
-
-  const handleFileUpload = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0] && selectedRequestForUpload) {
-      const file = event.target.files[0];
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const fileDataUrl = e.target?.result as string;
-        setLeaveRequests(leaveRequests.map(r => 
-          r.id === selectedRequestForUpload.id 
-            ? { ...r, medicalCertificate: fileDataUrl } 
-            : r
-        ));
-        toast({ title: 'Success', description: 'Medical certificate uploaded.' });
-        setIsUploadDialogOpen(false);
-        setSelectedRequestForUpload(null);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleApprove = (requestId: string) => {
-    setLeaveRequests(leaveRequests.map(r => r.id === requestId ? { ...r, status: 'Approved' } : r));
-    toast({ title: 'Request Approved', description: 'The leave request has been approved.' });
-  };
-  
-  const handleReject = (requestId: string) => {
-    setLeaveRequests(leaveRequests.map(r => r.id === requestId ? { ...r, status: 'Rejected' } : r));
-    toast({ variant: 'destructive', title: 'Request Rejected', description: 'The leave request has been rejected.' });
-  };
-  
-
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold font-headline">Dashboard</h1>
-        {currentUser?.role !== 'Admin' && (
-          <Button onClick={() => handleOpenForm()}>
-            <PlusCircle className="mr-2 h-4 w-4" /> Ajukan Cuti
-          </Button>
-        )}
+        <h1 className="text-2xl font-bold font-headline">Admin Dashboard</h1>
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
@@ -278,10 +109,6 @@ export default function DashboardPage() {
                 <TableHead>Dates</TableHead>
                 <TableHead>Days</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead className="hidden sm:table-cell">Surat Sakit</TableHead>
-                <TableHead>
-                  <span className="sr-only">Actions</span>
-                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -290,8 +117,6 @@ export default function DashboardPage() {
                 const leaveType = getLeaveTypeById(request.leaveTypeId);
                 if (!user || !leaveType) return null;
                 const department = getDepartmentById(user.departmentId);
-
-                const canApprove = currentUser?.role === 'Employee' && department?.headId === currentUser.id && request.status === 'Pending';
 
                 return (
                   <TableRow key={request.id}>
@@ -319,51 +144,6 @@ export default function DashboardPage() {
                         {request.status}
                       </Badge>
                     </TableCell>
-                    <TableCell className="hidden sm:table-cell">
-                      {leaveType.name === 'Sick' ? (
-                        request.medicalCertificate ? (
-                          <Badge variant="secondary">Uploaded</Badge>
-                        ) : (
-                          <Badge variant="outline">Not Set</Badge>
-                        )
-                      ) : (
-                        <span className="text-muted-foreground">N/A</span>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button aria-haspopup="true" size="icon" variant="ghost">
-                            <MoreHorizontal className="h-4 w-4" />
-                            <span className="sr-only">Toggle menu</span>
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                           {canApprove && (
-                            <>
-                              <DropdownMenuItem onClick={() => handleApprove(request.id)}>
-                                <Check className="mr-2 h-4 w-4" /> Approve
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleReject(request.id)} className="text-destructive focus:text-destructive">
-                                <X className="mr-2 h-4 w-4" /> Reject
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                            </>
-                          )}
-                          {leaveType.name === 'Sick' && (
-                            <DropdownMenuItem onClick={() => handleOpenUploadDialog(request)}>
-                              <Upload className="mr-2 h-4 w-4" /> Upload Surat
-                            </DropdownMenuItem>
-                          )}
-                          <DropdownMenuItem onClick={() => handleOpenForm(request)}>
-                            <FilePen className="mr-2 h-4 w-4" /> Edit
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="text-destructive focus:text-destructive">
-                            <Trash2 className="mr-2 h-4 w-4" /> Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
                   </TableRow>
                 );
               })}
@@ -371,137 +151,6 @@ export default function DashboardPage() {
           </Table>
         </CardContent>
       </Card>
-      <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-        <DialogContent className="sm:max-w-[480px]">
-          <DialogHeader>
-            <DialogTitle>{editingRequest ? 'Edit' : 'Ajukan'} Cuti</DialogTitle>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="employee" className="text-right">Karyawan</Label>
-              <Select
-                value={formState.userId}
-                onValueChange={(value) => handleFormChange('userId', value)}
-                disabled={currentUser?.role !== 'Admin' || !!editingRequest}
-              >
-                <SelectTrigger id="employee" className="col-span-3">
-                  <SelectValue placeholder="Pilih Karyawan" />
-                </SelectTrigger>
-                <SelectContent>
-                  {users.map(user => (
-                    <SelectItem key={user.id} value={user.id}>{user.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="leave-type" className="text-right">Jenis Cuti</Label>
-              <Select 
-                value={formState.leaveTypeId}
-                onValueChange={(value) => handleFormChange('leaveTypeId', value)}
-              >
-                <SelectTrigger id="leave-type" className="col-span-3">
-                  <SelectValue placeholder="Pilih Jenis Cuti" />
-                </SelectTrigger>
-                <SelectContent>
-                  {leaveTypes.map(type => (
-                    <SelectItem key={type.id} value={type.id}>{type.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="date-range" className="text-right">Tanggal</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    id="date-range"
-                    variant="outline"
-                    className={cn(
-                      'col-span-3 justify-start text-left font-normal',
-                      !formState.startDate && 'text-muted-foreground'
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {formState.startDate ? (
-                      formState.endDate ? (
-                        <>
-                          {format(formState.startDate, 'LLL dd, y')} -{' '}
-                          {format(formState.endDate, 'LLL dd, y')}
-                        </>
-                      ) : (
-                        format(formState.startDate, 'LLL dd, y')
-                      )
-                    ) : (
-                      <span>Pilih tanggal</span>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    initialFocus
-                    mode="range"
-                    defaultMonth={formState.startDate}
-                    selected={{ from: formState.startDate, to: formState.endDate }}
-                    onSelect={handleDateSelect}
-                    numberOfMonths={2}
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="days" className="text-right">Jumlah Hari</Label>
-                <Input
-                    id="days"
-                    type="number"
-                    value={formState.days}
-                    onChange={(e) => handleFormChange('days', parseInt(e.target.value, 10) || 0)}
-                    className="col-span-3"
-                    min="1"
-                />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="reason" className="text-right">Alasan</Label>
-              <Textarea
-                id="reason"
-                value={formState.reason}
-                onChange={(e) => handleFormChange('reason', e.target.value)}
-                className="col-span-3"
-                placeholder="Tuliskan alasan cuti Anda"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsFormOpen(false)}>Batal</Button>
-            <Button onClick={handleSubmit}>Kirim</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Upload Surat Keterangan Sakit</DialogTitle>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="certificate" className="text-right">
-                File
-              </Label>
-              <Input
-                id="certificate"
-                type="file"
-                className="col-span-3"
-                onChange={handleFileUpload}
-                accept="image/png, image/jpeg, application/pdf"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsUploadDialogOpen(false)}>Cancel</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

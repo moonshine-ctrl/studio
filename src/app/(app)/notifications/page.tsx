@@ -27,33 +27,41 @@ export default function NotificationsPage() {
   const [notifData, setNotifData] = useState<Notification[]>(initialNotifications);
   
   // This should come from auth context in a real app
-  const [currentUser, setCurrentUser] = useState<User | undefined>(users.find(u => u.role === 'Admin'));
+  const [currentUser, setCurrentUser] = useState<User | undefined>(users.find(u => u.id === '2'));
 
   const enrichedNotifications = useMemo(() => {
-    return notifData.map(notification => {
+    // Filter notifications for the current user (or all for admin)
+    const userNotifications = currentUser?.role === 'Admin' 
+      ? notifData 
+      : notifData.filter(n => n.userId === currentUser?.id || (
+          n.type === 'warning' && (getUserById(getLeaveRequestById(n.leaveRequestId!)?.userId || '')?.departmentId === departments.find(d => d.headId === currentUser?.id)?.id)
+      ));
+
+    return userNotifications.map(notification => {
       let message = notification.message;
       if (notification.type === 'warning' && notification.leaveRequestId) {
         const leaveRequest = getLeaveRequestById(notification.leaveRequestId);
         if (leaveRequest) {
           const employee = getUserById(leaveRequest.userId);
-          const department = employee ? getDepartmentById(employee.departmentId) : undefined;
-          const approver = department ? getUserById(department.headId) : undefined;
-          if (approver) {
-            message = `Permintaan cuti dari ${employee?.name} menunggu persetujuan Anda, ${approver.name}.`;
+          const approver = getUserById(notification.userId); // Approver is the recipient of the warning
+          if (employee && approver) {
+             message = `Permintaan cuti dari ${employee?.name} menunggu persetujuan Anda.`;
           }
         }
       }
       return { ...notification, message };
     });
-  }, [notifData]);
+  }, [notifData, currentUser]);
 
 
   const markAsRead = (id: string) => {
     setNotifData(notifData.map(n => n.id === id ? {...n, isRead: true} : n));
+    initialNotifications.find(n => n.id === id)!.isRead = true;
   }
 
   const markAllAsRead = () => {
     setNotifData(notifData.map(n => ({...n, isRead: true})));
+    initialNotifications.forEach(n => n.isRead = true);
   }
 
   const handleWhatsAppNotification = (notification: Notification) => {
@@ -90,10 +98,12 @@ export default function NotificationsPage() {
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold font-headline">Notifications</h1>
-        <Button onClick={markAllAsRead}>
-          <Check className="mr-2 h-4 w-4" />
-          Mark all as read
-        </Button>
+        {enrichedNotifications.some(n => !n.isRead) && (
+            <Button onClick={markAllAsRead}>
+                <Check className="mr-2 h-4 w-4" />
+                Mark all as read
+            </Button>
+        )}
       </div>
 
       <Card>
