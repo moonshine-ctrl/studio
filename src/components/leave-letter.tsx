@@ -307,8 +307,8 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td colSpan={2} className={`${styles.cell} p-0`}></td>
-                                    <td colSpan={2} className={`${styles.cell} text-center align-top p-0`} style={{ height: '140px' }}>
+                                    <td colSpan={3} className={`${styles.cell} p-0 w-2/3`}></td>
+                                    <td className={`${styles.cell} text-center align-top p-0 w-1/3`} style={{ height: '140px' }}>
                                         {approver && <SignatureBlock user={approver} title="Atasan Langsung," signatureDate={request.createdAt} />}
                                     </td>
                                 </tr>
@@ -341,8 +341,8 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td colSpan={2} className={`${styles.cell} p-0`}></td>
-                                    <td colSpan={2} className={`${styles.cell} text-center align-top p-0`} style={{ height: '140px' }}>
+                                    <td colSpan={3} className={`${styles.cell} p-0 w-2/3`}></td>
+                                    <td className={`${styles.cell} text-center align-top p-0 w-1/3`} style={{ height: '140px' }}>
                                          {headOfAgency && <SignatureBlock user={headOfAgency} signatureDate={request.createdAt} />}
                                     </td>
                                 </tr>
