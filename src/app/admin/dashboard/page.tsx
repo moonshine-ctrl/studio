@@ -24,6 +24,7 @@ import {
   MoreHorizontal,
   FileWarning,
   Ban,
+  PauseCircle,
 } from 'lucide-react';
 import {
   getDepartmentById,
@@ -51,11 +52,20 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-const statusColors: { [key: string]: 'default' | 'secondary' | 'destructive' | 'outline' } = {
+const statusColors: { [key: string]: 'default' | 'secondary' | 'destructive' | 'outline' | 'warning' } = {
   Pending: 'secondary',
   Approved: 'default',
   Rejected: 'destructive',
   Cancelled: 'outline',
+  Suspended: 'warning',
+};
+
+const statusIcons: { [key: string]: React.ReactNode } = {
+  Pending: <Hourglass className="h-4 w-4" />,
+  Approved: <CheckCircle className="h-4 w-4" />,
+  Rejected: <XCircle className="h-4 w-4" />,
+  Cancelled: <Ban className="h-4 w-4" />,
+  Suspended: <PauseCircle className="h-4 w-4" />,
 };
 
 export default function DashboardPage() {
@@ -99,8 +109,8 @@ export default function DashboardPage() {
 
     const leaveType = getLeaveTypeById(request.leaveTypeId);
 
-    if (leaveType?.name === 'Cuti Tahunan' && (request.status === 'Approved')) {
-      // Restore leave balance only for annual leave that was already approved
+    if (leaveType?.name === 'Cuti Tahunan' && (request.status === 'Approved' || request.status === 'Suspended')) {
+      // Restore leave balance only for annual leave that was already approved or suspended
       const updatedUsers = users.map(u =>
         u.id === userToUpdate.id
           ? { ...u, annualLeaveBalance: u.annualLeaveBalance + request.days }
@@ -216,7 +226,7 @@ export default function DashboardPage() {
                   const leaveType = getLeaveTypeById(request.leaveTypeId);
                   if (!user || !leaveType) return null;
                   const department = getDepartmentById(user.departmentId);
-                  const isCancellable = request.status === 'Pending' || request.status === 'Approved';
+                  const isCancellable = request.status === 'Pending' || request.status === 'Approved' || request.status === 'Suspended';
 
                   return (
                     <TableRow key={request.id}>
@@ -240,7 +250,8 @@ export default function DashboardPage() {
                       </TableCell>
                       <TableCell>{request.days}</TableCell>
                       <TableCell>
-                        <Badge variant={statusColors[request.status]}>
+                        <Badge variant={statusColors[request.status]} className="flex items-center gap-1 w-fit">
+                          {statusIcons[request.status]}
                           {request.status}
                         </Badge>
                       </TableCell>

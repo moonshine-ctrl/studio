@@ -18,13 +18,13 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Check, X } from 'lucide-react';
+import { Check, X, PauseCircle } from 'lucide-react';
 import {
   getDepartmentById,
   getLeaveTypeById,
   getUserById,
   leaveRequests as initialLeaveRequests,
-  departments as initialDepartments,
+  users as initialUsers,
   users,
   logHistory,
 } from '@/lib/data';
@@ -35,6 +35,7 @@ import { useToast } from '@/hooks/use-toast';
 
 export default function ApprovalsPage() {
   const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>(initialLeaveRequests);
+  const [allUsers, setAllUsers] = useState<User[]>(initialUsers);
   const { toast } = useToast();
   const [currentUser, setCurrentUser] = useState<User | undefined>();
 
@@ -61,7 +62,7 @@ export default function ApprovalsPage() {
 
   }, [leaveRequests, currentUser]);
 
-  const handleDecision = (requestId: string, status: 'Approved' | 'Rejected') => {
+  const handleDecision = (requestId: string, status: 'Approved' | 'Rejected' | 'Suspended') => {
     const updatedRequests = leaveRequests.map(r => r.id === requestId ? { ...r, status } : r);
     setLeaveRequests(updatedRequests);
     
@@ -70,7 +71,20 @@ export default function ApprovalsPage() {
 
     const requestDetails = initialLeaveRequests.find(r => r.id === requestId);
     const employee = requestDetails ? getUserById(requestDetails.userId) : null;
+    const leaveType = requestDetails ? getLeaveTypeById(requestDetails.leaveTypeId) : null;
 
+    // Restore leave balance if suspended and it's an annual leave
+    if (status === 'Suspended' && employee && leaveType?.name === 'Cuti Tahunan') {
+        const updatedUsers = allUsers.map(u => 
+            u.id === employee.id 
+            ? { ...u, annualLeaveBalance: u.annualLeaveBalance + requestDetails.days } 
+            : u
+        );
+        setAllUsers(updatedUsers);
+        const originalUser = initialUsers.find(u => u.id === employee.id);
+        if (originalUser) originalUser.annualLeaveBalance += requestDetails.days;
+    }
+    
     // Add to log
     logHistory.unshift({
       id: `log-${Date.now()}`,
@@ -143,6 +157,9 @@ export default function ApprovalsPage() {
                         <div className="flex gap-2">
                            <Button size="sm" onClick={() => handleDecision(request.id, 'Approved')}>
                              <Check className="mr-2 h-4 w-4" /> Approve
+                           </Button>
+                           <Button size="sm" variant="outline" className="text-yellow-600 border-yellow-500 hover:bg-yellow-50 hover:text-yellow-700" onClick={() => handleDecision(request.id, 'Suspended')}>
+                             <PauseCircle className="mr-2 h-4 w-4" /> Suspend
                            </Button>
                            <Button size="sm" variant="destructive" onClick={() => handleDecision(request.id, 'Rejected')}>
                              <X className="mr-2 h-4 w-4" /> Reject

@@ -24,6 +24,7 @@ import {
   Hourglass,
   XCircle,
   Ban,
+  PauseCircle,
 } from 'lucide-react';
 import {
   leaveRequests as initialLeaveRequests,
@@ -37,11 +38,12 @@ import { useState, useMemo, useEffect } from 'react';
 import type { LeaveRequest, User } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 
-const statusColors: { [key: string]: 'default' | 'secondary' | 'destructive' | 'outline' } = {
+const statusColors: { [key: string]: 'default' | 'secondary' | 'destructive' | 'outline' | 'warning' } = {
   Pending: 'secondary',
   Approved: 'default',
   Rejected: 'destructive',
   Cancelled: 'outline',
+  Suspended: 'warning',
 };
 
 const statusIcons: { [key: string]: React.ReactNode } = {
@@ -49,6 +51,7 @@ const statusIcons: { [key: string]: React.ReactNode } = {
   Approved: <CheckCircle className="h-4 w-4 text-green-500" />,
   Rejected: <XCircle className="h-4 w-4 text-red-500" />,
   Cancelled: <Ban className="h-4 w-4 text-gray-500" />,
+  Suspended: <PauseCircle className="h-4 w-4 text-yellow-600" />,
 };
 
 export default function EmployeeDashboardPage() {

@@ -141,16 +141,14 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                          <table className={styles.table}>
                             <tbody>
                                 <tr>
-                                    <td className={`${styles.cell} w-1/2`}>1. Cuti Tahunan <span className="float-right font-bold text-lg pr-2">{leaveTypeCheck('Cuti Tahunan')}</span></td>
-                                    <td className={`${styles.cell} w-1/2`}>2. Cuti Besar <span className="float-right font-bold text-lg pr-2">{leaveTypeCheck('Cuti Besar')}</span></td>
+                                    <td className={`${styles.cell} w-1/3`}>1. Cuti Tahunan <span className="float-right font-bold text-lg pr-2">{leaveTypeCheck('Cuti Tahunan')}</span></td>
+                                    <td className={`${styles.cell} w-1/3`}>2. Cuti Besar <span className="float-right font-bold text-lg pr-2">{leaveTypeCheck('Cuti Besar')}</span></td>
+                                    <td className={`${styles.cell} w-1/3`}>3. Cuti Sakit <span className="float-right font-bold text-lg pr-2">{leaveTypeCheck('Cuti Sakit')}</span></td>
                                 </tr>
                                  <tr>
-                                    <td className={styles.cell}>3. Cuti Melahirkan <span className="float-right font-bold text-lg pr-2">{leaveTypeCheck('Cuti Melahirkan')}</span></td>
-                                    <td className={styles.cell}>4. Cuti Karena Alasan Penting <span className="float-right font-bold text-lg pr-2">{leaveTypeCheck('Cuti Alasan Penting')}</span></td>
-                                </tr>
-                                <tr>
-                                     <td className={styles.cell}>5. Cuti di Luar Tanggungan Negara <span className="float-right font-bold text-lg pr-2">{leaveTypeCheck('Cuti di Luar Tanggungan Negara')}</span></td>
-                                     <td className={styles.cell}>6. Cuti Lainnya<span className="float-right font-bold text-lg pr-2">{leaveTypeCheck('Cuti Lainnya')}</span></td>
+                                    <td className={styles.cell}>4. Cuti Melahirkan <span className="float-right font-bold text-lg pr-2">{leaveTypeCheck('Cuti Melahirkan')}</span></td>
+                                    <td className={styles.cell}>5. Cuti Karena Alasan Penting <span className="float-right font-bold text-lg pr-2">{leaveTypeCheck('Cuti Alasan Penting')}</span></td>
+                                    <td className={styles.cell}>6. Cuti di Luar Tanggungan Negara <span className="float-right font-bold text-lg pr-2">{leaveTypeCheck('Cuti di Luar Tanggungan Negara')}</span></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -232,20 +230,20 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                                     <td className={`${styles.cell} border-t-0 border-l-0`}>2. Cuti Besar</td>
                                                     <td className={`${styles.cell} border-t-0 border-r-0 w-1/4`}></td>
                                                 </tr>
-                                                <tr>
-                                                    <td className={`${styles.cell} border-l-0`}>3. Cuti Melahirkan</td>
+                                                 <tr>
+                                                    <td className={`${styles.cell} border-l-0`}>3. Cuti Sakit</td>
                                                     <td className={`${styles.cell} border-r-0`}></td>
                                                 </tr>
                                                 <tr>
-                                                    <td className={`${styles.cell} border-l-0`}>4. Cuti Karena Alasan Penting</td>
+                                                    <td className={`${styles.cell} border-l-0`}>4. Cuti Melahirkan</td>
+                                                    <td className={`${styles.cell} border-r-0`}></td>
+                                                </tr>
+                                                <tr>
+                                                    <td className={`${styles.cell} border-l-0`}>5. Cuti Karena Alasan Penting</td>
                                                     <td className={`${styles.cell} border-r-0`}></td>
                                                 </tr>
                                                  <tr>
-                                                    <td className={`${styles.cell} border-l-0`}>5. Cuti di Luar Tanggungan Negara</td>
-                                                    <td className={`${styles.cell} border-r-0`}></td>
-                                                </tr>
-                                                <tr>
-                                                    <td className={`${styles.cell} border-b-0 border-l-0`}>6. Cuti Lainnya</td>
+                                                    <td className={`${styles.cell} border-b-0 border-l-0`}>6. Cuti di Luar Tanggungan Negara</td>
                                                     <td className={`${styles.cell} border-b-0 border-r-0`}></td>
                                                 </tr>
                                             </tbody>
@@ -290,16 +288,16 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                         <table className={styles.table}>
                             <tbody>
                                 <tr>
-                                    <td className={styles.cellCenter}>DISETUJUI</td>
+                                    <td className={styles.cellCenter}>DISETUJUI <span className='font-bold text-lg pl-2'>{request.status === 'Approved' ? '✓' : ''}</span></td>
                                     <td className={styles.cellCenter}>PERUBAHAN****</td>
-                                    <td className={styles.cellCenter}>DITANGGUHKAN****</td>
+                                    <td className={styles.cellCenter}>DITANGGUHKAN**** <span className='font-bold text-lg pl-2'>{request.status === 'Suspended' ? '✓' : ''}</span></td>
                                     <td className={`${styles.cell} w-1/3 text-center align-top`} rowSpan={2} style={{height: '140px'}}>
                                         {approver && <SignatureBlock user={approver} signatureDate={request.createdAt} />}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td colSpan={3} className={`${styles.cell} h-full align-top`}>
-                                         <span className='font-bold text-lg pl-2'>{request.status === 'Approved' ? '✓' : ''}</span>
+                                         <p>Ditolak: <span className='font-bold text-lg pl-2'>{request.status === 'Rejected' ? '✓' : ''}</span></p>
                                     </td>
                                 </tr>
                             </tbody>
@@ -312,16 +310,16 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                         <table className={styles.table}>
                             <tbody>
                                 <tr>
-                                    <td className={styles.cellCenter}>DISETUJUI</td>
+                                    <td className={styles.cellCenter}>DISETUJUI <span className='font-bold text-lg pl-2'>{request.status === 'Approved' ? '✓' : ''}</span></td>
                                     <td className={styles.cellCenter}>PERUBAHAN****</td>
-                                    <td className={styles.cellCenter}>DITANGGUHKAN****</td>
+                                    <td className={styles.cellCenter}>DITANGGUHKAN**** <span className='font-bold text-lg pl-2'>{request.status === 'Suspended' ? '✓' : ''}</span></td>
                                     <td className={`${styles.cell} w-1/3 text-center align-top`} rowSpan={2} style={{height: '140px'}}>
                                          {headOfAgency && <SignatureBlock user={headOfAgency} signatureDate={request.createdAt} />}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td colSpan={3} className={`${styles.cell} h-full align-top`}>
-                                        <span className='font-bold text-lg pl-2'>{request.status === 'Approved' ? '✓' : ''}</span>
+                                         <p>Ditolak: <span className='font-bold text-lg pl-2'>{request.status === 'Rejected' ? '✓' : ''}</span></p>
                                     </td>
                                 </tr>
                             </tbody>
