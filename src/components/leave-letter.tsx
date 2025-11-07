@@ -28,10 +28,10 @@ const PrintHeaderContent = () => (
         <div className="flex items-center justify-center gap-4">
              {settings.logoUrl && <Image src={settings.logoUrl} alt="Logo" width={70} height={70} className="object-contain" />}
             <div>
-                <h1 className="font-bold text-sm">{settings.letterhead[0]}</h1>
-                <h2 className="font-bold text-sm">{settings.letterhead[1]}</h2>
-                <h3 className="font-bold text-base">{settings.letterhead[2]}</h3>
-                <h3 className="font-bold text-lg">{settings.letterhead[3]}</h3>
+                <h1 className="font-bold text-base">{settings.letterhead[0]}</h1>
+                <h2 className="font-bold text-base">{settings.letterhead[1]}</h2>
+                <h3 className="font-bold text-lg">{settings.letterhead[2]}</h3>
+                <h3 className="font-bold text-xl">{settings.letterhead[3]}</h3>
                 <p className="text-xs">{settings.letterhead[4]}</p>
                 <p className="text-xs">{settings.letterhead[5]}</p>
             </div>
@@ -48,7 +48,7 @@ const SignatureBlock = ({ user, title, signatureDate }: { user?: User, title?: s
             <div>
                 <p className="mb-1">Solok, {dateToDisplay}</p>
             </div>
-            <div className="h-16 w-32 mx-auto my-1 flex items-center justify-center">
+            <div className="h-20 w-32 mx-auto my-1 flex items-center justify-center">
                 {user.qrCodeSignature ? (
                     <Image src={user.qrCodeSignature} alt="QR Code" width={80} height={80} className="mx-auto object-contain" />
                 ) : (
@@ -99,12 +99,12 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
             <div className="max-w-4xl mx-auto">
                 <PrintHeaderContent />
                 
-                <h4 className="font-bold text-center underline mb-1 mt-4">FORMULIR PERMINTAAN DAN PEMBERIAN CUTI</h4>
+                <h4 className="font-bold text-center underline mb-1 mt-2">FORMULIR PERMINTAAN DAN PEMBERIAN CUTI</h4>
                 <p className="text-center mb-2">Nomor: {letterNumber}</p>
 
-                <div className={styles.outerBorder}>
+                <div className={`${styles.outerBorder} mt-1`}>
                     {/* SECTION I */}
-                    <div className="section-container mt-2">
+                    <div className="section-container">
                         <p className="font-bold pl-1">I. DATA PEGAWAI</p>
                         <table className={styles.table}>
                             <tbody>
@@ -129,7 +129,7 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                     </div>
                     
                     {/* SECTION II */}
-                     <div className="section-container mt-2">
+                     <div className="section-container mt-1">
                         <p className="font-bold pl-1">II. JENIS CUTI YANG DIAMBIL **</p>
                          <table className={styles.table}>
                             <tbody>
@@ -150,13 +150,13 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                     </div>
 
                     {/* SECTION III */}
-                    <div className="section-container mt-2">
+                    <div className="section-container mt-1">
                         <p className="font-bold pl-1">III. ALASAN CUTI</p>
                         <div className={`${styles.cell} min-h-[2rem]`}>{request.reason}</div>
                     </div>
 
                     {/* SECTION IV */}
-                     <div className="section-container mt-2">
+                     <div className="section-container mt-1">
                         <p className="font-bold pl-1">IV. LAMANYA CUTI</p>
                         <table className={styles.table}>
                              <tbody>
@@ -173,7 +173,7 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                     </div>
                     
                     {/* SECTION V */}
-                    <div className="section-container mt-2">
+                    <div className="section-container mt-1">
                         <p className="font-bold pl-1">V. CATATAN CUTI ***</p>
                          <table className={styles.table}>
                             <tbody>
@@ -218,7 +218,7 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                     </div>
                     
                     {/* SECTION VI */}
-                    <div className="section-container mt-2">
+                    <div className="section-container mt-1">
                         <p className="font-bold pl-1">VI. ALAMAT SELAMA MENJALANKAN CUTI</p>
                          <table className={styles.table}>
                             <tbody>
@@ -240,7 +240,7 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                     </div>
                     
                     {/* SECTION VII */}
-                    <div className="section-container mt-2">
+                    <div className="section-container mt-1">
                         <p className="font-bold pl-1">VII. PERTIMBANGAN ATASAN LANGSUNG **</p>
                         <table className={styles.table}>
                             <tbody>
@@ -262,7 +262,7 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                     </div>
 
                     {/* SECTION VIII */}
-                    <div className="section-container mt-2">
+                    <div className="section-container mt-1">
                         <p className="font-bold pl-1">VIII. KEPUTUSAN PEJABAT YANG BERWENANG MEMBERIKAN CUTI **</p>
                         <table className={styles.table}>
                             <tbody>
@@ -281,7 +281,7 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                 </tr>
                             </tbody>
                         </table>
-                         <div className="pl-1 text-xs">
+                         <div className="pl-1 text-xs mt-1">
                            <p>CATATAN:</p>
                            <p>* Coret yang tidak perlu</p>
                            <p>** Pilih salah satu dengan memberi tanda centang (✓)</p>
