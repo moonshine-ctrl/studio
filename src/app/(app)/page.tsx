@@ -149,15 +149,9 @@ export default function DashboardPage() {
                     </TableCell>
                      <TableCell>
                        {leaveType?.name === 'Cuti Sakit' ? (
-                          request.attachment ? (
-                            <Badge variant="secondary" className="flex items-center gap-1 w-fit">
-                                <FileCheck2 className="h-3 w-3" /> Uploaded
-                            </Badge>
-                          ) : (
                             <Badge variant="outline" className="flex items-center gap-1 w-fit">
-                                <FileWarning className="h-3 w-3" /> Missing
+                                <FileWarning className="h-3 w-3" /> Via Form
                             </Badge>
-                          )
                        ) : (
                          <span className="text-muted-foreground">-</span>
                        )}

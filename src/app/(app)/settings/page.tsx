@@ -22,19 +22,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { departments, users } from '@/lib/data';
+import { departments, users, settings as appSettings } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { Input } from '@/components/ui/input';
+import { useState } from 'react';
 
 export default function SettingsPage() {
   const { toast } = useToast();
+  const [sickLeaveFormUrl, setSickLeaveFormUrl] = useState(appSettings.sickLeaveFormUrl);
 
   const handleSaveChanges = () => {
     toast({
       title: 'Changes Saved!',
-      description: 'Your approval flow configuration has been updated.',
+      description: 'Your settings have been updated.',
     });
   };
+  
+  const handleGeneralSave = () => {
+      // In a real app, you'd save this to a backend.
+      appSettings.sickLeaveFormUrl = sickLeaveFormUrl;
+      handleSaveChanges();
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -49,10 +58,22 @@ export default function SettingsPage() {
             <Card>
                 <CardHeader>
                     <CardTitle>General Settings</CardTitle>
-                    <CardDescription>General application settings will be here.</CardDescription>
+                    <CardDescription>Atur link eksternal dan konfigurasi umum aplikasi.</CardDescription>
                 </CardHeader>
-                <CardContent>
-                    <p className="text-muted-foreground">Coming soon.</p>
+                <CardContent className="space-y-6">
+                    <div className="space-y-2">
+                        <Label htmlFor="sick-leave-url">URL Google Form Surat Sakit</Label>
+                        <Input 
+                            id="sick-leave-url"
+                            value={sickLeaveFormUrl}
+                            onChange={(e) => setSickLeaveFormUrl(e.target.value)}
+                            placeholder="https://docs.google.com/forms/..."
+                        />
+                         <p className="text-xs text-muted-foreground">
+                            Tautan ini akan digunakan saat karyawan mengajukan cuti sakit.
+                        </p>
+                    </div>
+                    <Button onClick={handleGeneralSave}>Save General Settings</Button>
                 </CardContent>
             </Card>
         </TabsContent>

@@ -21,13 +21,14 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { Calendar as CalendarIcon } from 'lucide-react';
+import { Calendar as CalendarIcon, UploadCloud } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { DateRange } from 'react-day-picker';
 import { useToast } from '@/hooks/use-toast';
-import { leaveTypes, users, leaveRequests as initialLeaveRequests, notifications as initialNotifications, getLeaveTypeById } from '@/lib/data';
+import { leaveTypes, users, leaveRequests as initialLeaveRequests, notifications as initialNotifications, getLeaveTypeById, settings as appSettings } from '@/lib/data';
 import type { LeaveRequest, User, Notification } from '@/types';
+import Link from 'next/link';
 
 export default function AjukanCutiPage() {
   const [currentUser, setCurrentUser] = useState<User | undefined>(users.find(u => u.id === '1'));
@@ -36,14 +37,7 @@ export default function AjukanCutiPage() {
   const [leaveTypeId, setLeaveTypeId] = useState<string>('');
   const [reason, setReason] = useState('');
   const [days, setDays] = useState<number | string>('');
-  const [attachment, setAttachment] = useState<File | null>(null);
   const { toast } = useToast();
-
-  const handleAttachmentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setAttachment(e.target.files[0]);
-    }
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,7 +71,7 @@ export default function AjukanCutiPage() {
       reason: reason,
       status: 'Pending',
       createdAt: new Date(),
-      attachment: attachment ? attachment.name : undefined,
+      attachment: undefined, // Attachment handled externally
     };
 
     setLeaveRequests([newRequest, ...leaveRequests]);
@@ -86,11 +80,11 @@ export default function AjukanCutiPage() {
 
     // Notification logic for sick leave
     const selectedLeaveType = getLeaveTypeById(leaveTypeId);
-    if (selectedLeaveType?.name === 'Cuti Sakit' && !attachment) {
+    if (selectedLeaveType?.name === 'Cuti Sakit') {
       const userNotification: Notification = {
         id: `notif-${Date.now()}-user`,
         userId: currentUser!.id,
-        message: `Pengajuan cuti sakit Anda pada ${format(date.from, 'd MMM y')} menunggu unggahan surat keterangan dokter.`,
+        message: `Pengajuan cuti sakit Anda pada ${format(date.from, 'd MMM y')} menunggu pengisian formulir surat keterangan dokter.`,
         type: 'warning',
         isRead: false,
         createdAt: new Date(),
@@ -99,7 +93,7 @@ export default function AjukanCutiPage() {
       const adminNotification: Notification = {
         id: `notif-${Date.now()}-admin`,
         userId: 'admin', // Or dynamically find admin user
-        message: `${currentUser?.name} mengajukan cuti sakit tanpa surat keterangan.`,
+        message: `${currentUser?.name} mengajukan cuti sakit. Ingatkan untuk mengisi form surat keterangan.`,
         type: 'warning',
         isRead: false,
         createdAt: new Date(),
@@ -119,7 +113,6 @@ export default function AjukanCutiPage() {
     setLeaveTypeId('');
     setReason('');
     setDays('');
-    setAttachment(null);
   };
   
   const selectedLeaveTypeName = getLeaveTypeById(leaveTypeId)?.name;
@@ -208,14 +201,14 @@ export default function AjukanCutiPage() {
 
               {selectedLeaveTypeName === 'Cuti Sakit' && (
                 <div className="space-y-2">
-                    <Label htmlFor="attachment">Surat Keterangan Sakit (Opsional)</Label>
-                    <Input 
-                        id="attachment" 
-                        type="file" 
-                        onChange={handleAttachmentChange}
-                        accept="application/pdf,image/jpeg,image/png"
-                    />
-                    <p className="text-xs text-muted-foreground">Anda dapat mengunggah ini nanti jika diperlukan.</p>
+                    <Label htmlFor="attachment">Surat Keterangan Sakit</Label>
+                    <Button asChild variant="outline" className="w-full">
+                       <Link href={appSettings.sickLeaveFormUrl} target="_blank">
+                         <UploadCloud className="mr-2 h-4 w-4" />
+                         Unggah Surat via Form
+                       </Link>
+                    </Button>
+                    <p className="text-xs text-muted-foreground">Surat diunggah melalui Google Form. Anda bisa melengkapinya nanti.</p>
                 </div>
               )}
             </div>
@@ -237,7 +230,6 @@ export default function AjukanCutiPage() {
                     setLeaveTypeId('');
                     setReason('');
                     setDays('');
-                    setAttachment(null);
                 }}>
                     Batal
                 </Button>

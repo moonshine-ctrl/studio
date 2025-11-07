@@ -140,15 +140,9 @@ export default function EmployeeDashboardPage() {
                     </TableCell>
                      <TableCell>
                        {leaveType?.name === 'Cuti Sakit' ? (
-                          request.attachment ? (
-                            <Badge variant="secondary" className="flex items-center gap-1 w-fit">
-                                <FileCheck2 className="h-3 w-3" /> Terunggah
-                            </Badge>
-                          ) : (
                             <Badge variant="destructive" className="flex items-center gap-1 w-fit">
-                                <FileWarning className="h-3 w-3" /> Wajib
+                                <FileWarning className="h-3 w-3" /> Wajib via Form
                             </Badge>
-                          )
                        ) : (
                          <span className="text-muted-foreground">-</span>
                        )}
