@@ -36,8 +36,13 @@ export default function NotificationsPage() {
   const enrichedNotifications = useMemo(() => {
     if (!currentUser) return [];
 
-    // Admin should only see notifications where userId is 'admin'
-    return notifData.filter(n => n.userId === 'admin').sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+    // Admin sees all notifications
+    if (currentUser.role === 'Admin') {
+      return [...notifData].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+    }
+    
+    // Employee should only see notifications where userId is their own
+    return notifData.filter(n => n.userId === currentUser.id).sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
   }, [notifData, currentUser]);
 
@@ -49,16 +54,16 @@ export default function NotificationsPage() {
   }
 
   const markAllAsRead = () => {
-    const adminNotifIds = enrichedNotifications.map(n => n.id);
+    const notifIdsToMark = enrichedNotifications.map(n => n.id);
     
     // Update local state
     setNotifData(notifData.map(n => 
-        adminNotifIds.includes(n.id) ? {...n, isRead: true} : n
+        notifIdsToMark.includes(n.id) ? {...n, isRead: true} : n
     ));
     
     // Update master data
     initialNotifications.forEach(n => {
-        if (adminNotifIds.includes(n.id)) {
+        if (notifIdsToMark.includes(n.id)) {
             n.isRead = true;
         }
     });
