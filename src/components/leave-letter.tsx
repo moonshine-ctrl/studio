@@ -47,8 +47,7 @@ const SignatureBlock = ({ user, qrCode, name, nip, signatureDate, title, align =
 
     return (
         <div className={`text-${align}`}>
-            {title && <p className="mb-1">{title}</p>}
-            {!title && <p className="mb-1">{dateToDisplay}</p>}
+            <p className="mb-1">{dateToDisplay}</p>
             <div className="h-16 w-16 mx-auto my-1 flex items-center justify-center">
                 {signatureQr ? (
                     <Image src={signatureQr} alt="QR Code" width={64} height={64} className="mx-auto" />
@@ -79,9 +78,6 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
         }
         return `${months} bulan`;
     }
-
-    const allApprovers = approver ? [approver] : [];
-
 
     return (
         <div className="bg-white p-4 font-serif text-xs" id="print-area">
@@ -214,6 +210,11 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                     <td className={styles.cellCenter}>Keterangan</td>
                                 </tr>
                                 <tr>
+                                    <td className={styles.cellCenter}>{currentYear - 2}</td>
+                                    <td className={styles.cellCenter}>-</td>
+                                    <td className={styles.cell}></td>
+                                </tr>
+                                 <tr>
                                     <td className={styles.cellCenter}>{currentYear - 1}</td>
                                     <td className={styles.cellCenter}>-</td>
                                     <td className={styles.cell}></td>
@@ -225,6 +226,13 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                 </tr>
                             </tbody>
                         </table>
+                         <div className="pl-1">
+                            <p className="font-bold">2. Cuti Besar</p>
+                            <p className="font-bold">3. Cuti Sakit</p>
+                            <p className="font-bold">4. Cuti Melahirkan</p>
+                            <p className="font-bold">5. Cuti Karena Alasan Penting</p>
+                            <p className="font-bold">6. Cuti di Luar Tanggungan Negara</p>
+                        </div>
                     </div>
                     
                     {/* SECTION VI */}
@@ -240,8 +248,8 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                 <td className={`${styles.cell} w-1/3 align-top text-center`}>
                                     <div className='flex flex-col h-full'>
                                         <p>Hormat saya,</p>
-                                        <div className='flex-grow flex items-center justify-center'>
-                                            {user.qrCodeSignature && <Image src={user.qrCodeSignature} alt="QR Code" width={50} height={50} />}
+                                        <div className='flex-grow'>
+                                            {/* This div pushes the name to the bottom */}
                                         </div>
                                         <p className="underline font-bold">{user.name}</p>
                                         <p>NIP. {user.nip}</p>
@@ -294,6 +302,13 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                 </tr>
                             </tbody>
                         </table>
+                         <div className="pl-1 text-xs">
+                           <p>CATATAN:</p>
+                           <p>* Coret yang tidak perlu</p>
+                           <p>** Pilih salah satu dengan memberi tanda centang (✓)</p>
+                           <p>*** diisi oleh pejabat yang menangani bidang kepegawaian sebelum surat permohonan cuti diserahkan kepada pejabat yang berwenang memberikan cuti</p>
+                           <p>**** diberi tanda centang dan alasannya</p>
+                        </div>
                     </div>
                 </div>
             </div>
