@@ -21,7 +21,7 @@ export type Department = {
 
 export type LeaveType = {
   id: string;
-  name: 'Annual' | 'Sick' | 'Maternity' | 'Important Reason' | 'Unpaid' | 'Other';
+  name: 'Cuti Tahunan' | 'Cuti Besar' | 'Cuti Melahirkan' | 'Cuti Alasan Penting' | 'Cuti di Luar Tanggungan Negara' | 'Cuti Lainnya';
 };
 
 export type LeaveRequest = {

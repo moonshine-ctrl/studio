@@ -23,7 +23,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { format, differenceInDays } from 'date-fns';
+import { format } from 'date-fns';
 import { DateRange } from 'react-day-picker';
 import { useToast } from '@/hooks/use-toast';
 import { leaveTypes, users, leaveRequests as initialLeaveRequests } from '@/lib/data';
@@ -35,11 +35,12 @@ export default function AjukanCutiPage() {
   const [date, setDate] = useState<DateRange | undefined>();
   const [leaveTypeId, setLeaveTypeId] = useState<string>('');
   const [reason, setReason] = useState('');
+  const [days, setDays] = useState<number | string>('');
   const { toast } = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!date?.from || !date?.to || !leaveTypeId || !reason) {
+    if (!date?.from || !date?.to || !leaveTypeId || !reason || !days) {
       toast({
         variant: 'destructive',
         title: 'Gagal Mengirim',
@@ -47,16 +48,17 @@ export default function AjukanCutiPage() {
       });
       return;
     }
-
-    const days = differenceInDays(date.to, date.from) + 1;
-    if (days <= 0) {
+    
+    const numDays = Number(days);
+    if (numDays <= 0) {
         toast({
             variant: 'destructive',
-            title: 'Tanggal tidak valid',
-            description: 'Tanggal selesai harus setelah tanggal mulai.',
+            title: 'Jumlah hari tidak valid',
+            description: 'Jumlah hari cuti harus lebih dari 0.',
         });
         return;
     }
+
 
     const newRequest: LeaveRequest = {
       id: `req-${Date.now()}`,
@@ -64,7 +66,7 @@ export default function AjukanCutiPage() {
       leaveTypeId: leaveTypeId,
       startDate: date.from,
       endDate: date.to,
-      days: days,
+      days: numDays,
       reason: reason,
       status: 'Pending',
       createdAt: new Date(),
@@ -83,6 +85,7 @@ export default function AjukanCutiPage() {
     setDate(undefined);
     setLeaveTypeId('');
     setReason('');
+    setDays('');
   };
 
   return (
@@ -100,7 +103,7 @@ export default function AjukanCutiPage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-2">
                 <Label htmlFor="leave-type">Jenis Cuti</Label>
                 <Select value={leaveTypeId} onValueChange={setLeaveTypeId}>
@@ -154,6 +157,16 @@ export default function AjukanCutiPage() {
                   </PopoverContent>
                 </Popover>
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="days">Jumlah Hari</Label>
+                <Input 
+                    id="days" 
+                    type="number" 
+                    value={days} 
+                    onChange={(e) => setDays(e.target.value)} 
+                    placeholder="Contoh: 3"
+                />
+              </div>
             </div>
             
             <div className="space-y-2">
@@ -172,6 +185,7 @@ export default function AjukanCutiPage() {
                     setDate(undefined);
                     setLeaveTypeId('');
                     setReason('');
+                    setDays('');
                 }}>
                     Batal
                 </Button>

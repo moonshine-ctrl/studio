@@ -21,23 +21,23 @@ export const departments: Department[] = [
 ];
 
 export const leaveTypes: LeaveType[] = [
-  { id: 'annual', name: 'Annual' },
-  { id: 'sick', name: 'Sick' },
-  { id: 'maternity', name: 'Maternity' },
-  { id: 'important', name: 'Important Reason' },
-  { id: 'unpaid', name: 'Unpaid' },
-  { id: 'other', name: 'Other' },
+  { id: 'annual', name: 'Cuti Tahunan' },
+  { id: 'big', name: 'Cuti Besar' },
+  { id: 'maternity', name: 'Cuti Melahirkan' },
+  { id: 'important', name: 'Cuti Alasan Penting' },
+  { id: 'unpaid', name: 'Cuti di Luar Tanggungan Negara' },
+  { id: 'other', name: 'Cuti Lainnya' },
 ];
 
 const now = new Date();
 
 export const leaveRequests: LeaveRequest[] = [
   { id: 'req1', userId: '1', leaveTypeId: 'annual', startDate: subDays(now, 5), endDate: subDays(now, 4), days: 2, reason: 'Family vacation', status: 'Approved', createdAt: subDays(now, 10) },
-  { id: 'req2', userId: '3', leaveTypeId: 'sick', startDate: subDays(now, 2), endDate: subDays(now, 1), days: 2, reason: 'Flu', status: 'Approved', createdAt: subDays(now, 3), medicalCertificate: undefined },
+  { id: 'req2', userId: '3', leaveTypeId: 'big', startDate: subDays(now, 2), endDate: subDays(now, 1), days: 2, reason: 'Flu', status: 'Approved', createdAt: subDays(now, 3), medicalCertificate: undefined },
   { id: 'req3', userId: '6', leaveTypeId: 'annual', startDate: addDays(now, 10), endDate: addDays(now, 14), days: 5, reason: 'Trip to Bali', status: 'Pending', createdAt: subDays(now, 1) },
   { id: 'req4', userId: '1', leaveTypeId: 'important', startDate: subDays(now, 20), endDate: subDays(now, 19), days: 2, reason: 'Family emergency', status: 'Approved', createdAt: subDays(now, 22) },
   { id: 'req5', userId: '2', leaveTypeId: 'annual', startDate: subDays(now, 30), endDate: subDays(now, 28), days: 3, reason: 'Personal matters', status: 'Rejected', createdAt: subDays(now, 35) },
-  { id: 'req6', userId: '4', leaveTypeId: 'sick', startDate: subDays(now, 12), endDate: subDays(now, 11), days: 2, reason: 'Medical Checkup', status: 'Approved', createdAt: subDays(now, 15), medicalCertificate: 'path/to/cert.pdf' },
+  { id: 'req6', userId: '4', leaveTypeId: 'big', startDate: subDays(now, 12), endDate: subDays(now, 11), days: 2, reason: 'Medical Checkup', status: 'Approved', createdAt: subDays(now, 15), medicalCertificate: 'path/to/cert.pdf' },
   { id: 'req7', userId: '7', leaveTypeId: 'maternity', startDate: addDays(now, 30), endDate: addDays(now, 120), days: 90, reason: 'Maternity Leave', status: 'Pending', createdAt: subDays(now, 2) },
 ];
 
