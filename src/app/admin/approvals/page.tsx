@@ -16,81 +16,24 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Check, X } from 'lucide-react';
 import {
   getDepartmentById,
   getLeaveTypeById,
   getUserById,
   leaveRequests as initialLeaveRequests,
-  departments as initialDepartments,
-  users,
 } from '@/lib/data';
 import { format } from 'date-fns';
-import { useState, useMemo, useEffect } from 'react';
-import type { LeaveRequest, User } from '@/types';
-import { useToast } from '@/hooks/use-toast';
+import { useState, useMemo } from 'react';
+import type { LeaveRequest } from '@/types';
 
 export default function ApprovalsPage() {
-  const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>(initialLeaveRequests);
-  const { toast } = useToast();
-  const [currentUser, setCurrentUser] = useState<User | undefined>();
-
-  useEffect(() => {
-    // In a real app, this would come from an auth context.
-    // For this demo, we simulate a user. We check if they are a department head.
-    // Let's assume the approver is Citra Lestari (user '2') who is head of IT.
-    // An admin would see all requests.
-    const loggedInUser = users.find(u => u.id === '2'); // Simulate Citra Lestari
-    // const loggedInUser = users.find(u => u.role === 'Admin'); // Simulate Admin
-    setCurrentUser(loggedInUser);
-  }, []);
+  const [leaveRequests] = useState<LeaveRequest[]>(initialLeaveRequests);
 
   const requestsToApprove = useMemo(() => {
-    if (!currentUser) return [];
-
-    // If user is Admin, show all pending requests
-    if (currentUser.role === 'Admin') {
-      return leaveRequests.filter(req => req.status === 'Pending');
-    }
-
-    // If user is an employee, check if they are a department head
-    const userDepartment = initialDepartments.find(d => d.headId === currentUser.id);
-    if (userDepartment) {
-      // It's a department head, show pending requests from their department
-      return leaveRequests.filter(req => {
-        const requestUser = getUserById(req.userId);
-        return requestUser?.departmentId === userDepartment.id && req.status === 'Pending';
-      });
-    }
-
-    // Regular employee, no requests to approve
-    return [];
-
-  }, [leaveRequests, currentUser]);
-
-
-  const handleApprove = (requestId: string) => {
-    const updatedRequests = leaveRequests.map(r => r.id === requestId ? { ...r, status: 'Approved' } : r);
-    setLeaveRequests(updatedRequests);
-    // In a real app, this mutation would be done on the backend
-    const originalRequest = initialLeaveRequests.find(r => r.id === requestId);
-    if(originalRequest) originalRequest.status = 'Approved';
-    
-    toast({ title: 'Request Approved', description: 'The leave request has been approved.' });
-  };
-  
-  const handleReject = (requestId: string) => {
-    const updatedRequests = leaveRequests.map(r => r.id === requestId ? { ...r, status: 'Rejected' } : r);
-    setLeaveRequests(updatedRequests);
-     // In a real app, this mutation would be done on the backend
-    const originalRequest = initialLeaveRequests.find(r => r.id === requestId);
-    if(originalRequest) originalRequest.status = 'Rejected';
-
-    toast({ variant: 'destructive', title: 'Request Rejected', description: 'The leave request has been rejected.' });
-  };
-  
+    // Admin sees all pending requests for monitoring purposes
+    return leaveRequests.filter(req => req.status === 'Pending');
+  }, [leaveRequests]);
 
   return (
     <div className="flex flex-col gap-6 max-w-7xl mx-auto">
@@ -102,7 +45,7 @@ export default function ApprovalsPage() {
         <CardHeader>
           <CardTitle>Pending Requests</CardTitle>
           <CardDescription>
-            Review and act on the leave requests waiting for approval.
+            All pending leave requests across departments. Admin role is for monitoring only.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -115,9 +58,7 @@ export default function ApprovalsPage() {
                 <TableHead>Dates</TableHead>
                 <TableHead>Days</TableHead>
                 <TableHead>Reason</TableHead>
-                <TableHead>
-                  <span className="sr-only">Actions</span>
-                </TableHead>
+                <TableHead>Status</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -151,14 +92,7 @@ export default function ApprovalsPage() {
                       <TableCell>{request.days}</TableCell>
                       <TableCell className="max-w-[200px] truncate">{request.reason}</TableCell>
                       <TableCell>
-                        <div className="flex gap-2">
-                           <Button size="sm" onClick={() => handleApprove(request.id)}>
-                             <Check className="mr-2 h-4 w-4" /> Approve
-                           </Button>
-                           <Button size="sm" variant="destructive" onClick={() => handleReject(request.id)}>
-                             <X className="mr-2 h-4 w-4" /> Reject
-                           </Button>
-                        </div>
+                        <Badge variant="secondary">{request.status}</Badge>
                       </TableCell>
                     </TableRow>
                   );
@@ -166,7 +100,7 @@ export default function ApprovalsPage() {
               ) : (
                 <TableRow>
                     <TableCell colSpan={7} className="h-24 text-center">
-                        No pending requests to approve.
+                        No pending requests.
                     </TableCell>
                 </TableRow>
               )}
