@@ -292,7 +292,7 @@ export default function UsersPage() {
               </div>
             </div>
             <DialogFooter>
-              <Button onClick={handleAddUser}>Add User</Button>
+              <Button onClick={handleAddUser} variant="default">Add User</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -403,7 +403,7 @@ export default function UsersPage() {
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="edit-password" className="text-right">Password</Label>
-                <Input id="edit-password" type="password" value={editingUser.password} onChange={(e) => handleInputChange('password', e.target.value, true)} className="col-span-3" placeholder="Enter new password" />
+                <Input id="edit-password" type="password" value={editingUser.password} onChange={(e) => handleInputChange('password', e.target.value, true)} className="col-span-3" placeholder="Kosongkan jika tidak ingin mengubah" />
               </div>
                <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="edit-phone" className="text-right">Phone</Label>
@@ -415,7 +415,7 @@ export default function UsersPage() {
               </div>
                <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="edit-joinDate" className="text-right">Tgl. Masuk</Label>
-                <Input id="edit-joinDate" type="date" value={editingUser.joinDate ? format(editingUser.joinDate, 'yyyy-MM-dd') : ''} onChange={(e) => handleInputChange('joinDate', e.target.value, true)} className="col-span-3" />
+                <Input id="edit-joinDate" type="date" value={editingUser.joinDate ? format(new Date(editingUser.joinDate), 'yyyy-MM-dd') : ''} onChange={(e) => handleInputChange('joinDate', e.target.value, true)} className="col-span-3" />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="edit-department" className="text-right">Department</Label>
@@ -452,7 +452,7 @@ export default function UsersPage() {
               </div>
             </div>
             <DialogFooter>
-              <Button onClick={handleUpdateUser}>Save Changes</Button>
+              <Button onClick={handleUpdateUser} variant="default">Save Changes</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>

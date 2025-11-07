@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import {
   leaveRequests,
@@ -32,6 +32,7 @@ export default function PrintLeaveRequestPage() {
   } | null>(null);
   
   const [isLoading, setIsLoading] = useState(true);
+  const printTriggered = useRef(false);
 
   useEffect(() => {
     if (id) {
@@ -42,9 +43,7 @@ export default function PrintLeaveRequestPage() {
         const leaveType = getLeaveTypeById(request.leaveTypeId);
         
         if (user && department) {
-            // This is a simplified logic. In a real app, you'd fetch the actual approver based on the approval flow settings.
-            // For now, we'll find a user who is an approver. A better mock would be needed.
-            const approver = users.find(u => u.id === '2'); // Assuming Citra Lestari is a default approver
+            const approver = users.find(u => u.id === '2'); 
             const headOfAgency = users.find(u => u.role === 'Admin');
 
             setLetterData({
@@ -56,15 +55,21 @@ export default function PrintLeaveRequestPage() {
               approver,
               headOfAgency,
             });
-
-            setTimeout(() => {
-                window.print();
-            }, 500);
         }
       }
     }
     setIsLoading(false);
   }, [id, letterNumber]);
+  
+  useEffect(() => {
+    // Trigger print only after data has been loaded and rendered
+    if (!isLoading && letterData && !printTriggered.current) {
+        printTriggered.current = true; // Prevent multiple print triggers
+        setTimeout(() => {
+            window.print();
+        }, 500); // A small delay to ensure content is fully rendered
+    }
+  }, [isLoading, letterData]);
   
   if (isLoading) {
     return (
@@ -87,7 +92,6 @@ export default function PrintLeaveRequestPage() {
        </div>
      );
   }
-
 
   return (
     <div className="bg-white text-black">

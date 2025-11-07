@@ -232,11 +232,13 @@ export default function DashboardPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Recent Leave Requests</CardTitle>
-            <div className="flex items-center justify-between gap-4">
-                 <CardDescription>
-                    An overview of the latest leave requests from all departments.
-                </CardDescription>
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                 <div>
+                    <CardTitle>Recent Leave Requests</CardTitle>
+                    <CardDescription>
+                        An overview of the latest leave requests from all departments.
+                    </CardDescription>
+                 </div>
                 <div className="flex items-center gap-2">
                     <Input 
                         placeholder="Search by name, dept, type..."

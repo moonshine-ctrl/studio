@@ -18,7 +18,6 @@ import type { Notification, User } from '@/types';
 import {
   getUserById,
   getLeaveRequestById,
-  getDepartmentById,
   getLeaveTypeById,
   users,
 } from '@/lib/data';
@@ -77,7 +76,6 @@ export default function NotificationsPage() {
       return;
     }
     
-    const leaveType = getLeaveTypeById(leaveRequest.leaveTypeId);
     const message = `Yth. Sdr/i ${employee.name},\n\nMengingatkan untuk segera melengkapi dokumen surat keterangan sakit untuk pengajuan cuti Anda pada tanggal ${format(leaveRequest.startDate, 'd MMMM yyyy')}.\n\nTerima kasih atas perhatiannya dan semoga lekas sembuh.\n\n- Admin Kepegawaian -`;
     const whatsappUrl = `https://wa.me/${employee.phone}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
@@ -90,8 +88,7 @@ export default function NotificationsPage() {
     if (!leaveRequest) return;
     
     const employee = getUserById(leaveRequest.userId);
-    // In a real app, the approver would be dynamically determined. Here, we use a hardcoded approver.
-    const approver = users.find(u => u.id === '2'); // Citra Lestari as default approver
+    const approver = leaveRequest.nextApproverId ? getUserById(leaveRequest.nextApproverId) : users.find(u => u.id === '2');
 
     if (!approver || !approver.phone) {
       alert('Kontak approver tidak ditemukan atau tidak valid.');

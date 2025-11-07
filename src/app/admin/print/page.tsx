@@ -84,10 +84,10 @@ export default function PrintPage() {
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
-                       <div className="flex justify-end items-center gap-2">
+                       <div className="flex flex-col sm:flex-row justify-end items-stretch sm:items-center gap-2">
                         <Input 
                           placeholder="Nomor Surat" 
-                          className="w-[200px]" 
+                          className="w-full sm:w-[200px]" 
                           value={letterNumbers[request.id] || ''}
                           onChange={(e) => handleLetterNumberChange(request.id, e.target.value)}
                           disabled={!isPrintable}

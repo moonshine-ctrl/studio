@@ -167,7 +167,7 @@ export default function DepartmentsPage() {
               </div>
             </div>
             <DialogFooter>
-              <Button onClick={handleAddDepartment}>Add Department</Button>
+              <Button onClick={handleAddDepartment} variant="default">Add Department</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -238,7 +238,7 @@ export default function DepartmentsPage() {
               </div>
             </div>
             <DialogFooter>
-              <Button onClick={handleUpdateDepartment}>Save Changes</Button>
+              <Button onClick={handleUpdateDepartment} variant="default">Save Changes</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>

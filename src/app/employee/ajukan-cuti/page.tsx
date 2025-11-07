@@ -278,7 +278,7 @@ export default function AjukanCutiPage() {
                 }}>
                     Batal
                 </Button>
-                <Button type="submit">Kirim Pengajuan</Button>
+                <Button type="submit" variant="default">Kirim Pengajuan</Button>
             </div>
           </form>
         </CardContent>
