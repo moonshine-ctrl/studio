@@ -15,7 +15,6 @@ export type User = {
 export type Department = {
   id: string;
   name: string;
-  headId: string;
   employeeCount: number;
 };
 

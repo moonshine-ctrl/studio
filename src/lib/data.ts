@@ -14,10 +14,10 @@ export const users: User[] = [
 ];
 
 export const departments: Department[] = [
-  { id: 'hr', name: 'Human Resources', headId: '5', employeeCount: 2 },
-  { id: 'it', name: 'Information Technology', headId: '2', employeeCount: 2 },
-  { id: 'finance', name: 'Finance', headId: '7', employeeCount: 2 },
-  { id: 'marketing', name: 'Marketing', headId: '8', employeeCount: 2 },
+  { id: 'hr', name: 'Human Resources', employeeCount: 2 },
+  { id: 'it', name: 'Information Technology', employeeCount: 2 },
+  { id: 'finance', name: 'Finance', employeeCount: 2 },
+  { id: 'marketing', name: 'Marketing', employeeCount: 2 },
 ];
 
 export const leaveTypes: LeaveType[] = [

@@ -34,8 +34,10 @@ export default function SettingsPage() {
   const [sickLeaveFormUrl, setSickLeaveFormUrl] = useState(appSettings.sickLeaveFormUrl);
   const [logo, setLogo] = useState(appSettings.logoUrl);
   const [letterhead, setLetterhead] = useState(appSettings.letterhead);
+  const [approvers, setApprovers] = useState<{ [key: string]: string[] }>({});
 
   const handleSaveChanges = () => {
+    // Here you would save the approvers state to your backend
     toast({
       title: 'Changes Saved!',
       description: 'Your settings have been updated.',
@@ -163,7 +165,7 @@ export default function SettingsPage() {
                           <Label htmlFor={`approver1-${dept.id}`}>
                             Approver Level 1
                           </Label>
-                          <Select defaultValue={dept.headId}>
+                          <Select>
                             <SelectTrigger id={`approver1-${dept.id}`}>
                               <SelectValue placeholder="Select an approver" />
                             </SelectTrigger>

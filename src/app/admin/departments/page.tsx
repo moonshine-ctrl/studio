@@ -23,7 +23,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MoreHorizontal, PlusCircle, Trash2, Pen } from 'lucide-react';
 import { departments as initialDepartments, users as initialUsers } from '@/lib/data';
 import {
@@ -36,19 +35,11 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import type { Department } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 
 export default function DepartmentsPage() {
   const [departments, setDepartments] = useState<Department[]>(initialDepartments);
-  const [users, setUsers] = useState(initialUsers);
   const [open, setOpen] = useState(false);
   const [newDeptName, setNewDeptName] = useState('');
   
@@ -56,14 +47,11 @@ export default function DepartmentsPage() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const { toast } = useToast();
 
-  const getUserById = (id: string) => users.find(u => u.id === id);
-  
   const handleAddDepartment = () => {
     if (newDeptName) {
       const newDepartment: Department = {
         id: `dept-${Date.now()}`,
         name: newDeptName,
-        headId: '', // Head is not assigned on creation
         employeeCount: 0,
       };
       const updatedDepartments = [...departments, newDepartment];
@@ -173,7 +161,6 @@ export default function DepartmentsPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Department Name</TableHead>
-                <TableHead>Department Head</TableHead>
                 <TableHead>Employees</TableHead>
                 <TableHead>
                   <span className="sr-only">Actions</span>
@@ -182,25 +169,9 @@ export default function DepartmentsPage() {
             </TableHeader>
             <TableBody>
               {departments.map((department) => {
-                const head = getUserById(department.headId);
                 return (
                   <TableRow key={department.id}>
                     <TableCell className="font-medium">{department.name}</TableCell>
-                    <TableCell>
-                      {head ? (
-                        <div className="flex items-center gap-3">
-                          <Avatar className="h-9 w-9">
-                            <AvatarImage src={head.avatar} alt={head.name} data-ai-hint="profile person" />
-                            <AvatarFallback>
-                              {head.name.charAt(0)}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="font-medium">{head.name}</div>
-                        </div>
-                      ) : (
-                        <span className="text-muted-foreground">Not assigned</span>
-                      )}
-                    </TableCell>
                     <TableCell>{department.employeeCount}</TableCell>
                     <TableCell>
                       <DropdownMenu>
@@ -240,21 +211,6 @@ export default function DepartmentsPage() {
                   Name
                 </Label>
                 <Input id="edit-name" value={editingDepartment.name} onChange={(e) => handleDepartmentChange('name', e.target.value)} className="col-span-3" />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="edit-head" className="text-right">
-                  Department Head
-                </Label>
-                <Select onValueChange={(value) => handleDepartmentChange('headId', value)} value={editingDepartment.headId}>
-                    <SelectTrigger className="col-span-3">
-                        <SelectValue placeholder="Select a head" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {users.map((user) => (
-                            <SelectItem key={user.id} value={user.id}>{user.name}</SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
               </div>
             </div>
             <DialogFooter>

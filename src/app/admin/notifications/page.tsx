@@ -44,8 +44,7 @@ export default function NotificationsPage() {
       const request = getLeaveRequestById(notification.leaveRequestId || '');
       if (request) {
         const employee = getUserById(request.userId);
-        const approver = employee ? getDepartmentById(employee.departmentId) : undefined;
-
+        
         if (notification.type === 'warning' && currentUser?.role === 'Admin') {
             finalMessage = `${employee?.name} mengajukan cuti sakit. Ingatkan untuk mengisi form surat keterangan.`;
         }
@@ -74,10 +73,10 @@ export default function NotificationsPage() {
     const employee = getUserById(leaveRequest.userId);
     if (!employee) return;
     
-    const department = getDepartmentById(employee.departmentId);
-    if (!department) return;
-
-    const approver = getUserById(department.headId);
+    // This logic is now simplified as we don't have a direct "head". 
+    // In a real app, this would get the designated approver for the department.
+    // For now, we'll find a default approver to notify.
+    const approver = users.find(u => u.id === '2'); // Let's assume Citra is the default approver to notify
     if (!approver || !approver.phone) {
       alert('Approver contact not found.');
       return;

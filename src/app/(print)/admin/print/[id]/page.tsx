@@ -42,7 +42,9 @@ export default function PrintLeaveRequestPage() {
         const leaveType = getLeaveTypeById(request.leaveTypeId);
         
         if (user && department) {
-            const approver = users.find(u => u.id === department.headId);
+            // This is a simplified logic. In a real app, you'd fetch the actual approver based on the approval flow settings.
+            // For now, we'll find a user who is an approver. A better mock would be needed.
+            const approver = users.find(u => u.id === '2'); // Assuming Citra Lestari is a default approver
             const headOfAgency = users.find(u => u.role === 'Admin');
 
             setLetterData({

@@ -1,4 +1,3 @@
-
 'use client';
 
 import {
@@ -47,13 +46,16 @@ export default function ApprovalsPage() {
   const requestsToApprove = useMemo(() => {
     if (!currentUser) return [];
     
-    // Employee who is a department head can approve requests for their department.
-    const userDepartment = initialDepartments.find(d => d.headId === currentUser.id);
-    if (!userDepartment) return [];
+    // In a real app, this logic should be based on the approval flow settings.
+    // This is a simplified mock logic: user '2' can approve for IT department.
+    const isApproverForAnyDept = currentUser.id === '2'; // Simplified check
+    if (!isApproverForAnyDept) return [];
+    
+    const approverDepartments = ['it']; // User '2' approves for IT
 
     return leaveRequests.filter(req => {
         const requestUser = getUserById(req.userId);
-        return requestUser?.departmentId === userDepartment.id && req.status === 'Pending';
+        return requestUser && approverDepartments.includes(requestUser.departmentId) && req.status === 'Pending';
     });
 
   }, [leaveRequests, currentUser]);
