@@ -35,7 +35,7 @@ import {
   logHistory,
 } from '@/lib/data';
 import { format } from 'date-fns';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import type { LeaveRequest, User } from '@/types';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -51,6 +51,13 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 const statusColors: { [key: string]: 'default' | 'secondary' | 'destructive' | 'outline' | 'warning' } = {
   Pending: 'secondary',
@@ -77,18 +84,46 @@ export default function DashboardPage() {
   const [isCancelAlertOpen, setIsCancelAlertOpen] = useState(false);
   const [password, setPassword] = useState('');
 
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedYear, setSelectedYear] = useState<string>('all');
+
   const stats = {
     pending: leaveRequests.filter((r) => r.status === 'Pending').length,
     approved: leaveRequests.filter((r) => r.status === 'Approved').length,
     total: leaveRequests.length,
   };
 
+  const availableYears = useMemo(() => {
+    const years = new Set(leaveRequests.map(req => format(req.createdAt, 'yyyy')));
+    return Array.from(years).sort((a, b) => b.localeCompare(a));
+  }, [leaveRequests]);
+
+  const filteredRequests = useMemo(() => {
+    return leaveRequests
+      .filter(request => {
+        if (selectedYear === 'all') return true;
+        return format(request.createdAt, 'yyyy') === selectedYear;
+      })
+      .filter(request => {
+        if (!searchTerm) return true;
+        const user = getUserById(request.userId);
+        const department = user ? getDepartmentById(user.departmentId) : null;
+        const leaveType = getLeaveTypeById(request.leaveTypeId);
+        const lowerCaseSearch = searchTerm.toLowerCase();
+
+        return (
+          user?.name.toLowerCase().includes(lowerCaseSearch) ||
+          department?.name.toLowerCase().includes(lowerCaseSearch) ||
+          leaveType?.name.toLowerCase().includes(lowerCaseSearch)
+        );
+      });
+  }, [leaveRequests, searchTerm, selectedYear]);
+
   const handleCancelClick = (request: LeaveRequest) => {
     setRequestToCancel(request);
     if (request.status === 'Approved' || request.status === 'Suspended') {
       setIsCancelAlertOpen(true);
     } else if (request.status === 'Pending') {
-      // For pending requests, cancel directly without password
       performCancellation(request);
     }
   };
@@ -198,9 +233,30 @@ export default function DashboardPage() {
         <Card>
           <CardHeader>
             <CardTitle>Recent Leave Requests</CardTitle>
-            <CardDescription>
-              An overview of the latest leave requests from all departments.
-            </CardDescription>
+            <div className="flex items-center justify-between gap-4">
+                 <CardDescription>
+                    An overview of the latest leave requests from all departments.
+                </CardDescription>
+                <div className="flex items-center gap-2">
+                    <Input 
+                        placeholder="Search by name, dept, type..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full md:w-[250px]"
+                    />
+                    <Select value={selectedYear} onValueChange={setSelectedYear}>
+                        <SelectTrigger className="w-[120px]">
+                            <SelectValue placeholder="Year" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">All Years</SelectItem>
+                            {availableYears.map(year => (
+                                <SelectItem key={year} value={year}>{year}</SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+            </div>
           </CardHeader>
           <CardContent>
             <Table>
@@ -217,7 +273,7 @@ export default function DashboardPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {leaveRequests.map((request) => {
+                {filteredRequests.map((request) => {
                   const user = getUserById(request.userId);
                   const leaveType = getLeaveTypeById(request.leaveTypeId);
                   if (!user || !leaveType) return null;
