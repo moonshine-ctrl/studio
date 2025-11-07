@@ -37,7 +37,7 @@ export default function PrintPage() {
     setLetterNumbers(prev => ({ ...prev, [requestId]: value }));
   };
 
-  const handlePrint = (request: LeaveRequest, user: User) => {
+  const handlePrint = (request: LeaveRequest) => {
     const letterNumber = letterNumbers[request.id] || '';
     const printUrl = `/admin/print/${request.id}?letterNumber=${encodeURIComponent(letterNumber)}`;
     window.open(printUrl, '_blank');
@@ -69,14 +69,15 @@ export default function PrintPage() {
                 const leaveType = getLeaveTypeById(request.leaveTypeId);
                 if (!user || !leaveType) return null;
 
-                const isPrintable = request.status === 'Approved' || (leaveType.name === 'Cuti Sakit' && request.status !== 'Rejected');
+                const isPrintable = request.status === 'Approved' || (leaveType.name === 'Cuti Sakit' && request.status !== 'Rejected' && request.status !== 'Cancelled');
+                const isInputActive = isPrintable;
 
                 return (
                   <TableRow key={request.id}>
                     <TableCell className="font-medium">{user.name}</TableCell>
                     <TableCell className="hidden sm:table-cell">{leaveType.name}</TableCell>
                     <TableCell className="hidden md:table-cell">
-                      {format(request.startDate, 'd MMM y')} - {format(request.endDate, 'd MMM y')}
+                      {format(new Date(request.startDate), 'd MMM y')} - {format(new Date(request.endDate), 'd MMM y')}
                     </TableCell>
                     <TableCell>
                        <Badge variant={request.status === 'Approved' ? 'default' : request.status === 'Pending' ? 'secondary' : 'destructive'}>
@@ -90,9 +91,9 @@ export default function PrintPage() {
                           className="w-full sm:w-auto sm:flex-1" 
                           value={letterNumbers[request.id] || ''}
                           onChange={(e) => handleLetterNumberChange(request.id, e.target.value)}
-                          disabled={!isPrintable}
+                          disabled={!isInputActive}
                         />
-                        <Button variant="outline" size="sm" onClick={() => handlePrint(request, user)} disabled={!isPrintable}>
+                        <Button variant="outline" size="sm" onClick={() => handlePrint(request)} disabled={!isPrintable}>
                           <Printer className="mr-2 h-4 w-4" />
                           Cetak
                         </Button>
