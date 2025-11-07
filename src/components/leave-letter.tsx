@@ -169,7 +169,7 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                              <tbody>
                                 <tr>
                                     <td className={styles.cell} style={{width: '10%'}}>Selama</td>
-                                    <td className={styles.cell} style={{width: '30%'}}>{duration} (hari/bulan/tahun)*</td>
+                                    <td className={styles.cell} style={{width: '30%'}}>{duration} (hari)*</td>
                                     <td className={styles.cell} style={{width: '15%'}}>mulai tanggal</td>
                                     <td className={styles.cell} style={{width: '20%'}}>{format(request.startDate, 'dd-MM-yyyy')}</td>
                                     <td className={styles.cell} style={{width: '5%'}}>s/d</td>
@@ -180,17 +180,16 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                     </div>
                     
                     {/* SECTION V */}
-                     <div className="section-container mt-1">
+                    <div className="section-container mt-1">
                         <p className="font-bold pl-1">V. CATATAN CUTI ***</p>
                         <table className={styles.table}>
                             <tbody>
                                 <tr>
+                                    {/* Kolom Kiri - Cuti Tahunan & Paraf */}
                                     <td className={`${styles.cell} align-top`} style={{width: '50%'}}>
                                         <table className="w-full">
                                             <tbody>
-                                                <tr>
-                                                    <td colSpan={3} className="font-bold">1. CUTI TAHUNAN <span className="font-bold text-lg">{leaveTypeCheck('Cuti Tahunan')}</span></td>
-                                                </tr>
+                                                <tr><td colSpan={3} className="font-bold">1. CUTI TAHUNAN</td></tr>
                                                 <tr>
                                                     <td className={styles.cellHeader} style={{width: '25%'}}>Tahun</td>
                                                     <td className={styles.cellHeader} style={{width: '25%'}}>Sisa</td>
@@ -211,9 +210,15 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                                     <td className={styles.cellCenter}>{user.annualLeaveBalance}</td>
                                                     <td className={styles.cell}></td>
                                                 </tr>
+                                                <tr>
+                                                    <td colSpan={3} className={`${styles.cell} text-center font-bold`}>
+                                                        Paraf Petugas Cuti: ✓
+                                                    </td>
+                                                </tr>
                                             </tbody>
                                         </table>
                                     </td>
+                                    {/* Kolom Kanan - Jenis Cuti Lainnya */}
                                     <td className={`${styles.cell} align-top p-0`} style={{width: '50%'}}>
                                          <table className="w-full h-full">
                                             <tbody>
@@ -241,14 +246,10 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                         </table>
                                     </td>
                                 </tr>
-                                 <tr>
-                                    <td className={`${styles.cell} text-center font-bold`} colSpan={2}>
-                                        PARAF PETUGAS CUTI: ✓
-                                    </td>
-                                 </tr>
                             </tbody>
                         </table>
                     </div>
+
                     
                     {/* SECTION VI */}
                     <div className="section-container mt-1">
