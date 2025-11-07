@@ -22,11 +22,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { departments, users, settings as appSettings } from '@/lib/data';
+import { departments, users, settings as appSettings, departmentApprovalFlows } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '@/components/ui/input';
-import { useState } from 'react';
+import { useState, SyntheticEvent } from 'react';
 import Image from 'next/image';
 
 export default function SettingsPage() {
@@ -34,26 +34,46 @@ export default function SettingsPage() {
   const [sickLeaveFormUrl, setSickLeaveFormUrl] = useState(appSettings.sickLeaveFormUrl);
   const [logo, setLogo] = useState(appSettings.logoUrl);
   const [letterhead, setLetterhead] = useState(appSettings.letterhead);
-  const [approvers, setApprovers] = useState<{ [key: string]: string[] }>({});
+  const [approvers, setApprovers] = useState<{ [key: string]: (string | null)[] }>(departmentApprovalFlows);
+  const [activeAccordionItem, setActiveAccordionItem] = useState<string | undefined>();
 
-  const handleSaveChanges = () => {
-    // Here you would save the approvers state to your backend
+  const handleApproverChange = (deptId: string, level: number, value: string) => {
+    setApprovers(prev => {
+      const newApprovers = { ...prev };
+      if (!newApprovers[deptId]) {
+        newApprovers[deptId] = [null, null, null];
+      }
+      // 'none' from select is stored as null
+      newApprovers[deptId][level - 1] = value === 'none' ? null : value;
+      return newApprovers;
+    });
+  };
+
+  const handleSaveChanges = (e: SyntheticEvent, deptId: string) => {
+    e.preventDefault();
+    departmentApprovalFlows[deptId] = approvers[deptId].filter(id => id !== null) as string[];
     toast({
       title: 'Changes Saved!',
-      description: 'Your settings have been updated.',
+      description: `Approval flow for the department has been updated.`,
     });
   };
   
   const handleGeneralSave = () => {
       // In a real app, you'd save this to a backend.
       appSettings.sickLeaveFormUrl = sickLeaveFormUrl;
-      handleSaveChanges();
+       toast({
+          title: 'Changes Saved!',
+          description: 'Your settings have been updated.',
+        });
   }
 
   const handleBrandingSave = () => {
     appSettings.logoUrl = logo;
     appSettings.letterhead = letterhead;
-    handleSaveChanges();
+     toast({
+      title: 'Changes Saved!',
+      description: 'Your settings have been updated.',
+    });
   }
 
   const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -151,7 +171,7 @@ export default function SettingsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Accordion type="single" collapsible className="w-full">
+              <Accordion type="single" collapsible className="w-full" value={activeAccordionItem} onValueChange={setActiveAccordionItem}>
                 {departments.map((dept) => (
                   <AccordionItem key={dept.id} value={dept.id}>
                     <AccordionTrigger className="text-base font-medium">
@@ -159,60 +179,30 @@ export default function SettingsPage() {
                     </AccordionTrigger>
                     <AccordionContent>
                       <div className="space-y-6 p-2">
-                        <div className="grid gap-3">
-                          <Label htmlFor={`approver1-${dept.id}`}>
-                            Approver Level 1
-                          </Label>
-                          <Select>
-                            <SelectTrigger id={`approver1-${dept.id}`}>
-                              <SelectValue placeholder="Select an approver" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {users.map((user) => (
-                                <SelectItem key={user.id} value={user.id}>
-                                  {user.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="grid gap-3">
-                          <Label htmlFor={`approver2-${dept.id}`}>
-                            Approver Level 2
-                          </Label>
-                          <Select>
-                            <SelectTrigger id={`approver2-${dept.id}`}>
-                              <SelectValue placeholder="Select an approver" />
-                            </SelectTrigger>
-                            <SelectContent>
-                               <SelectItem value="none">None</SelectItem>
-                              {users.map((user) => (
-                                <SelectItem key={user.id} value={user.id}>
-                                  {user.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="grid gap-3">
-                          <Label htmlFor={`approver3-${dept.id}`}>
-                            Approver Level 3
-                          </Label>
-                          <Select>
-                            <SelectTrigger id={`approver3-${dept.id}`}>
-                              <SelectValue placeholder="Select an approver" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="none">None</SelectItem>
-                              {users.map((user) => (
-                                <SelectItem key={user.id} value={user.id}>
-                                  {user.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <Button className="mt-4" onClick={handleSaveChanges}>Save Changes</Button>
+                        {[1, 2, 3].map(level => (
+                          <div className="grid gap-3" key={level}>
+                            <Label htmlFor={`approver${level}-${dept.id}`}>
+                              Approver Level {level}
+                            </Label>
+                            <Select 
+                              value={approvers[dept.id]?.[level - 1] || 'none'}
+                              onValueChange={(value) => handleApproverChange(dept.id, level, value)}
+                            >
+                              <SelectTrigger id={`approver${level}-${dept.id}`}>
+                                <SelectValue placeholder="Select an approver" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="none">None</SelectItem>
+                                {users.filter(u => u.role !== 'Admin').map((user) => (
+                                  <SelectItem key={user.id} value={user.id}>
+                                    {user.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        ))}
+                        <Button className="mt-4" onClick={(e) => handleSaveChanges(e, dept.id)}>Save Changes</Button>
                       </div>
                     </AccordionContent>
                   </AccordionItem>
