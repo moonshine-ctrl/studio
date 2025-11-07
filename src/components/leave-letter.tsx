@@ -28,10 +28,10 @@ const PrintHeaderContent = () => (
         <div className="flex items-center justify-start gap-4 pl-16">
              {settings.logoUrl && <Image src={settings.logoUrl} alt="Logo" width={80} height={80} className="object-contain" />}
             <div className="text-center leading-tight">
-                <h1 className="font-bold text-[18px]">{settings.letterhead[0]}</h1>
-                <h2 className="font-bold text-[18px]">{settings.letterhead[1]}</h2>
-                <h3 className="font-bold text-[18px]">{settings.letterhead[2]}</h3>
-                <h3 className="font-bold text-[18px]">{settings.letterhead[3]}</h3>
+                <h1 className="font-bold text-[18px]" style={{ wordSpacing: '0.1em' }}>{settings.letterhead[0]}</h1>
+                <h2 className="font-bold text-[18px]" style={{ wordSpacing: '0.1em' }}>{settings.letterhead[1]}</h2>
+                <h3 className="font-bold text-[18px]" style={{ wordSpacing: '0.1em' }}>{settings.letterhead[2]}</h3>
+                <h3 className="font-bold text-[18px]" style={{ wordSpacing: '0.1em' }}>{settings.letterhead[3]}</h3>
                 <p className="text-sm">{settings.letterhead[4]}</p>
                 <p className="text-sm">{settings.letterhead[5]}</p>
             </div>
@@ -368,3 +368,5 @@ declare module 'react' {
       'data-value'?: string;
     }
 }
+
+    
