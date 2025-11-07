@@ -133,7 +133,7 @@ export default function DepartmentsPage() {
 
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 max-w-7xl mx-auto">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold font-headline">Department Management</h1>
         <Dialog open={open} onOpenChange={setOpen}>
@@ -142,7 +142,7 @@ export default function DepartmentsPage() {
               <PlusCircle className="mr-2 h-4 w-4" /> Add Department
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle>Add New Department</DialogTitle>
             </DialogHeader>
@@ -230,7 +230,7 @@ export default function DepartmentsPage() {
 
       {editingDepartment && (
         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-          <DialogContent>
+          <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle>Edit Department</DialogTitle>
             </DialogHeader>

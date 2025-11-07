@@ -192,7 +192,7 @@ export default function UsersPage() {
 
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 max-w-7xl mx-auto">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold font-headline">User Management</h1>
         <Dialog open={open} onOpenChange={setOpen}>
@@ -201,7 +201,7 @@ export default function UsersPage() {
               <PlusCircle className="mr-2 h-4 w-4" /> Add User
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
+          <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle>Add New User</DialogTitle>
             </DialogHeader>
@@ -357,7 +357,7 @@ export default function UsersPage() {
       
       {editingUser && (
         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-          <DialogContent className="sm:max-w-[425px]">
+          <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle>Edit User</DialogTitle>
             </DialogHeader>
