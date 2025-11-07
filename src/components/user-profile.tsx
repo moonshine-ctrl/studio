@@ -31,9 +31,9 @@ export function UserProfile() {
   }, [pathname]);
 
   const handleLogout = () => {
-    if (pathname.startsWith('/admin')) {
+    if (currentUser?.role === 'Admin') {
       sessionStorage.removeItem('adminLoggedIn');
-      router.push('/admin/login');
+      router.push('/admin-login');
     } else {
       sessionStorage.removeItem('employeeLoggedIn');
       router.push('/login');

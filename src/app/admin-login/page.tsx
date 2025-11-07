@@ -17,12 +17,20 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  // This should run only on the client after mount
+  const [isClient, setIsClient] = useState(false);
   useEffect(() => {
-    // Redirect if already logged in
-    if (sessionStorage.getItem('adminLoggedIn') === 'true') {
-      router.replace('/admin/dashboard');
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (isClient) {
+      // Redirect if already logged in
+      if (sessionStorage.getItem('adminLoggedIn') === 'true') {
+        router.replace('/admin/dashboard');
+      }
     }
-  }, [router]);
+  }, [router, isClient]);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,7 +45,7 @@ export default function AdminLoginPage() {
       });
       setTimeout(() => {
         router.push('/admin/dashboard');
-        setIsLoading(false);
+        // No need to set isLoading(false) as we are navigating away
       }, 1000);
     } else {
       toast({
@@ -49,6 +57,11 @@ export default function AdminLoginPage() {
     }
   };
 
+  if (!isClient) {
+    // You can render a loader here or nothing
+    return null;
+  }
+  
   return (
     <div className="flex min-h-screen items-center justify-center p-4 gradient-background">
       <Card className="w-full max-w-sm bg-white/30 dark:bg-black/30 backdrop-blur-lg border-white/20 text-gray-800 dark:text-white shadow-2xl">

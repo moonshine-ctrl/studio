@@ -9,10 +9,8 @@ import {
 import { Logo } from '@/components/logo';
 import { Nav } from '@/components/nav';
 import { Button } from './ui/button';
-import Link from 'next/link';
 import { LogOut } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 interface AppSidebarProps {
   role: 'Admin' | 'Employee';
@@ -23,9 +21,9 @@ export function AppSidebar({ role }: AppSidebarProps) {
     const pathname = usePathname();
 
     const handleLogout = () => {
-        if (pathname.startsWith('/admin')) {
+        if (role === 'Admin') {
           sessionStorage.removeItem('adminLoggedIn');
-          router.push('/admin/login');
+          router.push('/admin-login');
         } else {
           sessionStorage.removeItem('employeeLoggedIn');
           router.push('/login');

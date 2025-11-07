@@ -16,13 +16,20 @@ export default function LoginPage() {
   const [nip, setNip] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   useEffect(() => {
-    // Redirect if already logged in
-    if (sessionStorage.getItem('employeeLoggedIn') === 'true') {
-      router.replace('/employee/dashboard');
+    if (isClient) {
+        // Redirect if already logged in
+        if (sessionStorage.getItem('employeeLoggedIn') === 'true') {
+          router.replace('/employee/dashboard');
+        }
     }
-  }, [router]);
+  }, [router, isClient]);
 
 
   const handleLogin = (e: React.FormEvent) => {
@@ -37,7 +44,6 @@ export default function LoginPage() {
       });
       setTimeout(() => {
         router.push('/employee/dashboard'); 
-        setIsLoading(false);
       }, 1000);
     } else {
       toast({
@@ -48,6 +54,10 @@ export default function LoginPage() {
       setIsLoading(false);
     }
   };
+  
+  if (!isClient) {
+    return null;
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4 gradient-background">
@@ -91,7 +101,7 @@ export default function LoginPage() {
           </form>
         </CardContent>
         <CardFooter className="flex flex-col gap-4 text-center text-sm text-muted-foreground">
-            <Link href="/admin/login" className="text-violet-600 dark:text-violet-400 hover:underline">
+            <Link href="/admin-login" className="text-violet-600 dark:text-violet-400 hover:underline">
               Login as Admin
             </Link>
             <span className="text-slate-500 dark:text-slate-400">&copy; {new Date().getFullYear()} Pengadilan Agama Solok.</span>
