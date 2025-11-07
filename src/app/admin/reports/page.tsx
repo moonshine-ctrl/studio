@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import * as XLSX from 'xlsx';
 import {
   Card,
   CardContent,
@@ -23,13 +24,46 @@ import { Calendar } from '@/components/ui/calendar';
 import { DateRange } from 'react-day-picker';
 import { format, addDays } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { departments } from '@/lib/data';
+import { departments, leaveRequests, getUserById, getDepartmentById, getLeaveTypeById } from '@/lib/data';
 
 export default function ReportsPage() {
   const [date, setDate] = useState<DateRange | undefined>({
     from: new Date(),
     to: addDays(new Date(), 30),
   });
+
+  const handleExport = () => {
+    // 1. Filter data (optional, for now we export all)
+    const dataToExport = leaveRequests.map(req => {
+        const user = getUserById(req.userId);
+        const department = user ? getDepartmentById(user.departmentId) : null;
+        const leaveType = getLeaveTypeById(req.leaveTypeId);
+
+        return {
+            'Employee Name': user?.name || 'N/A',
+            'NIP': user?.nip || 'N/A',
+            'Department': department?.name || 'N/A',
+            'Leave Type': leaveType?.name || 'N/A',
+            'Start Date': format(req.startDate, 'yyyy-MM-dd'),
+            'End Date': format(req.endDate, 'yyyy-MM-dd'),
+            'Total Days': req.days,
+            'Reason': req.reason,
+            'Status': req.status,
+            'Created At': format(req.createdAt, 'yyyy-MM-dd HH:mm:ss'),
+        };
+    });
+
+    // 2. Create worksheet
+    const ws = XLSX.utils.json_to_sheet(dataToExport);
+
+    // 3. Create workbook
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Leave Requests");
+
+    // 4. Trigger download
+    XLSX.writeFile(wb, "LeaveReport.xlsx");
+  };
+
 
   return (
     <div className="flex flex-col gap-6 max-w-7xl mx-auto">
@@ -118,7 +152,7 @@ export default function ReportsPage() {
             </div>
           </div>
           <div className="flex justify-end">
-            <Button>
+            <Button onClick={handleExport}>
               <FileDown className="mr-2 h-4 w-4" />
               Export to Excel
             </Button>
