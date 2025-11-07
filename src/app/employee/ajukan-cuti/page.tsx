@@ -65,6 +65,16 @@ export default function AjukanCutiPage() {
         return;
     }
 
+    const selectedLeaveType = getLeaveTypeById(leaveTypeId);
+    if (selectedLeaveType?.name === 'Cuti Tahunan' && numDays > currentUser.annualLeaveBalance) {
+        toast({
+            variant: 'destructive',
+            title: 'Saldo Cuti Tidak Cukup',
+            description: `Anda hanya memiliki ${currentUser.annualLeaveBalance} hari cuti tahunan tersisa.`,
+        });
+        return;
+    }
+
     const newRequestId = `req-${Date.now()}`;
     const newRequest: LeaveRequest = {
       id: newRequestId,
@@ -80,16 +90,14 @@ export default function AjukanCutiPage() {
     };
 
     setLeaveRequests([newRequest, ...leaveRequests]);
-    // In real app, you would also update the data source e.g. via API call
     initialLeaveRequests.unshift(newRequest);
 
-    // Notification logic for sick leave
-    const selectedLeaveType = getLeaveTypeById(leaveTypeId);
-    if (selectedLeaveType?.name === 'Cuti Sakit') {
+    // Notification logic for non-annual leave
+    if (selectedLeaveType?.name !== 'Cuti Tahunan') {
       const userNotification: Notification = {
         id: `notif-${Date.now()}-user`,
         userId: currentUser.id,
-        message: `Pengajuan cuti sakit Anda pada ${format(date.from, 'd MMM y')} menunggu pengisian formulir surat keterangan dokter.`,
+        message: `Pengajuan ${selectedLeaveType?.name} Anda pada ${format(date.from, 'd MMM y')} menunggu kelengkapan dokumen.`,
         type: 'warning',
         isRead: false,
         createdAt: new Date(),
@@ -98,7 +106,7 @@ export default function AjukanCutiPage() {
       const adminNotification: Notification = {
         id: `notif-${Date.now()}-admin`,
         userId: 'admin', // Notify admin
-        message: `${currentUser?.name} mengajukan cuti sakit. Ingatkan untuk mengisi form surat keterangan.`,
+        message: `${currentUser?.name} mengajukan ${selectedLeaveType?.name}. Ingatkan untuk melengkapi dokumen.`,
         type: 'warning',
         isRead: false,
         createdAt: new Date(),
@@ -120,7 +128,7 @@ export default function AjukanCutiPage() {
     setDays('');
   };
   
-  const selectedLeaveTypeName = getLeaveTypeById(leaveTypeId)?.name;
+  const selectedLeaveType = getLeaveTypeById(leaveTypeId);
 
 
   return (
@@ -134,6 +142,7 @@ export default function AjukanCutiPage() {
           <CardTitle>Ajukan Cuti Baru</CardTitle>
           <CardDescription>
             Silakan isi formulir di bawah ini untuk mengajukan cuti.
+            {currentUser && <p className="font-medium text-primary">Sisa Cuti Tahunan Anda: {currentUser.annualLeaveBalance} hari</p>}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -204,16 +213,16 @@ export default function AjukanCutiPage() {
                 />
               </div>
 
-              {selectedLeaveTypeName === 'Cuti Sakit' && (
+              {selectedLeaveType && selectedLeaveType.name !== 'Cuti Tahunan' && (
                 <div className="space-y-2">
-                    <Label htmlFor="attachment">Surat Keterangan Sakit</Label>
+                    <Label htmlFor="attachment">Dokumen Pendukung</Label>
                     <Button asChild variant="outline" className="w-full">
                        <Link href={appSettings.sickLeaveFormUrl} target="_blank">
                          <UploadCloud className="mr-2 h-4 w-4" />
-                         Unggah Surat via Form
+                         Unggah Dokumen via Form
                        </Link>
                     </Button>
-                    <p className="text-xs text-muted-foreground">Surat diunggah melalui Google Form. Anda bisa melengkapinya nanti.</p>
+                    <p className="text-xs text-muted-foreground">Dokumen diunggah melalui Google Form. Anda bisa melengkapinya nanti.</p>
                 </div>
               )}
             </div>

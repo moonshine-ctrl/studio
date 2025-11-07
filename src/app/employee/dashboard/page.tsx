@@ -66,6 +66,8 @@ export default function EmployeeDashboardPage() {
   const handleCancelRequest = (requestId: string) => {
     const requestToCancel = leaveRequests.find(r => r.id === requestId);
     if (!requestToCancel || !currentUser) return;
+
+    const leaveType = getLeaveTypeById(requestToCancel.leaveTypeId);
     
     // Update request status
     const updatedRequests = leaveRequests.map(r => 
@@ -75,16 +77,23 @@ export default function EmployeeDashboardPage() {
     const originalRequest = initialLeaveRequests.find(r => r.id === requestId);
     if(originalRequest) originalRequest.status = 'Cancelled';
 
-    // Restore leave balance
-    const updatedUser = { ...currentUser, annualLeaveBalance: currentUser.annualLeaveBalance + requestToCancel.days };
-    setCurrentUser(updatedUser);
-    const originalUser = allUsers.find(u => u.id === currentUser.id);
-    if (originalUser) originalUser.annualLeaveBalance += requestToCancel.days;
+    if (leaveType?.name === 'Cuti Tahunan') {
+      // Restore leave balance only for annual leave
+      const updatedUser = { ...currentUser, annualLeaveBalance: currentUser.annualLeaveBalance + requestToCancel.days };
+      setCurrentUser(updatedUser);
+      const originalUser = allUsers.find(u => u.id === currentUser.id);
+      if (originalUser) originalUser.annualLeaveBalance += requestToCancel.days;
 
-    toast({
-      title: 'Request Cancelled',
-      description: 'Your leave request has been cancelled and your leave balance has been restored.',
-    });
+      toast({
+        title: 'Request Cancelled',
+        description: 'Your leave request has been cancelled and your leave balance has been restored.',
+      });
+    } else {
+      toast({
+        title: 'Request Cancelled',
+        description: 'Your leave request has been cancelled.',
+      });
+    }
   };
 
   const stats = useMemo(() => {
@@ -184,9 +193,9 @@ export default function EmployeeDashboardPage() {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                       {leaveType.name === 'Cuti Sakit' ? (
+                       {leaveType.name !== 'Cuti Tahunan' ? (
                             <Badge variant="outline" className="flex items-center gap-1 w-fit">
-                                <FileWarning className="h-3 w-3" /> Via Form
+                                <FileWarning className="h-3 w-3" /> Required
                             </Badge>
                        ) : (
                          <span className="text-muted-foreground">-</span>

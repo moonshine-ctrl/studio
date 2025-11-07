@@ -44,9 +44,10 @@ export default function NotificationsPage() {
       const request = getLeaveRequestById(notification.leaveRequestId || '');
       if (request) {
         const employee = getUserById(request.userId);
+        const leaveType = getLeaveTypeById(request.leaveTypeId);
         
-        if (notification.type === 'warning' && currentUser?.role === 'Admin') {
-            finalMessage = `${employee?.name} mengajukan cuti sakit. Ingatkan untuk mengisi form surat keterangan.`;
+        if (notification.type === 'warning' && currentUser?.role === 'Admin' && leaveType?.name !== 'Cuti Tahunan') {
+            finalMessage = `${employee?.name} mengajukan ${leaveType?.name}. Ingatkan untuk melengkapi dokumen pendukung jika diperlukan.`;
         }
       }
       return { ...notification, message: finalMessage };

@@ -60,6 +60,8 @@ export default function DashboardPage() {
     const requestToCancel = leaveRequests.find(r => r.id === requestId);
     if (!requestToCancel) return;
 
+    const leaveType = getLeaveTypeById(requestToCancel.leaveTypeId);
+
     // Update leave request status
     const updatedRequests = leaveRequests.map(r => 
       r.id === requestId ? { ...r, status: 'Cancelled' as const } : r
@@ -68,22 +70,29 @@ export default function DashboardPage() {
     const originalRequest = initialLeaveRequests.find(r => r.id === requestId);
     if (originalRequest) originalRequest.status = 'Cancelled';
 
-    // Restore leave balance
-    const userToUpdate = users.find(u => u.id === requestToCancel.userId);
-    if (userToUpdate) {
-      const updatedUsers = users.map(u =>
-        u.id === userToUpdate.id 
-        ? { ...u, annualLeaveBalance: u.annualLeaveBalance + requestToCancel.days }
-        : u
-      );
-      setUsers(updatedUsers);
-      const originalUser = initialUsers.find(u => u.id === userToUpdate.id);
-      if (originalUser) originalUser.annualLeaveBalance += requestToCancel.days;
+    if (leaveType?.name === 'Cuti Tahunan') {
+        // Restore leave balance only for annual leave
+        const userToUpdate = users.find(u => u.id === requestToCancel.userId);
+        if (userToUpdate) {
+          const updatedUsers = users.map(u =>
+            u.id === userToUpdate.id 
+            ? { ...u, annualLeaveBalance: u.annualLeaveBalance + requestToCancel.days }
+            : u
+          );
+          setUsers(updatedUsers);
+          const originalUser = initialUsers.find(u => u.id === userToUpdate.id);
+          if (originalUser) originalUser.annualLeaveBalance += requestToCancel.days;
 
-      toast({
-        title: 'Leave Request Cancelled',
-        description: `${userToUpdate.name}'s request has been cancelled and their leave balance has been restored.`,
-      });
+          toast({
+            title: 'Leave Request Cancelled',
+            description: `${userToUpdate.name}'s request has been cancelled and their leave balance has been restored.`,
+          });
+        }
+    } else {
+         toast({
+            title: 'Leave Request Cancelled',
+            description: `The request has been cancelled.`,
+          });
     }
   };
 
@@ -187,9 +196,9 @@ export default function DashboardPage() {
                       </Badge>
                     </TableCell>
                      <TableCell>
-                       {leaveType?.name === 'Cuti Sakit' ? (
+                       {leaveType?.name !== 'Cuti Tahunan' ? (
                             <Badge variant="outline" className="flex items-center gap-1 w-fit">
-                                <FileWarning className="h-3 w-3" /> Via Form
+                                <FileWarning className="h-3 w-3" /> Required
                             </Badge>
                        ) : (
                          <span className="text-muted-foreground">-</span>
