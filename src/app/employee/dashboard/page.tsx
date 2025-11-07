@@ -59,6 +59,14 @@ export default function EmployeeDashboardPage() {
   const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>([]);
   const { toast } = useToast();
 
+  const fetchLeaveRequests = () => {
+    const loggedInUserId = sessionStorage.getItem('loggedInUserId');
+    const user = getUserById(loggedInUserId || '1'); // Fallback for safety
+    if (user) {
+      setLeaveRequests(initialLeaveRequests.filter(req => req.userId === user.id));
+    }
+  };
+
   useEffect(() => {
     const loggedInUserId = sessionStorage.getItem('loggedInUserId');
     const user = getUserById(loggedInUserId || '1'); // Fallback for safety
@@ -66,6 +74,12 @@ export default function EmployeeDashboardPage() {
     if (user) {
       setLeaveRequests(initialLeaveRequests.filter(req => req.userId === user.id));
     }
+
+    window.addEventListener('focus', fetchLeaveRequests);
+
+    return () => {
+      window.removeEventListener('focus', fetchLeaveRequests);
+    };
   }, []);
 
   const handleCancelRequest = (requestId: string) => {
