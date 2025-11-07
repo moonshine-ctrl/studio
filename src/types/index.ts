@@ -8,6 +8,8 @@ export type User = {
   annualLeaveBalance: number;
   qrCodeSignature?: string;
   phone?: string;
+  golongan?: string;
+  joinDate?: Date;
 };
 
 export type Department = {

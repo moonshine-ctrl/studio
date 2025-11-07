@@ -46,6 +46,7 @@ import {
 import type { User } from '@/types';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { formatDistanceToNow, differenceInYears, differenceInMonths, differenceInDays } from 'date-fns';
 
 export default function UsersPage() {
   const [users, setUsers] = useState<User[]>(initialUsers);
@@ -61,7 +62,9 @@ export default function UsersPage() {
     role: 'Employee',
     annualLeaveBalance: 12,
     qrCodeSignature: '',
-    phone: ''
+    phone: '',
+    golongan: '',
+    joinDate: new Date(),
   });
 
   const getDepartmentById = (id: string) => departments.find(d => d.id === id);
@@ -80,7 +83,10 @@ export default function UsersPage() {
             };
             reader.readAsDataURL(file);
         }
-    } else {
+    } else if (field === 'joinDate') {
+        setter({ ...target!, [field]: new Date(value) });
+    }
+    else {
         setter({ ...target!, [field]: value });
     }
   };
@@ -103,6 +109,8 @@ export default function UsersPage() {
         annualLeaveBalance: Number(newUser.annualLeaveBalance),
         qrCodeSignature: newUser.qrCodeSignature,
         phone: newUser.phone,
+        golongan: newUser.golongan,
+        joinDate: newUser.joinDate
       };
       const updatedUsers = [...users, user];
       setUsers(updatedUsers);
@@ -115,7 +123,9 @@ export default function UsersPage() {
         role: 'Employee',
         annualLeaveBalance: 12,
         qrCodeSignature: '',
-        phone: ''
+        phone: '',
+        golongan: '',
+        joinDate: new Date(),
       });
       toast({
         title: 'User Added',
@@ -169,6 +179,17 @@ export default function UsersPage() {
     });
   }
 
+  const calculateMasaKerja = (joinDate?: Date): string => {
+    if (!joinDate) return 'N/A';
+    const now = new Date();
+    const years = differenceInYears(now, joinDate);
+    const months = differenceInMonths(now, joinDate) % 12;
+    if (years > 0) {
+        return `${years} tahun, ${months} bulan`;
+    }
+    return `${months} bulan`;
+  }
+
 
   return (
     <div className="flex flex-col gap-6">
@@ -196,6 +217,14 @@ export default function UsersPage() {
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="phone" className="text-right">Phone</Label>
                 <Input id="phone" value={newUser.phone} onChange={(e) => handleInputChange('phone', e.target.value)} className="col-span-3" />
+              </div>
+               <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="golongan" className="text-right">Gol. Ruang</Label>
+                <Input id="golongan" value={newUser.golongan} onChange={(e) => handleInputChange('golongan', e.target.value)} className="col-span-3" />
+              </div>
+               <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="joinDate" className="text-right">Tgl. Masuk</Label>
+                <Input id="joinDate" type="date" onChange={(e) => handleInputChange('joinDate', e.target.value)} className="col-span-3" />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="department" className="text-right">Department</Label>
@@ -252,7 +281,7 @@ export default function UsersPage() {
                 <TableHead>Name</TableHead>
                 <TableHead className="hidden md:table-cell">Department</TableHead>
                 <TableHead className="hidden lg:table-cell">Role</TableHead>
-                <TableHead className="hidden sm:table-cell">Phone</TableHead>
+                <TableHead>Masa Kerja</TableHead>
                 <TableHead>Leave Balance</TableHead>
                 <TableHead className="hidden sm:table-cell">TTD QR Code</TableHead>
                 <TableHead>
@@ -283,7 +312,7 @@ export default function UsersPage() {
                       {department?.name}
                     </TableCell>
                     <TableCell className="hidden lg:table-cell">{user.role}</TableCell>
-                    <TableCell className="hidden sm:table-cell">{user.phone}</TableCell>
+                    <TableCell>{calculateMasaKerja(user.joinDate)}</TableCell>
                     <TableCell>
                       <span className="font-medium">{user.annualLeaveBalance}</span> days
                     </TableCell>
@@ -344,6 +373,14 @@ export default function UsersPage() {
                <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="edit-phone" className="text-right">Phone</Label>
                 <Input id="edit-phone" value={editingUser.phone} onChange={(e) => handleInputChange('phone', e.target.value, true)} className="col-span-3" />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="edit-golongan" className="text-right">Gol. Ruang</Label>
+                <Input id="edit-golongan" value={editingUser.golongan} onChange={(e) => handleInputChange('golongan', e.target.value, true)} className="col-span-3" />
+              </div>
+               <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="edit-joinDate" className="text-right">Tgl. Masuk</Label>
+                <Input id="edit-joinDate" type="date" value={editingUser.joinDate ? editingUser.joinDate.toISOString().split('T')[0] : ''} onChange={(e) => handleInputChange('joinDate', e.target.value, true)} className="col-span-3" />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="edit-department" className="text-right">Department</Label>

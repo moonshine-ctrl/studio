@@ -1,6 +1,6 @@
 'use client';
 import type { LeaveRequest, User, Department, LeaveType } from '@/types';
-import { format, differenceInDays } from 'date-fns';
+import { format, differenceInDays, differenceInYears, differenceInMonths } from 'date-fns';
 import Image from 'next/image';
 
 interface LeaveLetterProps {
@@ -31,6 +31,17 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
     
     const duration = differenceInDays(request.endDate, request.startDate) + 1;
     const leaveTypeCheck = (type: string) => leaveType?.name === type ? 'V' : '';
+    
+    const calculateMasaKerja = (joinDate?: Date): string => {
+        if (!joinDate) return '.......................';
+        const now = new Date();
+        const years = differenceInYears(now, joinDate);
+        const months = differenceInMonths(now, joinDate) % 12;
+        if (years > 0) {
+            return `${years} tahun, ${months} bulan`;
+        }
+        return `${months} bulan`;
+    }
 
     return (
         <div className="bg-white p-8 font-serif text-xs">
@@ -67,13 +78,13 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                 <Cell isHeader>Jabatan</Cell>
                                 <Cell>{user.role}</Cell>
                                 <Cell isHeader>Gol. Ruang</Cell>
-                                <Cell>.......................</Cell>
+                                <Cell>{user.golongan || '.......................'}</Cell>
                             </tr>
                             <tr>
                                 <Cell isHeader>Unit Kerja</Cell>
                                 <Cell>{department.name}</Cell>
                                 <Cell isHeader>Masa Kerja</Cell>
-                                <Cell>.......................</Cell>
+                                <Cell>{calculateMasaKerja(user.joinDate)}</Cell>
                             </tr>
                         </tbody>
                     </table>
@@ -122,26 +133,16 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                         <tbody>
                             <tr>
                                 <Cell colSpan={3}>1. CUTI TAHUNAN</Cell>
-                                <Cell rowSpan={5} className="align-top">PARAF PETUGAS CUTI</Cell>
-                                <Cell colSpan={2}>2. CUTI BESAR</Cell>
+                                <Cell rowSpan={2} className="align-top">PARAF PETUGAS CUTI</Cell>
                             </tr>
                             <tr>
                                 <Cell>Tahun</Cell>
                                 <Cell>Sisa</Cell>
                                 <Cell>Keterangan</Cell>
-                                <Cell colSpan={2}>3. CUTI SAKIT</Cell>
                             </tr>
                             <tr>
-                                <Cell>N-2</Cell><Cell></Cell><Cell></Cell>
-                                <Cell colSpan={2}>4. CUTI MELAHIRKAN</Cell>
-                            </tr>
-                             <tr>
-                                <Cell>N-1</Cell><Cell></Cell><Cell></Cell>
-                                <Cell colSpan={2}>5. CUTI KARENA ALASAN PENTING</Cell>
-                            </tr>
-                             <tr>
                                 <Cell>N</Cell><Cell>{user.annualLeaveBalance}</Cell><Cell></Cell>
-                                <Cell colSpan={2}>6. CUTI DILUAR TANGGUNGAN NEGARA</Cell>
+                                <Cell></Cell>
                             </tr>
                         </tbody>
                     </table>
@@ -234,8 +235,6 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                         <li>*** diisi oleh pejabat yang menangani bidang kepegawaian sebelum PNS mengajukan cuti</li>
                         <li>**** diberi tanda centang dan alasan</li>
                         <li>N = Cuti tahun berjalan</li>
-                        <li>N-1 = Sisa cuti 1 tahun sebelumnya</li>
-                        <li>N-2 = Sisa cuti 2 tahun sebelumnya</li>
                     </ul>
                 </footer>
             </div>
