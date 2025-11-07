@@ -14,7 +14,7 @@ import { settings, users } from '@/lib/data';
 export default function AdminLoginPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const [email, setEmail] = useState('');
+  const [nip, setNip] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -39,7 +39,7 @@ export default function AdminLoginPage() {
 
     const adminUser = users.find(u => u.role === 'Admin');
 
-    if (adminUser && email === adminUser.nip && password === adminUser.password) {
+    if (adminUser && nip === adminUser.nip && password === adminUser.password) {
       sessionStorage.setItem('adminLoggedIn', 'true');
       toast({
         title: 'Admin Login Successful',
@@ -52,7 +52,7 @@ export default function AdminLoginPage() {
       toast({
         variant: 'destructive',
         title: 'Login Failed',
-        description: 'Invalid email or password. Please try again.',
+        description: 'Invalid NIP or password. Please try again.',
       });
       setIsLoading(false);
     }
@@ -76,13 +76,13 @@ export default function AdminLoginPage() {
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-slate-700 dark:text-slate-200">Email</Label>
+              <Label htmlFor="nip" className="text-slate-700 dark:text-slate-200">NIP</Label>
               <Input
-                id="email"
-                type="email"
-                placeholder="admin@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                id="nip"
+                type="text"
+                placeholder="Masukkan NIP Admin"
+                value={nip}
+                onChange={(e) => setNip(e.target.value)}
                 required
                 className="bg-white/50 dark:bg-black/50 border-white/30 dark:border-black/30 focus:ring-pink-500"
               />
@@ -100,7 +100,7 @@ export default function AdminLoginPage() {
               />
             </div>
              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? 'Logging in...' : 'LOGIN'}
+                {isLoading ? 'Logging in...' : 'Login'}
              </Button>
           </form>
         </CardContent>
