@@ -62,10 +62,10 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4 gradient-background">
-      <Card className="w-full max-w-sm bg-white/30 dark:bg-black/30 backdrop-blur-lg border-white/20 text-gray-800 dark:text-white shadow-2xl">
+      <Card className="w-full max-w-md bg-white/30 dark:bg-black/30 backdrop-blur-lg border-white/20 text-gray-800 dark:text-white shadow-2xl">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
-              <Logo logoUrl={settings.logoUrl} />
+              <Logo logoUrl={settings.logoUrl} isLogin={true} />
           </div>
           <CardTitle className="text-2xl font-bold font-headline text-slate-800 dark:text-white">SiRancak</CardTitle>
           <CardDescription className="text-slate-600 dark:text-slate-300">Sistem Cuti Ramah, Cepat, dan Akurat</CardDescription>

@@ -50,7 +50,7 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
             <div className="max-w-4xl mx-auto">
                 <header className="text-center mb-4 border-b-2 border-black pb-2">
                     <div className="flex items-center justify-center gap-4">
-                        <Image src={settings.logoUrl || '/logo.png'} alt="Logo" width={60} height={60} />
+                         {settings.logoUrl && <Image src={settings.logoUrl} alt="Logo" width={70} height={70} className="object-contain" />}
                         <div>
                             <h1 className="font-bold text-sm">{settings.letterhead[0]}</h1>
                             <h2 className="font-bold text-sm">{settings.letterhead[1]}</h2>
