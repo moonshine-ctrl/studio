@@ -31,6 +31,7 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
     
     const duration = differenceInDays(request.endDate, request.startDate) + 1;
     const leaveTypeCheck = (type: string) => leaveType?.name === type ? 'V' : '';
+    const currentYear = new Date().getFullYear();
     
     const calculateMasaKerja = (joinDate?: Date): string => {
         if (!joinDate) return '.......................';
@@ -141,7 +142,9 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                 <Cell>Keterangan</Cell>
                             </tr>
                             <tr>
-                                <Cell>N</Cell><Cell>{user.annualLeaveBalance}</Cell><Cell></Cell>
+                                <Cell>{currentYear}</Cell>
+                                <Cell>{user.annualLeaveBalance}</Cell>
+                                <Cell></Cell>
                                 <Cell></Cell>
                             </tr>
                         </tbody>
