@@ -53,10 +53,10 @@ export default function ApprovalsPage() {
   }, [leaveRequests, currentUser]);
 
   const handleDecision = (requestId: string, decision: 'Approved' | 'Rejected' | 'Suspended') => {
-    const requestIndex = leaveRequests.findIndex(r => r.id === requestId);
+    const requestIndex = initialLeaveRequests.findIndex(r => r.id === requestId);
     if (requestIndex === -1 || !currentUser) return;
     
-    const originalRequest = leaveRequests[requestIndex];
+    const originalRequest = initialLeaveRequests[requestIndex];
     const employee = getUserById(originalRequest.userId);
     if (!employee) return;
 
@@ -77,13 +77,8 @@ export default function ApprovalsPage() {
 
     // If rejected or suspended, the flow stops.
     if (decision === 'Rejected' || decision === 'Suspended') {
-        const updatedRequests = leaveRequests.map(r => r.id === requestId ? { ...r, status: decision, nextApproverId: undefined } : r);
-        setLeaveRequests(updatedRequests);
-        const masterRequest = initialLeaveRequests.find(r => r.id === requestId);
-        if (masterRequest) {
-            masterRequest.status = decision;
-            masterRequest.nextApproverId = undefined;
-        }
+        originalRequest.status = decision;
+        originalRequest.nextApproverId = undefined;
         logActivity(decision);
 
     } else if (decision === 'Approved') {
@@ -96,18 +91,8 @@ export default function ApprovalsPage() {
 
         const newStatus = nextApproverId ? 'Pending' : 'Approved';
 
-        const updatedRequests = leaveRequests.map(r => 
-            r.id === requestId 
-            ? { ...r, status: newStatus, nextApproverId: nextApproverId } 
-            : r
-        );
-        setLeaveRequests(updatedRequests);
-
-        const masterRequest = initialLeaveRequests.find(r => r.id === requestId);
-        if (masterRequest) {
-            masterRequest.status = newStatus;
-            masterRequest.nextApproverId = nextApproverId;
-        }
+        originalRequest.status = newStatus;
+        originalRequest.nextApproverId = nextApproverId;
         
         const leaveType = getLeaveTypeById(originalRequest.leaveTypeId);
 
@@ -129,14 +114,10 @@ export default function ApprovalsPage() {
             // Final approval
             // Deduct leave balance only on final approval
             if (leaveType?.name === 'Cuti Tahunan') {
-                 const updatedUsers = allUsers.map(u => 
-                    u.id === employee.id 
-                    ? { ...u, annualLeaveBalance: u.annualLeaveBalance - originalRequest.days } 
-                    : u
-                );
-                setAllUsers(updatedUsers);
-                const originalUser = initialUsers.find(u => u.id === employee.id);
-                if (originalUser) originalUser.annualLeaveBalance -= originalRequest.days;
+                 const userToUpdate = initialUsers.find(u => u.id === employee.id);
+                 if (userToUpdate) {
+                     userToUpdate.annualLeaveBalance -= originalRequest.days;
+                 }
             }
 
             // Notify employee of final approval
@@ -153,6 +134,9 @@ export default function ApprovalsPage() {
             logActivity('Approved (Final)');
         }
     }
+    // Force a re-render by creating a new array from the updated master data
+    setLeaveRequests([...initialLeaveRequests]);
+    setAllUsers([...initialUsers]);
   };
 
   return (
@@ -200,7 +184,7 @@ export default function ApprovalsPage() {
                       </TableCell>
                       <TableCell>{leaveType.name}</TableCell>
                       <TableCell>
-                        {format(request.startDate, 'MMM d, y')} - {format(request.endDate, 'MMM d, y')}
+                        {format(new Date(request.startDate), 'MMM d, y')} - {format(new Date(request.endDate), 'MMM d, y')}
                       </TableCell>
                       <TableCell>{request.days}</TableCell>
                       <TableCell className="max-w-[200px] truncate">{request.reason}</TableCell>
