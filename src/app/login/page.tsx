@@ -108,7 +108,6 @@ export default function LoginPage() {
             <Link href="/admin-login" className="text-violet-600 dark:text-violet-400 hover:underline">
               Login as Admin
             </Link>
-            <span className="text-slate-500 dark:text-slate-400">&copy; {new Date().getFullYear()} Pengadilan Agama Solok.</span>
         </CardFooter>
       </Card>
     </div>
