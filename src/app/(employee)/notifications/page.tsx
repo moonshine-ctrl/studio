@@ -12,15 +12,12 @@ import { notifications as initialNotifications } from '@/lib/data';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Check, Mail, MessageSquare } from 'lucide-react';
+import { Check, Mail } from 'lucide-react';
 import { useState, useMemo, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import type { Notification, User } from '@/types';
 import {
   getUserById,
-  getLeaveRequestById,
-  getDepartmentById,
-  getLeaveTypeById,
   users,
 } from '@/lib/data';
 
@@ -30,27 +27,18 @@ export default function NotificationsPage() {
   const [currentUser, setCurrentUser] = useState<User | undefined>();
 
   useEffect(() => {
-    // For admin pages, always set the admin user.
-    setCurrentUser(users.find(u => u.role === 'Admin'));
+    // For employee pages, always set the employee user.
+    setCurrentUser(users.find(u => u.id === '1'));
   }, []);
 
 
   const enrichedNotifications = useMemo(() => {
     if (!currentUser) return [];
 
-    let filteredNotifications = notifData;
+    let filteredNotifications = notifData.filter(n => n.userId === currentUser.id);
 
     return filteredNotifications.map(notification => {
       let finalMessage = notification.message;
-      const request = getLeaveRequestById(notification.leaveRequestId || '');
-      if (request) {
-        const employee = getUserById(request.userId);
-        const approver = employee ? getDepartmentById(employee.departmentId) : undefined;
-
-        if (notification.type === 'warning' && currentUser?.role === 'Admin') {
-            finalMessage = `${employee?.name} mengajukan cuti sakit. Ingatkan untuk mengisi form surat keterangan.`;
-        }
-      }
       return { ...notification, message: finalMessage };
     });
   }, [notifData, currentUser]);
@@ -63,32 +51,12 @@ export default function NotificationsPage() {
 
   const markAllAsRead = () => {
     setNotifData(notifData.map(n => ({...n, isRead: true})));
-    initialNotifications.forEach(n => n.isRead = true);
+    initialNotifications.forEach(n => {
+        if(enrichedNotifications.find(en => en.id === n.id)) {
+            n.isRead = true;
+        }
+    });
   }
-
-  const handleWhatsAppNotification = (notification: Notification) => {
-    if (!notification.leaveRequestId) return;
-
-    const leaveRequest = getLeaveRequestById(notification.leaveRequestId);
-    if (!leaveRequest) return;
-    
-    const employee = getUserById(leaveRequest.userId);
-    if (!employee) return;
-    
-    const department = getDepartmentById(employee.departmentId);
-    if (!department) return;
-
-    const approver = getUserById(department.headId);
-    if (!approver || !approver.phone) {
-      alert('Approver contact not found.');
-      return;
-    }
-    
-    const leaveType = getLeaveTypeById(leaveRequest.leaveTypeId);
-    const message = `Yth. Bapak/Ibu ${approver.name},\n\nDengan ini kami memberitahukan bahwa ada pengajuan cuti dari Sdr/i ${employee.name} (NIP: ${employee.nip}) yang memerlukan persetujuan Anda.\n\nDetail pengajuan:\nJenis Cuti: ${leaveType?.name}\nTanggal: ${format(leaveRequest.startDate, 'dd-MM-yyyy')} s/d ${format(leaveRequest.endDate, 'dd-MM-yyyy')}\n\nMohon untuk segera ditindaklanjuti. Terima kasih.\n\n- Admin Kepegawaian -`;
-    const whatsappUrl = `https://wa.me/${approver.phone}?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
-  };
 
   const notificationVariants = {
     info: 'bg-blue-100 dark:bg-blue-900/50',
@@ -110,9 +78,9 @@ export default function NotificationsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>All Notifications</CardTitle>
+          <CardTitle>Your Notifications</CardTitle>
           <CardDescription>
-            Here are all recent notifications across the system.
+            Here are all recent notifications for your account.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -139,12 +107,6 @@ export default function NotificationsPage() {
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
-                    {currentUser?.role === 'Admin' && notification.type === 'warning' && (
-                       <Button variant="outline" size="sm" onClick={() => handleWhatsAppNotification(notification)}>
-                          <MessageSquare className="mr-2 h-4 w-4" />
-                          Notify Approver
-                       </Button>
-                    )}
                     {!notification.isRead && (
                       <Button variant="ghost" size="sm" onClick={() => markAsRead(notification.id)}>
                         Mark as read
