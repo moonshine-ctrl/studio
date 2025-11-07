@@ -9,7 +9,7 @@ export default function PrintLayout({
           <style dangerouslySetInnerHTML={{ __html: `
             @page {
               size: A4;
-              margin: 2cm;
+              margin: 1.5cm 2cm;
             }
             @media print {
               body {
