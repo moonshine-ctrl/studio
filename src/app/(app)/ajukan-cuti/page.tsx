@@ -26,8 +26,8 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { DateRange } from 'react-day-picker';
 import { useToast } from '@/hooks/use-toast';
-import { leaveTypes, users, leaveRequests as initialLeaveRequests } from '@/lib/data';
-import type { LeaveRequest, User } from '@/types';
+import { leaveTypes, users, leaveRequests as initialLeaveRequests, notifications as initialNotifications, getLeaveTypeById } from '@/lib/data';
+import type { LeaveRequest, User, Notification } from '@/types';
 
 export default function AjukanCutiPage() {
   const [currentUser, setCurrentUser] = useState<User | undefined>(users.find(u => u.id === '1'));
@@ -36,7 +36,14 @@ export default function AjukanCutiPage() {
   const [leaveTypeId, setLeaveTypeId] = useState<string>('');
   const [reason, setReason] = useState('');
   const [days, setDays] = useState<number | string>('');
+  const [attachment, setAttachment] = useState<File | null>(null);
   const { toast } = useToast();
+
+  const handleAttachmentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setAttachment(e.target.files[0]);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,9 +66,9 @@ export default function AjukanCutiPage() {
         return;
     }
 
-
+    const newRequestId = `req-${Date.now()}`;
     const newRequest: LeaveRequest = {
-      id: `req-${Date.now()}`,
+      id: newRequestId,
       userId: currentUser!.id,
       leaveTypeId: leaveTypeId,
       startDate: date.from,
@@ -70,11 +77,37 @@ export default function AjukanCutiPage() {
       reason: reason,
       status: 'Pending',
       createdAt: new Date(),
+      attachment: attachment ? attachment.name : undefined,
     };
 
     setLeaveRequests([newRequest, ...leaveRequests]);
     // In real app, you would also update the data source e.g. via API call
     initialLeaveRequests.unshift(newRequest);
+
+    // Notification logic for sick leave
+    const selectedLeaveType = getLeaveTypeById(leaveTypeId);
+    if (selectedLeaveType?.name === 'Cuti Sakit' && !attachment) {
+      const userNotification: Notification = {
+        id: `notif-${Date.now()}-user`,
+        userId: currentUser!.id,
+        message: `Pengajuan cuti sakit Anda pada ${format(date.from, 'd MMM y')} menunggu unggahan surat keterangan dokter.`,
+        type: 'warning',
+        isRead: false,
+        createdAt: new Date(),
+        leaveRequestId: newRequestId,
+      };
+      const adminNotification: Notification = {
+        id: `notif-${Date.now()}-admin`,
+        userId: 'admin', // Or dynamically find admin user
+        message: `${currentUser?.name} mengajukan cuti sakit tanpa surat keterangan.`,
+        type: 'warning',
+        isRead: false,
+        createdAt: new Date(),
+        leaveRequestId: newRequestId,
+      };
+      initialNotifications.unshift(userNotification, adminNotification);
+    }
+
 
     toast({
       title: 'Permintaan Terkirim',
@@ -86,7 +119,11 @@ export default function AjukanCutiPage() {
     setLeaveTypeId('');
     setReason('');
     setDays('');
+    setAttachment(null);
   };
+  
+  const selectedLeaveTypeName = getLeaveTypeById(leaveTypeId)?.name;
+
 
   return (
     <div className="flex flex-col gap-6">
@@ -103,7 +140,7 @@ export default function AjukanCutiPage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label htmlFor="leave-type">Jenis Cuti</Label>
                 <Select value={leaveTypeId} onValueChange={setLeaveTypeId}>
@@ -157,6 +194,7 @@ export default function AjukanCutiPage() {
                   </PopoverContent>
                 </Popover>
               </div>
+
               <div className="space-y-2">
                 <Label htmlFor="days">Jumlah Hari</Label>
                 <Input 
@@ -167,6 +205,19 @@ export default function AjukanCutiPage() {
                     placeholder="Contoh: 3"
                 />
               </div>
+
+              {selectedLeaveTypeName === 'Cuti Sakit' && (
+                <div className="space-y-2">
+                    <Label htmlFor="attachment">Surat Keterangan Sakit (Opsional)</Label>
+                    <Input 
+                        id="attachment" 
+                        type="file" 
+                        onChange={handleAttachmentChange}
+                        accept="application/pdf,image/jpeg,image/png"
+                    />
+                    <p className="text-xs text-muted-foreground">Anda dapat mengunggah ini nanti jika diperlukan.</p>
+                </div>
+              )}
             </div>
             
             <div className="space-y-2">
@@ -186,6 +237,7 @@ export default function AjukanCutiPage() {
                     setLeaveTypeId('');
                     setReason('');
                     setDays('');
+                    setAttachment(null);
                 }}>
                     Batal
                 </Button>

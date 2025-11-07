@@ -22,6 +22,8 @@ import {
   CheckCircle,
   XCircle,
   FileText,
+  FileWarning,
+  FileCheck2,
 } from 'lucide-react';
 import {
   getLeaveTypeById,
@@ -54,7 +56,7 @@ export default function EmployeeDashboardPage() {
   const stats = {
     sisaCuti: currentUser?.annualLeaveBalance || 0,
     cutiDigunakan: leaveRequests
-        .filter(r => r.status === 'Approved' && getLeaveTypeById(r.leaveTypeId)?.name === 'Annual')
+        .filter(r => r.status === 'Approved' && getLeaveTypeById(r.leaveTypeId)?.name === 'Cuti Tahunan')
         .reduce((acc, r) => acc + r.days, 0),
   };
 
@@ -117,6 +119,7 @@ export default function EmployeeDashboardPage() {
                 <TableHead>Jumlah Hari</TableHead>
                 <TableHead>Alasan</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>Lampiran</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -134,6 +137,21 @@ export default function EmployeeDashboardPage() {
                       <Badge variant={statusColors[request.status]}>
                         {request.status}
                       </Badge>
+                    </TableCell>
+                     <TableCell>
+                       {leaveType?.name === 'Cuti Sakit' ? (
+                          request.attachment ? (
+                            <Badge variant="secondary" className="flex items-center gap-1 w-fit">
+                                <FileCheck2 className="h-3 w-3" /> Terunggah
+                            </Badge>
+                          ) : (
+                            <Badge variant="destructive" className="flex items-center gap-1 w-fit">
+                                <FileWarning className="h-3 w-3" /> Wajib
+                            </Badge>
+                          )
+                       ) : (
+                         <span className="text-muted-foreground">-</span>
+                       )}
                     </TableCell>
                   </TableRow>
                 );

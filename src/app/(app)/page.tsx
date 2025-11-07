@@ -22,6 +22,8 @@ import {
   CheckCircle,
   XCircle,
   MoreHorizontal,
+  FileWarning,
+  FileCheck2,
 } from 'lucide-react';
 import {
   getDepartmentById,
@@ -109,6 +111,7 @@ export default function DashboardPage() {
                 <TableHead>Dates</TableHead>
                 <TableHead>Days</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>Attachment</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -143,6 +146,21 @@ export default function DashboardPage() {
                       <Badge variant={statusColors[request.status]}>
                         {request.status}
                       </Badge>
+                    </TableCell>
+                     <TableCell>
+                       {leaveType?.name === 'Cuti Sakit' ? (
+                          request.attachment ? (
+                            <Badge variant="secondary" className="flex items-center gap-1 w-fit">
+                                <FileCheck2 className="h-3 w-3" /> Uploaded
+                            </Badge>
+                          ) : (
+                            <Badge variant="outline" className="flex items-center gap-1 w-fit">
+                                <FileWarning className="h-3 w-3" /> Missing
+                            </Badge>
+                          )
+                       ) : (
+                         <span className="text-muted-foreground">-</span>
+                       )}
                     </TableCell>
                   </TableRow>
                 );

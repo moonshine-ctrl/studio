@@ -1,6 +1,6 @@
 'use client';
 import type { LeaveRequest, User, Department, LeaveType } from '@/types';
-import { format, differenceInDays, differenceInYears, differenceInMonths } from 'date-fns';
+import { format, differenceInYears, differenceInMonths } from 'date-fns';
 import Image from 'next/image';
 
 interface LeaveLetterProps {
