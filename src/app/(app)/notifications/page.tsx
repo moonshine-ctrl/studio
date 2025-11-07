@@ -21,6 +21,7 @@ import {
   getDepartmentById,
   getLeaveTypeById,
   users,
+  departments,
 } from '@/lib/data';
 
 export default function NotificationsPage() {
