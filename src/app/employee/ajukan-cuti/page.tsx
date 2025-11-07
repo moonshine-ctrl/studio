@@ -107,7 +107,19 @@ export default function AjukanCutiPage() {
     setLeaveRequests([newRequest, ...leaveRequests]);
     initialLeaveRequests.unshift(newRequest);
 
-    // Notification logic for sick leave
+    // Create a notification for the approver
+    const approverNotification: Notification = {
+      id: `notif-${Date.now()}-approver`,
+      userId: firstApproverId,
+      message: `Anda memiliki permintaan persetujuan cuti baru dari ${currentUser.name} untuk ${selectedLeaveType?.name}.`,
+      type: 'info',
+      isRead: false,
+      createdAt: new Date(),
+      leaveRequestId: newRequestId,
+    };
+    initialNotifications.unshift(approverNotification);
+
+    // Notification logic for sick leave (for user and admin)
     if (selectedLeaveType?.name === 'Cuti Sakit') {
       const userNotification: Notification = {
         id: `notif-${Date.now()}-user`,
@@ -129,7 +141,7 @@ export default function AjukanCutiPage() {
       };
       initialNotifications.unshift(userNotification, adminNotification);
     } else {
-        // Generic notification for other leave types
+        // Generic notification for admin for other leave types
         const adminNotification: Notification = {
             id: `notif-${Date.now()}-admin`,
             userId: 'admin',
