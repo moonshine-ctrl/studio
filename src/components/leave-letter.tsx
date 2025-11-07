@@ -45,22 +45,23 @@ const PrintHeader = () => (
     </header>
 );
 
-const SignatureBlock = ({ title, user, qrCode, name, nip }: { title?: string, user?: User, qrCode?: string, name?: string, nip?: string }) => {
+const SignatureBlock = ({ user, qrCode, name, nip, signatureDate }: { user?: User, qrCode?: string, name?: string, nip?: string, signatureDate?: Date }) => {
     const signatureQr = qrCode || user?.qrCodeSignature;
     const signatureName = name || user?.name || '.......................';
     const signatureNip = nip || user?.nip || '.......................';
+    const dateToDisplay = signatureDate ? format(signatureDate, 'dd/MM/yyyy') : '.../.../......';
 
     return (
         <div className="text-center">
-            {title && <p>{title}</p>}
-            <div className="h-20 w-20 mx-auto my-1 flex items-center justify-center">
+            <p className='mb-1'>{dateToDisplay}</p>
+            <div className="h-16 w-16 mx-auto flex items-center justify-center">
                 {signatureQr ? (
-                    <Image src={signatureQr} alt="QR Code" width={70} height={70} className="mx-auto" />
+                    <Image src={signatureQr} alt="QR Code" width={60} height={60} className="mx-auto" />
                 ) : (
-                    <div className="h-[70px]"></div>
+                    <div className="h-[60px]"></div>
                 )}
             </div>
-            <p className="underline font-bold">({signatureName})</p>
+            <p className="underline font-bold mt-1">({signatureName})</p>
             <p>NIP. {signatureNip}</p>
         </div>
     );
@@ -205,7 +206,8 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                             </table>
                         </div>
                         <div className="w-1/2 text-center">
-                            <SignatureBlock title="Hormat saya," user={user} />
+                            <p className="font-bold">Hormat saya,</p>
+                            <SignatureBlock user={user} signatureDate={request.createdAt} />
                         </div>
                     </section>
                     
@@ -225,11 +227,11 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                         <tr>
                                             <td colSpan={4} className={`${styles.cell} p-2`}>
                                                 <div className="flex justify-end">
-                                                    <div className="w-1/2">
-                                                        {/* Empty space for comments */}
+                                                    <div className="w-2/3">
+                                                         {/* Empty space for comments */}
                                                     </div>
-                                                    <div className="w-1/2 text-center">
-                                                        <SignatureBlock title={`Atasan Langsung ${allApprovers.length > 1 ? index + 1 : ''},`} user={approverItem} />
+                                                    <div className="w-1/3 text-center">
+                                                        <SignatureBlock user={approverItem} signatureDate={new Date()} />
                                                     </div>
                                                 </div>
                                             </td>
@@ -254,11 +256,11 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                 <tr>
                                     <td colSpan={4} className={`${styles.cell} p-2`}>
                                          <div className="flex justify-end">
-                                             <div className="w-1/2">
+                                             <div className="w-2/3">
                                                  {/* Empty space for comments */}
                                              </div>
-                                            <div className="w-1/2 text-center">
-                                                <SignatureBlock title="Ketua," user={headOfAgency} />
+                                            <div className="w-1/3 text-center">
+                                                <SignatureBlock user={headOfAgency} signatureDate={new Date()} />
                                             </div>
                                         </div>
                                     </td>
