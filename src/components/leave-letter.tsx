@@ -39,14 +39,14 @@ const PrintHeaderContent = () => (
     </header>
 );
 
-const SignatureBlock = ({ user, signatureDate }: { user?: User, signatureDate?: Date }) => {
+const SignatureBlock = ({ user, title, signatureDate }: { user?: User, title?: string, signatureDate?: Date }) => {
     if (!user) return <div className="h-full"></div>;
     const dateToDisplay = signatureDate ? format(signatureDate, 'dd-MM-yyyy') : '...................';
 
     return (
         <div className="text-center h-full flex flex-col justify-between p-1">
             <div>
-                <p className="mb-1">Solok, {dateToDisplay}</p>
+                <p className="mb-1">{title || `Solok, ${dateToDisplay}`}</p>
             </div>
             <div className="h-16 w-16 mx-auto my-1 flex items-center justify-center">
                 {user.qrCodeSignature ? (
@@ -149,7 +149,8 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                     <td className={styles.cell}>4. Cuti Karena Alasan Penting <span className="float-right font-bold text-lg pr-2">{leaveTypeCheck('Cuti Alasan Penting')}</span></td>
                                 </tr>
                                 <tr>
-                                    <td className={styles.cell} colSpan={2}>5. Cuti di Luar Tanggungan Negara <span className="float-right font-bold text-lg pr-2">{leaveTypeCheck('Cuti di Luar Tanggungan Negara')}</span></td>
+                                     <td className={styles.cell}>5. Cuti di Luar Tanggungan Negara <span className="float-right font-bold text-lg pr-2">{leaveTypeCheck('Cuti di Luar Tanggungan Negara')}</span></td>
+                                     <td className={styles.cell}>6. Cuti Lainnya<span className="float-right font-bold text-lg pr-2">{leaveTypeCheck('Cuti Lainnya')}</span></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -184,7 +185,7 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                         <table className={styles.table}>
                             <tbody>
                                 <tr>
-                                    {/* Kolom Kiri - Cuti Tahunan & Paraf */}
+                                    {/* Kolom Kiri - Cuti Tahunan */}
                                     <td className={`${styles.cell} align-top p-0`} style={{width: '50%'}}>
                                         <table className="w-full h-full border-collapse">
                                             <thead>
@@ -240,8 +241,12 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                                     <td className={`${styles.cell} border-r-0`}></td>
                                                 </tr>
                                                  <tr>
-                                                    <td className={`${styles.cell} border-l-0 border-b-0`}>5. Cuti di Luar Tanggungan Negara</td>
-                                                    <td className={`${styles.cell} border-r-0 border-b-0`}></td>
+                                                    <td className={`${styles.cell} border-l-0`}>5. Cuti di Luar Tanggungan Negara</td>
+                                                    <td className={`${styles.cell} border-r-0`}></td>
+                                                </tr>
+                                                <tr>
+                                                    <td className={`${styles.cell} border-b-0 border-l-0`}>6. Cuti Lainnya</td>
+                                                    <td className={`${styles.cell} border-b-0 border-r-0`}></td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -272,7 +277,7 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                     )}
                                 </td>
                                 <td className={`${styles.cell} w-1/3 align-top text-center`}>
-                                   <SignatureBlock user={user} signatureDate={request.createdAt} />
+                                   <SignatureBlock user={user} title="Hormat saya," />
                                 </td>
                               </tr>
                             </tbody>
