@@ -26,6 +26,7 @@ import {
   leaveRequests as initialLeaveRequests,
   departments as initialDepartments,
   users,
+  logHistory,
 } from '@/lib/data';
 import { format } from 'date-fns';
 import { useState, useMemo, useEffect } from 'react';
@@ -60,27 +61,30 @@ export default function ApprovalsPage() {
 
   }, [leaveRequests, currentUser]);
 
-
-  const handleApprove = (requestId: string) => {
-    const updatedRequests = leaveRequests.map(r => r.id === requestId ? { ...r, status: 'Approved' } : r);
+  const handleDecision = (requestId: string, status: 'Approved' | 'Rejected') => {
+    const updatedRequests = leaveRequests.map(r => r.id === requestId ? { ...r, status } : r);
     setLeaveRequests(updatedRequests);
-    // In a real app, this mutation would be done on the backend
-    const originalRequest = initialLeaveRequests.find(r => r.id === requestId);
-    if(originalRequest) originalRequest.status = 'Approved';
     
-    toast({ title: 'Request Approved', description: 'The leave request has been approved.' });
-  };
-  
-  const handleReject = (requestId: string) => {
-    const updatedRequests = leaveRequests.map(r => r.id === requestId ? { ...r, status: 'Rejected' } : r);
-    setLeaveRequests(updatedRequests);
-     // In a real app, this mutation would be done on the backend
     const originalRequest = initialLeaveRequests.find(r => r.id === requestId);
-    if(originalRequest) originalRequest.status = 'Rejected';
+    if (originalRequest) originalRequest.status = status;
 
-    toast({ variant: 'destructive', title: 'Request Rejected', description: 'The leave request has been rejected.' });
+    const requestDetails = initialLeaveRequests.find(r => r.id === requestId);
+    const employee = requestDetails ? getUserById(requestDetails.userId) : null;
+
+    // Add to log
+    logHistory.unshift({
+      id: `log-${Date.now()}`,
+      date: new Date(),
+      user: currentUser?.name || 'Approver',
+      activity: `${status} leave request for ${employee?.name || 'N/A'}.`,
+    });
+
+    toast({
+      title: `Request ${status}`,
+      description: `The leave request has been ${status.toLowerCase()}.`,
+      variant: status === 'Rejected' ? 'destructive' : 'default',
+    });
   };
-  
 
   return (
     <div className="flex flex-col gap-6 max-w-7xl mx-auto">
@@ -137,10 +141,10 @@ export default function ApprovalsPage() {
                       <TableCell className="max-w-[200px] truncate">{request.reason}</TableCell>
                       <TableCell>
                         <div className="flex gap-2">
-                           <Button size="sm" onClick={() => handleApprove(request.id)}>
+                           <Button size="sm" onClick={() => handleDecision(request.id, 'Approved')}>
                              <Check className="mr-2 h-4 w-4" /> Approve
                            </Button>
-                           <Button size="sm" variant="destructive" onClick={() => handleReject(request.id)}>
+                           <Button size="sm" variant="destructive" onClick={() => handleDecision(request.id, 'Rejected')}>
                              <X className="mr-2 h-4 w-4" /> Reject
                            </Button>
                         </div>

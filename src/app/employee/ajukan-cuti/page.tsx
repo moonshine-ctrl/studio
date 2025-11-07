@@ -26,7 +26,7 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { DateRange } from 'react-day-picker';
 import { useToast } from '@/hooks/use-toast';
-import { leaveTypes, users, leaveRequests as initialLeaveRequests, notifications as initialNotifications, getLeaveTypeById, settings as appSettings, getUserById } from '@/lib/data';
+import { leaveTypes, users, leaveRequests as initialLeaveRequests, notifications as initialNotifications, getLeaveTypeById, settings as appSettings, getUserById, logHistory } from '@/lib/data';
 import type { LeaveRequest, User, Notification } from '@/types';
 import Link from 'next/link';
 
@@ -115,6 +115,14 @@ export default function AjukanCutiPage() {
       };
       initialNotifications.unshift(userNotification, adminNotification);
     }
+    
+    // Add to log history
+    logHistory.unshift({
+        id: `log-${Date.now()}`,
+        date: new Date(),
+        user: currentUser.name,
+        activity: `Submitted a new leave request (${selectedLeaveType?.name}, ${numDays} days).`,
+    });
 
 
     toast({

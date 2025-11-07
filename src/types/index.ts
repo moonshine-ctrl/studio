@@ -47,3 +47,10 @@ export type Notification = {
   createdAt: Date;
   leaveRequestId?: string;
 };
+
+export type LogEntry = {
+    id: string;
+    date: Date;
+    user: string;
+    activity: string;
+};

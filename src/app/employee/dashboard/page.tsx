@@ -30,6 +30,7 @@ import {
   users as allUsers,
   getLeaveTypeById,
   getUserById,
+  logHistory,
 } from '@/lib/data';
 import { format } from 'date-fns';
 import { useState, useMemo, useEffect } from 'react';
@@ -68,8 +69,6 @@ export default function EmployeeDashboardPage() {
     const requestToCancel = leaveRequests.find(r => r.id === requestId);
     if (!requestToCancel || !currentUser) return;
 
-    const leaveType = getLeaveTypeById(requestToCancel.leaveTypeId);
-    
     // Update request status
     const updatedRequests = leaveRequests.map(r => 
       r.id === requestId ? { ...r, status: 'Cancelled' as const } : r
@@ -77,24 +76,21 @@ export default function EmployeeDashboardPage() {
     setLeaveRequests(updatedRequests);
     const originalRequest = initialLeaveRequests.find(r => r.id === requestId);
     if(originalRequest) originalRequest.status = 'Cancelled';
+    
+    const leaveType = getLeaveTypeById(requestToCancel.leaveTypeId);
 
-    if (leaveType?.name === 'Cuti Tahunan' && requestToCancel.status === 'Approved') {
-      // Restore leave balance only for annual leave that was already approved
-      const updatedUser = { ...currentUser, annualLeaveBalance: currentUser.annualLeaveBalance + requestToCancel.days };
-      setCurrentUser(updatedUser);
-      const originalUser = allUsers.find(u => u.id === currentUser.id);
-      if (originalUser) originalUser.annualLeaveBalance += requestToCancel.days;
+    // Add to log
+    logHistory.unshift({
+        id: `log-${Date.now()}`,
+        date: new Date(),
+        user: currentUser.name,
+        activity: `Cancelled their own leave request (${leaveType?.name}, ${requestToCancel.days} days).`,
+    });
 
-      toast({
-        title: 'Request Cancelled',
-        description: 'Your leave request has been cancelled and your leave balance has been restored.',
-      });
-    } else {
-      toast({
-        title: 'Request Cancelled',
-        description: 'Your leave request has been cancelled.',
-      });
-    }
+    toast({
+      title: 'Request Cancelled',
+      description: 'Your leave request has been cancelled.',
+    });
   };
 
   const stats = useMemo(() => {
@@ -177,7 +173,7 @@ export default function EmployeeDashboardPage() {
              {leaveRequests.length > 0 ? leaveRequests.map((request) => {
                 const leaveType = getLeaveTypeById(request.leaveTypeId);
                 if (!leaveType) return null;
-                const isCancellable = request.status === 'Pending' || request.status === 'Approved';
+                const isCancellable = request.status === 'Pending'; // Employee can only cancel pending requests
 
                 return (
                   <TableRow key={request.id}>

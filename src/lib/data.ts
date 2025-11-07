@@ -1,4 +1,4 @@
-import type { User, Department, LeaveType, LeaveRequest, Notification } from '@/types';
+import type { User, Department, LeaveType, LeaveRequest, Notification, LogEntry } from '@/types';
 import { subDays, addDays, format } from 'date-fns';
 
 export const users: User[] = [
@@ -49,6 +49,13 @@ export const notifications: Notification[] = [
     { id: 'notif4', userId: '8', message: 'Permintaan cuti dari Gilang Ramadhan menunggu persetujuan Anda.', type: 'warning', isRead: false, createdAt: subDays(now, 1), leaveRequestId: 'req3' },
     { id: 'notif5', userId: '2', message: 'Permintaan cuti Anda ditolak.', type: 'info', isRead: false, createdAt: subDays(now, 29), leaveRequestId: 'req5' },
     { id: 'notif6', userId: '2', message: 'Permintaan cuti dari Eka Putri menunggu persetujuan Anda.', type: 'warning', isRead: false, createdAt: subDays(now, 1), leaveRequestId: 'req6' },
+];
+
+export const logHistory: LogEntry[] = [
+    { id: 'log1', date: subDays(now, 1), user: 'Budi Santoso', activity: 'Submitted a new leave request (Annual, 5 days).' },
+    { id: 'log2', date: subDays(now, 2), user: 'Admin SiRancak', activity: 'Approved leave request for Doni Firmansyah.' },
+    { id: 'log3', date: subDays(now, 3), user: 'Doni Firmansyah', activity: 'Submitted a new leave request (Sick Leave, 2 days).' },
+    { id: 'log4', date: subDays(now, 4), user: 'Admin SiRancak', activity: 'Rejected leave request for Citra Lestari.' },
 ];
 
 
