@@ -27,10 +27,13 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
+import Image from 'next/image';
 
 export default function SettingsPage() {
   const { toast } = useToast();
   const [sickLeaveFormUrl, setSickLeaveFormUrl] = useState(appSettings.sickLeaveFormUrl);
+  const [logo, setLogo] = useState(appSettings.logoUrl);
+  const [letterhead, setLetterhead] = useState(appSettings.letterhead);
 
   const handleSaveChanges = () => {
     toast({
@@ -45,6 +48,29 @@ export default function SettingsPage() {
       handleSaveChanges();
   }
 
+  const handleBrandingSave = () => {
+    appSettings.logoUrl = logo;
+    appSettings.letterhead = letterhead;
+    handleSaveChanges();
+  }
+
+  const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setLogo(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleLetterheadChange = (index: number, value: string) => {
+    const newLetterhead = [...letterhead];
+    newLetterhead[index] = value;
+    setLetterhead(newLetterhead);
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <h1 className="text-2xl font-bold font-headline">Settings</h1>
@@ -52,6 +78,7 @@ export default function SettingsPage() {
       <Tabs defaultValue="approval">
         <TabsList>
           <TabsTrigger value="general">General</TabsTrigger>
+          <TabsTrigger value="branding">Branding & Kop Surat</TabsTrigger>
           <TabsTrigger value="approval">Approval Flows</TabsTrigger>
         </TabsList>
         <TabsContent value="general" className="mt-6">
@@ -74,6 +101,44 @@ export default function SettingsPage() {
                         </p>
                     </div>
                     <Button onClick={handleGeneralSave}>Save General Settings</Button>
+                </CardContent>
+            </Card>
+        </TabsContent>
+         <TabsContent value="branding" className="mt-6">
+            <Card>
+                <CardHeader>
+                    <CardTitle>Branding & Kop Surat</CardTitle>
+                    <CardDescription>Sesuaikan logo dan teks kop surat untuk semua dokumen yang dicetak.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <Label>Logo Instansi</Label>
+                             {logo && <Image src={logo} alt="Current Logo" width={80} height={80} className="rounded-md border p-2" />}
+                            <Input 
+                                id="logo-upload"
+                                type="file"
+                                accept="image/png, image/jpeg, image/svg+xml"
+                                onChange={handleLogoUpload}
+                            />
+                            <p className="text-xs text-muted-foreground">
+                                Unggah logo yang akan muncul di halaman login dan kop surat.
+                            </p>
+                        </div>
+
+                        <div className="space-y-4">
+                             <Label>Teks Kop Surat</Label>
+                             {letterhead.map((line, index) => (
+                                <Input 
+                                    key={index}
+                                    value={line}
+                                    onChange={(e) => handleLetterheadChange(index, e.target.value)}
+                                    placeholder={`Baris ${index + 1}`}
+                                />
+                             ))}
+                        </div>
+                    </div>
+                    <Button onClick={handleBrandingSave}>Save Branding</Button>
                 </CardContent>
             </Card>
         </TabsContent>

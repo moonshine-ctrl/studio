@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Logo } from '@/components/logo';
 import Link from 'next/link';
+import { settings } from '@/lib/data';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -67,7 +68,7 @@ export default function AdminLoginPage() {
       <Card className="w-full max-w-sm bg-white/30 dark:bg-black/30 backdrop-blur-lg border-white/20 text-gray-800 dark:text-white shadow-2xl">
         <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
-                <Logo />
+                <Logo logoUrl={settings.logoUrl} />
             </div>
           <CardTitle className="text-2xl font-bold font-headline text-slate-800 dark:text-white">Admin Login</CardTitle>
           <CardDescription className="text-slate-600 dark:text-slate-300">Access the management dashboard</CardDescription>

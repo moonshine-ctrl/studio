@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Logo } from '@/components/logo';
+import { settings } from '@/lib/data';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -64,7 +65,7 @@ export default function LoginPage() {
       <Card className="w-full max-w-sm bg-white/30 dark:bg-black/30 backdrop-blur-lg border-white/20 text-gray-800 dark:text-white shadow-2xl">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
-              <Logo />
+              <Logo logoUrl={settings.logoUrl} />
           </div>
           <CardTitle className="text-2xl font-bold font-headline text-slate-800 dark:text-white">SiRancak</CardTitle>
           <CardDescription className="text-slate-600 dark:text-slate-300">Sistem Cuti Ramah, Cepat, dan Akurat</CardDescription>

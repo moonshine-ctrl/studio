@@ -11,6 +11,7 @@ import { Nav } from '@/components/nav';
 import { Button } from './ui/button';
 import { LogOut } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
+import { settings } from '@/lib/data';
 
 interface AppSidebarProps {
   role: 'Admin' | 'Employee';
@@ -38,7 +39,7 @@ export function AppSidebar({ role }: AppSidebarProps) {
       collapsible="icon"
     >
       <SidebarHeader>
-        <Logo />
+        <Logo logoUrl={settings.logoUrl} useText={true}/>
       </SidebarHeader>
       <SidebarContent>
         <Nav role={role} />

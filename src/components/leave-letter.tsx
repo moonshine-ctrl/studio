@@ -2,6 +2,7 @@
 import type { LeaveRequest, User, Department, LeaveType } from '@/types';
 import { format, differenceInYears, differenceInMonths } from 'date-fns';
 import Image from 'next/image';
+import { settings } from '@/lib/data';
 
 interface LeaveLetterProps {
     request: LeaveRequest;
@@ -49,14 +50,14 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
             <div className="max-w-4xl mx-auto">
                 <header className="text-center mb-4 border-b-2 border-black pb-2">
                     <div className="flex items-center justify-center gap-4">
-                        <Image src="/logo.png" alt="Logo" width={60} height={60} />
+                        <Image src={settings.logoUrl || '/logo.png'} alt="Logo" width={60} height={60} />
                         <div>
-                            <h1 className="font-bold text-sm">MAHKAMAH AGUNG REPUBLIK INDONESIA</h1>
-                            <h2 className="font-bold text-sm">DIREKTORAT JENDERAL BADAN PERADILAN AGAMA</h2>
-                            <h3 className="font-bold text-base">PENGADILAN TINGGI AGAMA PADANG</h3>
-                            <h3 className="font-bold text-lg">PENGADILAN AGAMA SOLOK</h3>
-                            <p className="text-xs">Jln. Kapten Bahar Hamid Kel. Laing Kec. Tanjung Harapan Kota Solok, Sumatera Barat 27325</p>
-                            <p className="text-xs">Telp. (0778) 3210231 www.pa-solok.go.id, pa.solok@pta-padang.go.id</p>
+                            <h1 className="font-bold text-sm">{settings.letterhead[0]}</h1>
+                            <h2 className="font-bold text-sm">{settings.letterhead[1]}</h2>
+                            <h3 className="font-bold text-base">{settings.letterhead[2]}</h3>
+                            <h3 className="font-bold text-lg">{settings.letterhead[3]}</h3>
+                            <p className="text-xs">{settings.letterhead[4]}</p>
+                            <p className="text-xs">{settings.letterhead[5]}</p>
                         </div>
                     </div>
                 </header>

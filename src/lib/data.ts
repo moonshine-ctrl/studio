@@ -52,8 +52,17 @@ export const notifications: Notification[] = [
 
 
 export const settings = {
-    sickLeaveFormUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSc_b_a-M9bA9gQlLd6v_iJbA4J/viewform'
-}
+    sickLeaveFormUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSc_b_a-M9bA9gQlLd6v_iJbA4J/viewform',
+    logoUrl: '/logo.png',
+    letterhead: [
+        'MAHKAMAH AGUNG REPUBLIK INDONESIA',
+        'DIREKTORAT JENDERAL BADAN PERADILAN AGAMA',
+        'PENGADILAN TINGGI AGAMA PADANG',
+        'PENGADILAN AGAMA SOLOK',
+        'Jln. Kapten Bahar Hamid Kel. Laing Kec. Tanjung Harapan Kota Solok, Sumatera Barat 27325',
+        'Telp. (0778) 3210231 www.pa-solok.go.id, pa.solok@pta-padang.go.id'
+    ]
+};
 
 // Helper functions to get data by ID
 export const getUserById = (id: string) => users.find(u => u.id === id);
