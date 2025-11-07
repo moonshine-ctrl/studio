@@ -26,10 +26,6 @@ export default function LogsPage() {
 
   return (
     <div className="flex flex-col gap-6 max-w-7xl mx-auto">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold font-headline">Log History</h1>
-      </div>
-
       <Card>
         <CardHeader>
           <CardTitle>System Activity Log</CardTitle>

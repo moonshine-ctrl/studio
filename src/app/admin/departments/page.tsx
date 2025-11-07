@@ -147,8 +147,7 @@ export default function DepartmentsPage() {
 
   return (
     <div className="flex flex-col gap-6 max-w-7xl mx-auto">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold font-headline">Department Management</h1>
+      <div className="flex items-center justify-end">
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button>

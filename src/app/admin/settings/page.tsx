@@ -75,8 +75,6 @@ export default function SettingsPage() {
 
   return (
     <div className="flex flex-col gap-6 max-w-7xl mx-auto">
-      <h1 className="text-2xl font-bold font-headline">Settings</h1>
-
       <Tabs defaultValue="approval">
         <TabsList>
           <TabsTrigger value="general">General</TabsTrigger>
