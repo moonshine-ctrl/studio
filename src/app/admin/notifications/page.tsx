@@ -65,7 +65,7 @@ export default function NotificationsPage() {
     });
   }
 
-  const handleWhatsAppNotification = (notification: Notification) => {
+  const handleNotifyEmployee = (notification: Notification) => {
     if (!notification.leaveRequestId) return;
 
     const leaveRequest = getLeaveRequestById(notification.leaveRequestId);
@@ -80,6 +80,28 @@ export default function NotificationsPage() {
     const leaveType = getLeaveTypeById(leaveRequest.leaveTypeId);
     const message = `Yth. Sdr/i ${employee.name},\n\nMengingatkan untuk segera melengkapi dokumen surat keterangan sakit untuk pengajuan cuti Anda pada tanggal ${format(leaveRequest.startDate, 'd MMMM yyyy')}.\n\nTerima kasih atas perhatiannya dan semoga lekas sembuh.\n\n- Admin Kepegawaian -`;
     const whatsappUrl = `https://wa.me/${employee.phone}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+  };
+  
+  const handleNotifyApprover = (notification: Notification) => {
+    if (!notification.leaveRequestId) return;
+
+    const leaveRequest = getLeaveRequestById(notification.leaveRequestId);
+    if (!leaveRequest) return;
+    
+    const employee = getUserById(leaveRequest.userId);
+    // In a real app, the approver would be dynamically determined. Here, we use a hardcoded approver.
+    const approver = users.find(u => u.id === '2'); // Citra Lestari as default approver
+
+    if (!approver || !approver.phone) {
+      alert('Kontak approver tidak ditemukan atau tidak valid.');
+      return;
+    }
+    if (!employee) return;
+    
+    const leaveType = getLeaveTypeById(leaveRequest.leaveTypeId);
+    const message = `Yth. Bapak/Ibu ${approver.name},\n\nMemberitahukan bahwa ada pengajuan cuti sakit dari Sdr/i ${employee.name} yang menunggu persetujuan. Karyawan telah diingatkan untuk melengkapi dokumen.\n\nMohon untuk segera ditindaklanjuti. Terima kasih.\n\n- Admin Kepegawaian -`;
+    const whatsappUrl = `https://wa.me/${approver.phone}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
 
@@ -132,10 +154,16 @@ export default function NotificationsPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     {notification.type === 'warning' && notification.leaveRequestId && (
-                       <Button variant="outline" size="sm" onClick={() => handleWhatsAppNotification(notification)}>
-                          <MessageSquare className="mr-2 h-4 w-4" />
-                          Ingatkan Karyawan
-                       </Button>
+                       <>
+                         <Button variant="outline" size="sm" onClick={() => handleNotifyEmployee(notification)}>
+                            <MessageSquare className="mr-2 h-4 w-4" />
+                            Notify Employee
+                         </Button>
+                          <Button variant="outline" size="sm" onClick={() => handleNotifyApprover(notification)}>
+                            <MessageSquare className="mr-2 h-4 w-4" />
+                            Notify Approver
+                         </Button>
+                       </>
                     )}
                     {!notification.isRead && (
                       <Button variant="ghost" size="sm" onClick={() => markAsRead(notification.id)}>
