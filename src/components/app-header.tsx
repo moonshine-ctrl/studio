@@ -31,6 +31,12 @@ export function AppHeader() {
   const [notifications, setNotifications] = useState<Notification[]>(allNotifications);
   
    useEffect(() => {
+    // Prevent user logic from running on login pages to avoid incorrect redirects
+    if (pathname === '/login' || pathname === '/admin-login') {
+      setCurrentUser(undefined);
+      return;
+    }
+
     const loggedInUserId = sessionStorage.getItem('loggedInUserId');
     if (pathname.startsWith('/admin')) {
       setCurrentUser(users.find(u => u.role === 'Admin'));
@@ -53,8 +59,8 @@ export function AppHeader() {
   
   const displayedNotifications = (
     currentUser?.role === 'Admin'
-      ? notifications
-      : notifications.filter(n => n.userId === currentUser?.id)
+      ? allNotifications
+      : allNotifications.filter(n => n.userId === currentUser?.id)
   )
   .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
   .slice(0, 4);
@@ -67,6 +73,11 @@ export function AppHeader() {
   }
 
   if (isMobile === undefined) return null;
+  
+  // Do not render the header on login pages
+  if (pathname === '/login' || pathname === '/admin-login') {
+    return null;
+  }
 
   return (
     <header className="sticky top-0 z-30 flex h-auto items-center gap-4 border-b bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 sm:py-4">

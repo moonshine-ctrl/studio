@@ -2,12 +2,31 @@
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/app-sidebar';
 import { AppHeader } from '@/components/app-header';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function EmployeeLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (isClient) {
+      const isEmployeeLoggedIn = sessionStorage.getItem('employeeLoggedIn') === 'true';
+      if (!isEmployeeLoggedIn) {
+        router.replace('/login');
+      }
+    }
+  }, [isClient, router]);
+
+
   return (
     <SidebarProvider>
       <div className="flex">

@@ -2,17 +2,30 @@
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/app-sidebar';
 import { AppHeader } from '@/components/app-header';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+
 
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname();
-  
-  // The print layout is handled by the (print) route group layout.
-  // No special logic is needed here anymore.
+  const router = useRouter();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (isClient) {
+      const isAdminLoggedIn = sessionStorage.getItem('adminLoggedIn') === 'true';
+      if (!isAdminLoggedIn) {
+        router.replace('/admin-login');
+      }
+    }
+  }, [isClient, router]);
 
   return (
     <SidebarProvider>
