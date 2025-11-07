@@ -8,7 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { LogOut, User as UserIcon } from 'lucide-react';
+import { LogOut, User as UserIcon, MoreVertical } from 'lucide-react';
 import { users } from '@/lib/data';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -30,6 +30,8 @@ export function UserProfile() {
     }
   }, [pathname]);
 
+  if (!currentUser) return null;
+
   const logoutLink = currentUser?.role === 'Admin' ? '/admin/login' : '/login';
   const profileName = currentUser?.name || 'User';
   const profileNip = currentUser?.nip || '123456789';
@@ -37,46 +39,36 @@ export function UserProfile() {
 
 
   return (
-    <div className="flex w-full items-center gap-3 p-2">
-      <Avatar className="h-9 w-9">
-        <AvatarImage
-          src={profileAvatar}
-          alt={profileName}
-          data-ai-hint="profile person"
-        />
-        <AvatarFallback>{profileName.charAt(0)}</AvatarFallback>
-      </Avatar>
-      <div className="hidden flex-1 flex-col group-data-[collapsible=icon]:hidden">
-        <span className="text-sm font-medium text-sidebar-foreground">
-          {profileName}
-        </span>
-        <span className="text-xs text-muted-foreground">
-          NIP: {profileNip}
-        </span>
-      </div>
-      <div className="hidden group-data-[collapsible=icon]:hidden">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <LogOut className="h-4 w-4" />
+    <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" className="rounded-full">
+                <Avatar className="h-8 w-8">
+                    <AvatarImage
+                        src={profileAvatar}
+                        alt={profileName}
+                        data-ai-hint="profile person"
+                    />
+                    <AvatarFallback>{profileName.charAt(0)}</AvatarFallback>
+                </Avatar>
             </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+            <DropdownMenuLabel className='flex flex-col'>
+                <span>My Account</span>
+                <span className='text-xs text-muted-foreground font-normal'>{profileName}</span>
+            </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <UserIcon className="mr-2 h-4 w-4" />
-              <span>Profile</span>
+                <UserIcon className="mr-2 h-4 w-4" />
+                <span>Profile</span>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
                 <Link href={logoutLink}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Log out</span>
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Log out</span>
                 </Link>
             </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-    </div>
+        </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

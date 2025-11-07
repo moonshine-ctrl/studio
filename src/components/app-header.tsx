@@ -19,6 +19,8 @@ import {
 import { notifications } from '@/lib/data';
 import { Badge } from './ui/badge';
 import Link from 'next/link';
+import { UserProfile } from './user-profile';
+import { format } from 'date-fns';
 
 export function AppHeader() {
   const { isMobile } = useSidebar();
@@ -61,7 +63,7 @@ export function AppHeader() {
                 {notif.message}
               </p>
               <p className="text-xs text-muted-foreground">
-                {notif.createdAt.toLocaleDateString()}
+                {format(notif.createdAt, "PPP 'at' p")}
               </p>
             </DropdownMenuItem>
           ))}
@@ -73,6 +75,7 @@ export function AppHeader() {
            </DropdownMenuFooter>
         </DropdownMenuContent>
       </DropdownMenu>
+      <UserProfile />
     </header>
   );
 }
