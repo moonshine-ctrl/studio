@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/sidebar';
 
 const adminLinks = [
-  { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/approvals', label: 'Approvals', icon: ClipboardCheck },
   { href: '/admin/users', label: 'Users', icon: Users },
   { href: '/admin/departments', label: 'Departments', icon: Building },
@@ -46,9 +46,11 @@ export function Nav({ role }: NavProps) {
   const links = role === 'Admin' ? adminLinks : employeeLinks;
 
   const isLinkActive = (href: string) => {
-    if (href === '/admin' || href === '/employee/dashboard') {
+    // Exact match for dashboard pages
+    if (href.endsWith('/dashboard')) {
         return pathname === href;
     }
+    // Starts with for other pages to handle sub-routes
     return pathname.startsWith(href);
   }
 

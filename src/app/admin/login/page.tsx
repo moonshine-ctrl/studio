@@ -28,7 +28,7 @@ export default function AdminLoginPage() {
         description: 'Welcome back, Admin!',
       });
       setTimeout(() => {
-        router.push('/admin');
+        router.push('/admin/dashboard');
         setIsLoading(false);
       }, 1000);
     } else {
