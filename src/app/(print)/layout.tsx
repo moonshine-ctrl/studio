@@ -9,7 +9,7 @@ export default function PrintLayout({
           <style dangerouslySetInnerHTML={{ __html: `
             @page {
               size: A4;
-              margin: 0;
+              margin: 2cm;
             }
             @media print {
               body {
@@ -18,6 +18,12 @@ export default function PrintLayout({
               }
               .no-print {
                 display: none;
+              }
+              .print-header {
+                  position: fixed;
+                  top: 0;
+                  left: 0;
+                  right: 0;
               }
             }
           `}} />
