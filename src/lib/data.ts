@@ -10,7 +10,7 @@ export const users: User[] = [
   { id: '6', name: 'Gilang Ramadhan', nip: '199609092021091004', avatar: 'https://picsum.photos/seed/6/100/100', departmentId: 'marketing', role: 'Employee', annualLeaveBalance: 15, phone: '6281234567895', golongan: 'III/a', joinDate: new Date('2021-09-10'), password: 'password123' },
   { id: '7', name: 'Hana Yulita', nip: '199107212018112003', avatar: 'https://picsum.photos/seed/7/100/100', departmentId: 'finance', role: 'Employee', annualLeaveBalance: 9, phone: '6281234567896', golongan: 'IV/b', joinDate: new Date('2018-11-01'), qrCodeSignature: '/qr-code-placeholder.png', password: 'password123' },
   { id: '8', name: 'Indra Wijaya', nip: '198912302015021001', avatar: 'https://picsum.photos/seed/8/100/100', departmentId: 'marketing', role: 'Employee', annualLeaveBalance: 11, phone: '6281234567897', golongan: 'III/c', joinDate: new Date('2015-02-20'), password: 'password123' },
-  { id: 'admin', name: 'Admin SiRancak', nip: 'admin@example.com', avatar: 'https://picsum.photos/seed/admin/100/100', departmentId: 'hr', role: 'Admin', annualLeaveBalance: 0, phone: '6281200000000', golongan: 'IV/c', joinDate: new Date('2020-12-01'), qrCodeSignature: '/qr-code-placeholder.png', password: 'admin123'},
+  { id: 'admin', name: 'Admin SiRancak', nip: 'admin', avatar: 'https://picsum.photos/seed/admin/100/100', departmentId: 'hr', role: 'Admin', annualLeaveBalance: 0, phone: '6281200000000', golongan: 'IV/c', joinDate: new Date('2020-12-01'), qrCodeSignature: '/qr-code-placeholder.png', password: 'admin123'},
 ];
 
 export const departments: Department[] = [
@@ -37,7 +37,7 @@ export const leaveTypes: LeaveType[] = [
   { id: 'other', name: 'Cuti Lainnya' },
 ];
 
-const now = new Date();
+const now = new Date('2024-08-01T10:00:00Z');
 
 export const leaveRequests: LeaveRequest[] = [
   { id: 'req1', userId: '1', leaveTypeId: 'annual', startDate: subDays(now, 5), endDate: subDays(now, 4), days: 2, reason: 'Family vacation', status: 'Approved', createdAt: subDays(now, 10), nextApproverId: undefined },
