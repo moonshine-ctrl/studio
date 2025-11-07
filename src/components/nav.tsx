@@ -8,17 +8,21 @@ import {
   Users,
   Bell,
   Printer,
+  ClipboardPlus,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-
+import { useState, useEffect } from 'react';
 import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
 } from '@/components/ui/sidebar';
+import type { User } from '@/types';
+import { users } from '@/lib/data';
 
-const links = [
+
+const adminLinks = [
   { href: '/', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/users', label: 'Users', icon: Users },
   { href: '/departments', label: 'Departments', icon: Building },
@@ -28,8 +32,26 @@ const links = [
   { href: '/reports', label: 'Reports', icon: FileDown },
 ];
 
+const employeeLinks = [
+    { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/ajukan-cuti', label: 'Ajukan Cuti', icon: ClipboardPlus },
+];
+
 export function Nav() {
   const pathname = usePathname();
+  // In a real app, this would come from an auth context
+  const [role, setRole] = useState<'Admin' | 'Employee'>('Admin');
+  const links = pathname.startsWith('/admin') || pathname === '/' ? adminLinks : employeeLinks;
+
+  // Simple logic to switch role for demonstration
+  useEffect(() => {
+    if (pathname.startsWith('/admin') || pathname === '/') {
+        setRole('Admin');
+    } else {
+        setRole('Employee');
+    }
+  }, [pathname]);
+
 
   return (
     <SidebarMenu>

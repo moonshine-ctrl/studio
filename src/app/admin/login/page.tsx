@@ -2,18 +2,18 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Logo } from '@/components/logo';
+import Link from 'next/link';
 
-export default function LoginPage() {
+export default function AdminLoginPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const [nip, setNip] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -21,21 +21,22 @@ export default function LoginPage() {
     e.preventDefault();
     setIsLoading(true);
 
-    if (nip && password) {
+    // In a real application, you would handle authentication here.
+    if (email && password) {
       toast({
-        title: 'Login Successful',
-        description: 'Welcome back!',
+        title: 'Admin Login Successful',
+        description: 'Welcome back, Admin!',
       });
+      // Redirect to admin dashboard after a short delay
       setTimeout(() => {
-        // In a real app, you'd set user state here
-        router.push('/dashboard'); 
+        router.push('/');
         setIsLoading(false);
       }, 1000);
     } else {
       toast({
         variant: 'destructive',
         title: 'Login Failed',
-        description: 'Please enter your NIP and password.',
+        description: 'Please enter your email and password.',
       });
       setIsLoading(false);
     }
@@ -48,19 +49,19 @@ export default function LoginPage() {
             <div className="flex justify-center mb-4">
                 <Logo />
             </div>
-          <CardTitle className="text-2xl font-bold font-headline">Employee Login</CardTitle>
-          <CardDescription>Enter your credentials to access your account.</CardDescription>
+          <CardTitle className="text-2xl font-bold font-headline">Admin Login</CardTitle>
+          <CardDescription>Enter your admin credentials to access the dashboard.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="nip">NIP</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
-                id="nip"
-                type="text"
-                placeholder="Enter your NIP"
-                value={nip}
-                onChange={(e) => setNip(e.target.value)}
+                id="email"
+                type="email"
+                placeholder="admin@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
@@ -80,9 +81,9 @@ export default function LoginPage() {
              </Button>
           </form>
         </CardContent>
-        <CardFooter className="flex flex-col gap-4 text-center text-sm text-muted-foreground">
-            <Link href="/admin/login" className="text-indigo-600 hover:underline">
-              Login as Admin
+         <CardFooter className="flex flex-col gap-4 text-center text-sm text-muted-foreground">
+            <Link href="/login" className="text-indigo-600 hover:underline">
+              Login as Employee
             </Link>
             <span>&copy; {new Date().getFullYear()} LeaveTrack Pro. All rights reserved.</span>
         </CardFooter>
