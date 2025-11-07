@@ -45,13 +45,20 @@ export function Nav({ role }: NavProps) {
   const pathname = usePathname();
   const links = role === 'Admin' ? adminLinks : employeeLinks;
 
+  const isLinkActive = (href: string) => {
+    if (href === '/admin' || href === '/employee/dashboard') {
+        return pathname === href;
+    }
+    return pathname.startsWith(href);
+  }
+
   return (
     <SidebarMenu>
       {links.map((link) => (
         <SidebarMenuItem key={link.href}>
           <SidebarMenuButton
             asChild
-            isActive={pathname === link.href}
+            isActive={isLinkActive(link.href)}
             tooltip={link.label}
           >
             <Link href={link.href}>

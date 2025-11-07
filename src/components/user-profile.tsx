@@ -24,10 +24,12 @@ export function UserProfile() {
     if (pathname.startsWith('/admin')) {
       setCurrentUser(users.find(u => u.role === 'Admin'));
     } else if (pathname.startsWith('/employee')) {
-      // Simulate a specific logged-in employee, e.g., 'Budi Santoso' (user '1')
-      // or an approver like 'Citra Lestari' (user '2')
-      // For this demo, we'll default to Budi Santoso.
-      setCurrentUser(users.find(u => u.id === '1'));
+      // Simulate a specific logged-in employee. Check for approver role first.
+      if (pathname.includes('/approvals')) {
+         setCurrentUser(users.find(u => u.id === '2')); // Citra Lestari, approver
+      } else {
+         setCurrentUser(users.find(u => u.id === '1')); // Budi Santoso, regular employee
+      }
     }
   }, [pathname]);
 
@@ -36,6 +38,7 @@ export function UserProfile() {
   const logoutLink = currentUser.role === 'Admin' ? '/admin/login' : '/login';
   const profileName = currentUser.name || 'User';
   const profileAvatar = currentUser.avatar || 'https://picsum.photos/seed/user/100/100';
+  const profileLink = currentUser.role === 'Admin' ? '/admin/settings' : '#'; // Employee profile page doesn't exist yet
 
   return (
     <DropdownMenu>
@@ -57,9 +60,11 @@ export function UserProfile() {
                 <span className='text-xs text-muted-foreground font-normal'>{profileName}</span>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-                <UserIcon className="mr-2 h-4 w-4" />
-                <span>Profile</span>
+            <DropdownMenuItem asChild>
+                <Link href={profileLink}>
+                    <UserIcon className="mr-2 h-4 w-4" />
+                    <span>Profile</span>
+                </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
                 <Link href={logoutLink}>
