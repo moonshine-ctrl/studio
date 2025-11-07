@@ -110,8 +110,8 @@ export default function AdminLoginPage() {
             </Link>
         </CardFooter>
       </Card>
-      <div className="fixed bottom-4 left-4 text-sm font-script text-slate-700 dark:text-slate-300">
-        Made with ❤️ by Moonshine | © 2025.
+      <div className="fixed bottom-4 left-4 text-sm font-headline text-slate-700 dark:text-slate-300">
+        Developed by Moonshine⚡
       </div>
     </div>
   );
