@@ -27,7 +27,6 @@ export default function LoginPage() {
         description: 'Welcome back!',
       });
       setTimeout(() => {
-        // In a real app, you'd set user state here
         router.push('/dashboard'); 
         setIsLoading(false);
       }, 1000);
@@ -42,49 +41,51 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100 dark:bg-gray-900">
-      <Card className="w-full max-w-sm">
+    <div className="flex min-h-screen items-center justify-center p-4 gradient-background">
+      <Card className="w-full max-w-sm bg-white/30 dark:bg-black/30 backdrop-blur-lg border-white/20 text-gray-800 dark:text-white shadow-2xl">
         <CardHeader className="text-center">
-            <div className="flex justify-center mb-4">
-                <Logo />
-            </div>
-          <CardTitle className="text-2xl font-bold font-headline">Employee Login</CardTitle>
-          <CardDescription>Enter your credentials to access your account.</CardDescription>
+          <div className="flex justify-center mb-4">
+              <Logo />
+          </div>
+          <CardTitle className="text-2xl font-bold font-headline text-slate-800 dark:text-white">SiRancak</CardTitle>
+          <CardDescription className="text-slate-600 dark:text-slate-300">Sistem Cuti Ramah, Cepat, dan Akurat</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="nip">NIP</Label>
+              <Label htmlFor="nip" className="text-slate-700 dark:text-slate-200">NIP</Label>
               <Input
                 id="nip"
                 type="text"
-                placeholder="Enter your NIP"
+                placeholder="Masukkan NIP"
                 value={nip}
                 onChange={(e) => setNip(e.target.value)}
                 required
+                className="bg-white/50 dark:bg-black/50 border-white/30 dark:border-black/30 focus:ring-pink-500"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password" className="text-slate-700 dark:text-slate-200">Password</Label>
               <Input
                 id="password"
                 type="password"
-                placeholder="Enter your password"
+                placeholder="Masukkan password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                className="bg-white/50 dark:bg-black/50 border-white/30 dark:border-black/30 focus:ring-pink-500"
               />
             </div>
              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? 'Logging in...' : 'Login'}
+                {isLoading ? 'Logging in...' : 'LOGIN'}
              </Button>
           </form>
         </CardContent>
         <CardFooter className="flex flex-col gap-4 text-center text-sm text-muted-foreground">
-            <Link href="/admin/login" className="text-indigo-600 hover:underline">
+            <Link href="/admin/login" className="text-violet-600 dark:text-violet-400 hover:underline">
               Login as Admin
             </Link>
-            <span>&copy; {new Date().getFullYear()} LeaveTrack Pro. All rights reserved.</span>
+            <span className="text-slate-500 dark:text-slate-400">&copy; {new Date().getFullYear()} Pengadilan Agama Solok.</span>
         </CardFooter>
       </Card>
     </div>

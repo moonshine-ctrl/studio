@@ -3,8 +3,8 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'LeaveTrack Pro',
-  description: 'Comprehensive Leave Management System',
+  title: 'SiRancak',
+  description: 'Sistem Cuti Ramah, Cepat, dan Akurat',
 };
 
 export default function RootLayout({

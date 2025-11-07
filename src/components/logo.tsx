@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { ClipboardCheck } from 'lucide-react';
+import { CalendarCheck } from 'lucide-react';
 
 export function Logo({ className }: { className?: string }) {
   return (
@@ -9,11 +9,11 @@ export function Logo({ className }: { className?: string }) {
         className
       )}
     >
-      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-        <ClipboardCheck className="h-5 w-5" />
+      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground bg-gradient-to-tr from-pink-500 to-violet-500">
+        <CalendarCheck className="h-5 w-5 text-white" />
       </div>
-      <span className="hidden group-data-[collapsible=icon]:hidden">
-        LeaveTrack Pro
+      <span className="hidden group-data-[collapsible=icon]:hidden text-slate-800 dark:text-white">
+        SiRancak
       </span>
     </div>
   );
