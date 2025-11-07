@@ -25,9 +25,9 @@ const styles = {
 
 const PrintHeaderContent = () => (
     <header className="text-center mb-2 border-b-2 border-black pb-2">
-        <div className="flex items-center justify-center gap-4">
+        <div className="flex items-center justify-start gap-4 text-left">
              {settings.logoUrl && <Image src={settings.logoUrl} alt="Logo" width={80} height={80} className="object-contain" />}
-            <div className="text-center leading-tight">
+            <div className="leading-tight">
                 <h1 className="font-bold text-[18px]" style={{ wordSpacing: '0.1em' }}>{settings.letterhead[0]}</h1>
                 <h2 className="font-bold text-[18px]" style={{ wordSpacing: '0.1em' }}>{settings.letterhead[1]}</h2>
                 <h3 className="font-bold text-[18px]" style={{ wordSpacing: '0.1em' }}>{settings.letterhead[2]}</h3>
