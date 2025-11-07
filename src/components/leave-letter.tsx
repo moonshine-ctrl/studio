@@ -29,7 +29,7 @@ const Cell = ({ children, className = '', colSpan = 1, isHeader = false, rowSpan
 
 export function LeaveLetter({ request, user, department, leaveType, letterNumber, approver, headOfAgency }: LeaveLetterProps) {
     
-    const duration = differenceInDays(request.endDate, request.startDate) + 1;
+    const duration = request.days;
     const leaveTypeCheck = (type: string) => leaveType?.name === type ? 'V' : '';
     const currentYear = new Date().getFullYear();
     
@@ -95,16 +95,16 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                      <table className={styles.table}>
                         <tbody>
                             <tr>
-                                <Cell>1. Cuti Tahunan <span className="float-right">{leaveTypeCheck('Annual')}</span></Cell>
-                                <Cell>2. Cuti Besar <span className="float-right">{leaveTypeCheck('Other')}</span></Cell>
+                                <Cell>1. Cuti Tahunan <span className="float-right">{leaveTypeCheck('Cuti Tahunan')}</span></Cell>
+                                <Cell>2. Cuti Besar <span className="float-right">{leaveTypeCheck('Cuti Besar')}</span></Cell>
                             </tr>
                              <tr>
-                                <Cell>3. Cuti Sakit <span className="float-right">{leaveTypeCheck('Sick')}</span></Cell>
-                                <Cell>4. Cuti Melahirkan <span className="float-right">{leaveTypeCheck('Maternity')}</span></Cell>
+                                <Cell>3. Cuti Sakit <span className="float-right">{leaveTypeCheck('Cuti Sakit')}</span></Cell>
+                                <Cell>4. Cuti Melahirkan <span className="float-right">{leaveTypeCheck('Cuti Melahirkan')}</span></Cell>
                             </tr>
                             <tr>
-                                <Cell>5. Cuti Karena Alasan Penting <span className="float-right">{leaveTypeCheck('Important Reason')}</span></Cell>
-                                <Cell>6. Cuti di Luar Tanggungan Negara <span className="float-right">{leaveTypeCheck('Unpaid')}</span></Cell>
+                                <Cell>5. Cuti Karena Alasan Penting <span className="float-right">{leaveTypeCheck('Cuti Alasan Penting')}</span></Cell>
+                                <Cell>6. Cuti di Luar Tanggungan Negara <span className="float-right">{leaveTypeCheck('Cuti di Luar Tanggungan Negara')}</span></Cell>
                             </tr>
                         </tbody>
                     </table>
