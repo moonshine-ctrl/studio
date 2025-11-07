@@ -29,25 +29,38 @@ import {
   users,
 } from '@/lib/data';
 import { format } from 'date-fns';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import type { LeaveRequest, User } from '@/types';
 import { useToast } from '@/hooks/use-toast';
+import { usePathname } from 'next/navigation';
 
 export default function ApprovalsPage() {
   const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>(initialLeaveRequests);
   const { toast } = useToast();
+  const pathname = usePathname();
 
   // In a real app, this would come from an auth context.
-  // Set to an approver for demonstration, or admin to see all.
-  const [currentUser, setCurrentUser] = useState<User | undefined>(users.find(u => u.id === '2'));
+  const [currentUser, setCurrentUser] = useState<User | undefined>();
+
+  useEffect(() => {
+    if (pathname.startsWith('/admin') || pathname === '/') {
+      // Admin user
+      setCurrentUser(users.find(u => u.role === 'Admin'));
+    } else {
+      // Regular employee/approver, for demo let's use user '2' who is a department head
+      setCurrentUser(users.find(u => u.id === '2'));
+    }
+  }, [pathname]);
 
   const requestsToApprove = useMemo(() => {
-    if (currentUser?.role === 'Admin') {
+    if (!currentUser) return [];
+
+    if (currentUser.role === 'Admin') {
       return leaveRequests.filter(req => req.status === 'Pending');
     }
     
     // Find departments where the current user is the head
-    const headedDepartments = initialDepartments.filter(dept => dept.headId === currentUser?.id);
+    const headedDepartments = initialDepartments.filter(dept => dept.headId === currentUser.id);
     if (headedDepartments.length === 0) {
       return [];
     }
@@ -64,14 +77,20 @@ export default function ApprovalsPage() {
   const handleApprove = (requestId: string) => {
     const updatedRequests = leaveRequests.map(r => r.id === requestId ? { ...r, status: 'Approved' } : r);
     setLeaveRequests(updatedRequests);
-    initialLeaveRequests.find(r => r.id === requestId)!.status = 'Approved';
+    // In a real app, this mutation would be done on the backend
+    const originalRequest = initialLeaveRequests.find(r => r.id === requestId);
+    if(originalRequest) originalRequest.status = 'Approved';
+    
     toast({ title: 'Request Approved', description: 'The leave request has been approved.' });
   };
   
   const handleReject = (requestId: string) => {
     const updatedRequests = leaveRequests.map(r => r.id === requestId ? { ...r, status: 'Rejected' } : r);
     setLeaveRequests(updatedRequests);
-    initialLeaveRequests.find(r => r.id === requestId)!.status = 'Rejected';
+     // In a real app, this mutation would be done on the backend
+    const originalRequest = initialLeaveRequests.find(r => r.id === requestId);
+    if(originalRequest) originalRequest.status = 'Rejected';
+
     toast({ variant: 'destructive', title: 'Request Rejected', description: 'The leave request has been rejected.' });
   };
   

@@ -28,13 +28,17 @@ export default function NotificationsPage() {
   const [notifData, setNotifData] = useState<Notification[]>(initialNotifications);
   const pathname = usePathname();
   
-  // This should come from auth context in a real app
   const [currentUser, setCurrentUser] = useState<User | undefined>();
 
   useEffect(() => {
+    // Determine user based on path to simulate auth context
     if (pathname.startsWith('/admin') || pathname === '/') {
       setCurrentUser(users.find(u => u.role === 'Admin'));
     } else {
+      // For employee view, let's use user '1' for personal notifs
+      // and user '2' (a dept head) for approval notifs.
+      // In a real app, this would be a single authenticated user.
+      // We'll use user '1' for this demo.
       setCurrentUser(users.find(u => u.id === '1'));
     }
   }, [pathname]);
@@ -42,33 +46,43 @@ export default function NotificationsPage() {
 
   const enrichedNotifications = useMemo(() => {
     if (!currentUser) return [];
-    // Filter notifications for the current user (or all for admin)
-    const userNotifications = currentUser?.role === 'Admin' 
-      ? notifData 
-      : notifData.filter(n => {
+
+    let filteredNotifications;
+
+    if (currentUser.role === 'Admin') {
+      // Admin sees all notifications
+      filteredNotifications = notifData;
+    } else {
+      // Employee/Approver sees their own notifications + approval requests
+      const headedDepartments = getDepartmentById(currentUser.departmentId) ? [getDepartmentById(currentUser.departmentId)!].filter(d => d.headId === currentUser.id) : [];
+      const headedDeptIds = headedDepartments.map(d => d.id);
+      
+      filteredNotifications = notifData.filter(n => {
+        // Is the notification for me directly?
         if (n.userId === currentUser.id) return true;
-        
-        const approverDept = getDepartmentById(currentUser.departmentId);
-        if (approverDept?.headId === currentUser.id) {
-            const request = getLeaveRequestById(n.leaveRequestId || '');
-            if (request) {
-                const employee = getUserById(request.userId);
-                return employee?.departmentId === approverDept.id;
-            }
+
+        // Am I an approver for this notification's related request?
+        const request = getLeaveRequestById(n.leaveRequestId || '');
+        if (request) {
+          const employee = getUserById(request.userId);
+          if(employee && headedDeptIds.includes(employee.departmentId)) {
+            // This is a notification for a request in my department
+            return true;
+          }
         }
         return false;
       });
+    }
 
-    return userNotifications.map(notification => {
+    return filteredNotifications.map(notification => {
       let finalMessage = notification.message;
       const request = getLeaveRequestById(notification.leaveRequestId || '');
       if (request) {
         const employee = getUserById(request.userId);
+        const approver = employee ? getDepartmentById(employee.departmentId) : undefined;
 
-        if (notification.type === 'warning' && currentUser?.role === 'Admin') {
+        if (notification.type === 'warning' && (currentUser?.role === 'Admin' || (approver && approver.headId === currentUser?.id))) {
             finalMessage = `${employee?.name} mengajukan cuti sakit. Ingatkan untuk mengisi form surat keterangan.`;
-        } else if (notification.type === 'warning' && currentUser?.id === getDepartmentById(employee?.departmentId || '')?.headId) {
-            finalMessage = `Permintaan cuti dari ${employee?.name} menunggu persetujuan Anda.`;
         }
       }
       return { ...notification, message: finalMessage };
