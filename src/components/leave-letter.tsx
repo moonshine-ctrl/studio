@@ -28,10 +28,10 @@ const PrintHeaderContent = () => (
         <div className="flex items-center justify-center gap-4">
              {settings.logoUrl && <Image src={settings.logoUrl} alt="Logo" width={80} height={80} className="object-contain" />}
             <div className="text-center leading-tight">
-                <h1 className="font-bold text-[13px]">{settings.letterhead[0]}</h1>
-                <h2 className="font-bold text-[13px]">{settings.letterhead[1]}</h2>
-                <h3 className="font-bold text-[13px]">{settings.letterhead[2]}</h3>
-                <h3 className="font-bold text-[13px]">{settings.letterhead[3]}</h3>
+                <h1 className="font-bold text-[16px]">{settings.letterhead[0]}</h1>
+                <h2 className="font-bold text-[16px]">{settings.letterhead[1]}</h2>
+                <h3 className="font-bold text-[16px]">{settings.letterhead[2]}</h3>
+                <h3 className="font-bold text-[16px]">{settings.letterhead[3]}</h3>
                 <p className="text-sm">{settings.letterhead[4]}</p>
                 <p className="text-sm">{settings.letterhead[5]}</p>
             </div>
@@ -48,7 +48,7 @@ const SignatureBlock = ({ user, title, signatureDate }: { user?: User, title?: s
             <div>
                 <p className="mb-1">{title || `Solok, ${dateToDisplay}`}</p>
             </div>
-            <div className="h-16 w-16 mx-auto flex items-center justify-center">
+            <div className="h-16 w-16 mx-auto my-1 flex items-center justify-center">
                 {user.qrCodeSignature ? (
                     <Image src={user.qrCodeSignature} alt="QR Code" width={64} height={64} className="mx-auto object-contain" />
                 ) : (
@@ -89,7 +89,7 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
 
 
     return (
-        <div className="bg-white p-4 font-headline text-xs" id="print-area">
+        <div className="bg-white p-4 font-body text-xs" id="print-area">
             <style jsx global>{`
                 @media print {
                   body {
@@ -258,29 +258,30 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                     {/* SECTION VI */}
                     <div className="section-container mt-1">
                         <p className="font-bold pl-1">VI. ALAMAT SELAMA MENJALANKAN CUTI</p>
-                         <table className={styles.table}>
+                        <table className={styles.table}>
                             <tbody>
-                              <tr>
-                                <td className={`${styles.cell} w-2/3 align-top`} style={{height: '140px'}}>
-                                    <div className="min-h-[50px]">{user.address || '..................................'}</div>
-                                    {leaveType?.name === 'Cuti Tahunan' && (
-                                      <div className="text-xs mt-2">
-                                        <p className="font-bold">Catatan Kepegawaian:</p>
-                                        <p>
-                                          Sisa cuti ybs. adalah {leaveBalanceBefore} hari, apabila
-                                          diambil {request.days} hari, maka sisa cuti ybs.
-                                          tersisa {leaveBalanceAfter} hari
-                                        </p>
-                                      </div>
-                                    )}
-                                </td>
-                                <td className={`${styles.cell} w-1/3 align-top text-center`}>
-                                   <SignatureBlock user={user} title="Hormat saya," />
-                                </td>
-                              </tr>
+                                <tr>
+                                    <td className={`${styles.cell} w-2/3 align-top`} style={{height: '140px'}}>
+                                        <div className="min-h-[50px]">{user.address || '..................................'}</div>
+                                        {leaveType?.name === 'Cuti Tahunan' && (
+                                        <div className="text-xs mt-2">
+                                            <p className="font-bold">Catatan Kepegawaian:</p>
+                                            <p>
+                                            Sisa cuti ybs. adalah {leaveBalanceBefore} hari, apabila
+                                            diambil {request.days} hari, maka sisa cuti ybs.
+                                            tersisa {leaveBalanceAfter} hari
+                                            </p>
+                                        </div>
+                                        )}
+                                    </td>
+                                    <td className={`${styles.cell} w-1/3 align-top text-center`}>
+                                        <SignatureBlock user={user} title="Hormat saya," />
+                                    </td>
+                                </tr>
                             </tbody>
-                          </table>
+                        </table>
                     </div>
+
                     
                     {/* SECTION VII */}
                     <div className="section-container mt-1">
@@ -295,8 +296,8 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td className={styles.cellCenter} style={{ height: '2rem' }}>
+                                <tr style={{ height: '2rem' }}>
+                                    <td className={styles.cellCenter}>
                                         <span className='font-bold text-lg'>{request.status === 'Approved' ? '✓' : ''}</span>
                                     </td>
                                     <td className={styles.cellCenter}></td>
@@ -308,7 +309,8 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td colSpan={4} className={`${styles.cell} text-center align-top`} style={{ height: '140px' }}>
+                                    <td colSpan={2} className={`${styles.cell} p-0`}></td>
+                                    <td colSpan={2} className={`${styles.cell} text-center align-top p-0`} style={{ height: '140px' }}>
                                         {approver && <SignatureBlock user={approver} title="Atasan Langsung," signatureDate={request.createdAt} />}
                                     </td>
                                 </tr>
@@ -330,8 +332,8 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td className={styles.cellCenter} style={{ height: '2rem' }}>
+                                <tr style={{ height: '2rem' }}>
+                                    <td className={styles.cellCenter}>
                                         <span className='font-bold text-lg'>{request.status === 'Approved' ? '✓' : ''}</span>
                                     </td>
                                     <td className={styles.cellCenter}></td>
@@ -343,7 +345,8 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td colSpan={4} className={`${styles.cell} text-center align-top`} style={{ height: '140px' }}>
+                                    <td colSpan={2} className={`${styles.cell} p-0`}></td>
+                                    <td colSpan={2} className={`${styles.cell} text-center align-top p-0`} style={{ height: '140px' }}>
                                          {headOfAgency && <SignatureBlock user={headOfAgency} signatureDate={request.createdAt} />}
                                     </td>
                                 </tr>
