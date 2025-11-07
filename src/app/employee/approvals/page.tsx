@@ -27,10 +27,11 @@ import {
   users,
   logHistory,
   departmentApprovalFlows,
+  notifications as initialNotifications
 } from '@/lib/data';
 import { format } from 'date-fns';
 import { useState, useMemo, useEffect } from 'react';
-import type { LeaveRequest, User } from '@/types';
+import type { LeaveRequest, User, Notification } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 
 export default function ApprovalsPage() {
@@ -56,6 +57,23 @@ export default function ApprovalsPage() {
     if (requestIndex === -1 || !currentUser) return;
     
     const originalRequest = leaveRequests[requestIndex];
+    const employee = getUserById(originalRequest.userId);
+    if (!employee) return;
+
+    // Common logic for logging
+    const logActivity = (status: string) => {
+        logHistory.unshift({
+          id: `log-${Date.now()}`,
+          date: new Date(),
+          user: currentUser?.name || 'Approver',
+          activity: `${status} leave request for ${employee?.name || 'N/A'}.`,
+        });
+        toast({
+          title: `Request ${status}`,
+          description: `The leave request has been ${status.toLowerCase()}.`,
+          variant: status === 'Rejected' ? 'destructive' : 'default',
+        });
+    };
 
     // If rejected or suspended, the flow stops.
     if (decision === 'Rejected' || decision === 'Suspended') {
@@ -66,11 +84,9 @@ export default function ApprovalsPage() {
             masterRequest.status = decision;
             masterRequest.nextApproverId = undefined;
         }
+        logActivity(decision);
 
     } else if (decision === 'Approved') {
-        const employee = getUserById(originalRequest.userId);
-        if (!employee) return;
-
         const approvalFlow = departmentApprovalFlows[employee.departmentId] || [];
         const currentApproverIndex = approvalFlow.indexOf(currentUser.id);
         
@@ -92,10 +108,26 @@ export default function ApprovalsPage() {
             masterRequest.status = newStatus;
             masterRequest.nextApproverId = nextApproverId;
         }
+        
+        const leaveType = getLeaveTypeById(originalRequest.leaveTypeId);
 
-        // Deduct leave balance only on final approval
-        if (newStatus === 'Approved') {
-            const leaveType = getLeaveTypeById(originalRequest.leaveTypeId);
+        if (nextApproverId) {
+            // Notify next approver
+            const nextApprover = getUserById(nextApproverId);
+            const approverNotification: Notification = {
+              id: `notif-${Date.now()}-nextapprover`,
+              userId: nextApproverId,
+              message: `Permintaan cuti dari ${employee.name} (${leaveType?.name}) telah disetujui dan menunggu persetujuan Anda.`,
+              type: 'info',
+              isRead: false,
+              createdAt: new Date(),
+              leaveRequestId: requestId,
+            };
+            initialNotifications.unshift(approverNotification);
+            logActivity(`Approved and forwarded`);
+        } else {
+            // Final approval
+            // Deduct leave balance only on final approval
             if (leaveType?.name === 'Cuti Tahunan') {
                  const updatedUsers = allUsers.map(u => 
                     u.id === employee.id 
@@ -106,24 +138,21 @@ export default function ApprovalsPage() {
                 const originalUser = initialUsers.find(u => u.id === employee.id);
                 if (originalUser) originalUser.annualLeaveBalance -= originalRequest.days;
             }
+
+            // Notify employee of final approval
+            const employeeNotification: Notification = {
+              id: `notif-${Date.now()}-approved`,
+              userId: employee.id,
+              message: `Selamat! Permintaan cuti Anda (${leaveType?.name}) telah disetujui sepenuhnya.`,
+              type: 'success',
+              isRead: false,
+              createdAt: new Date(),
+              leaveRequestId: requestId,
+            };
+            initialNotifications.unshift(employeeNotification);
+            logActivity('Approved (Final)');
         }
     }
-    
-    const employee = getUserById(originalRequest.userId);
-
-    // Add to log
-    logHistory.unshift({
-      id: `log-${Date.now()}`,
-      date: new Date(),
-      user: currentUser?.name || 'Approver',
-      activity: `${decision} leave request for ${employee?.name || 'N/A'}.`,
-    });
-
-    toast({
-      title: `Request ${decision}`,
-      description: `The leave request has been ${decision.toLowerCase()}.`,
-      variant: decision === 'Rejected' ? 'destructive' : 'default',
-    });
   };
 
   return (
