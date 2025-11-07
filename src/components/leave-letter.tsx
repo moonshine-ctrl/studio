@@ -24,10 +24,10 @@ const styles = {
 
 
 const PrintHeaderContent = () => (
-    <header className="text-center mb-2 border-b-2 border-black pb-2">
-        <div className="flex flex-col items-center justify-center gap-2 text-center">
-             {settings.logoUrl && <Image src={settings.logoUrl} alt="Logo" width={80} height={80} className="object-contain" />}
-            <div className="leading-tight">
+    <header className="mb-2 border-b-2 border-black pb-2">
+        <div className="flex flex-row items-center justify-start gap-4">
+            {settings.logoUrl && <Image src={settings.logoUrl} alt="Logo" width={80} height={80} className="object-contain" />}
+            <div className="leading-tight text-center flex-grow">
                 <h1 className="font-bold text-[18px]" style={{ wordSpacing: '0.1em' }}>{settings.letterhead[0]}</h1>
                 <h2 className="font-bold text-[18px]" style={{ wordSpacing: '0.1em' }}>{settings.letterhead[1]}</h2>
                 <h3 className="font-bold text-[18px]" style={{ wordSpacing: '0.1em' }}>{settings.letterhead[2]}</h3>
