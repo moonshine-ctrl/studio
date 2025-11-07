@@ -70,8 +70,7 @@ export default function PrintPage() {
                 if (!user || !leaveType) return null;
 
                 const isPrintable = request.status === 'Approved' || (leaveType.name === 'Cuti Sakit' && request.status !== 'Rejected' && request.status !== 'Cancelled');
-                const isInputActive = isPrintable;
-
+                
                 return (
                   <TableRow key={request.id}>
                     <TableCell className="font-medium">{user.name}</TableCell>
@@ -91,7 +90,6 @@ export default function PrintPage() {
                           className="w-full sm:w-auto sm:flex-1" 
                           value={letterNumbers[request.id] || ''}
                           onChange={(e) => handleLetterNumberChange(request.id, e.target.value)}
-                          disabled={!isInputActive}
                         />
                         <Button variant="outline" size="sm" onClick={() => handlePrint(request)} disabled={!isPrintable}>
                           <Printer className="mr-2 h-4 w-4" />
