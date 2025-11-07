@@ -29,6 +29,28 @@ const Cell = ({ children, className = '', colSpan = 1, isHeader = false, rowSpan
     </td>
 );
 
+const PrintHeader = () => (
+    <header className="text-center mb-4 border-b-2 border-black pb-2 print-header">
+        <div className="flex items-center justify-center gap-4">
+             {settings.logoUrl && <Image src={settings.logoUrl} alt="Logo" width={70} height={70} className="object-contain" />}
+            <div>
+                <h1 className="font-bold text-sm">{settings.letterhead[0]}</h1>
+                <h2 className="font-bold text-sm">{settings.letterhead[1]}</h2>
+                <h3 className="font-bold text-base">{settings.letterhead[2]}</h3>
+                <h3 className="font-bold text-lg">{settings.letterhead[3]}</h3>
+                <p className="text-xs">{settings.letterhead[4]}</p>
+                <p className="text-xs">{settings.letterhead[5]}</p>
+            </div>
+        </div>
+    </header>
+);
+
+const RepeatingPrintHeader = () => (
+    <div className="repeating-header hidden print:block">
+        <PrintHeader />
+    </div>
+)
+
 export function LeaveLetter({ request, user, department, leaveType, letterNumber, approver, headOfAgency }: LeaveLetterProps) {
     
     const duration = request.days;
@@ -54,19 +76,7 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
     return (
         <div className="bg-white p-8 font-serif text-xs">
             <div className="max-w-4xl mx-auto" id="print-area">
-                <header className="text-center mb-4 border-b-2 border-black pb-2 print-header">
-                    <div className="flex items-center justify-center gap-4">
-                         {settings.logoUrl && <Image src={settings.logoUrl} alt="Logo" width={70} height={70} className="object-contain" />}
-                        <div>
-                            <h1 className="font-bold text-sm">{settings.letterhead[0]}</h1>
-                            <h2 className="font-bold text-sm">{settings.letterhead[1]}</h2>
-                            <h3 className="font-bold text-base">{settings.letterhead[2]}</h3>
-                            <h3 className="font-bold text-lg">{settings.letterhead[3]}</h3>
-                            <p className="text-xs">{settings.letterhead[4]}</p>
-                            <p className="text-xs">{settings.letterhead[5]}</p>
-                        </div>
-                    </div>
-                </header>
+                <PrintHeader />
 
                 <h4 className="font-bold text-center underline mb-1">FORMULIR PERMINTAAN DAN PEMBERIAN CUTI</h4>
                 <p className="text-center mb-4">Nomor: {letterNumber}</p>
@@ -98,7 +108,8 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                             </tbody>
                         </table>
                     </div>
-
+                    
+                    <RepeatingPrintHeader />
                     {/* SECTION II */}
                      <div className={`${styles.sectionContainer} mt-4`}>
                         <p className="font-bold">II. JENIS CUTI YANG DIAMBIL **</p>
@@ -120,12 +131,14 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                         </table>
                     </div>
 
+                    <RepeatingPrintHeader />
                     {/* SECTION III */}
                     <div className={`${styles.sectionContainer} mt-4`}>
                         <p className="font-bold">III. ALASAN CUTI</p>
                         <div className={`${styles.cell} h-10`}>{request.reason}</div>
                     </div>
 
+                    <RepeatingPrintHeader />
                     {/* SECTION IV */}
                      <div className={`${styles.sectionContainer} mt-4`}>
                         <p className="font-bold">IV. LAMANYA CUTI</p>
@@ -142,7 +155,8 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                             </tbody>
                         </table>
                     </div>
-
+                    
+                    <RepeatingPrintHeader />
                     {/* SECTION V */}
                     <div className={`${styles.sectionContainer} mt-4`}>
                         <p className="font-bold">V. CATATAN CUTI ***</p>
@@ -166,7 +180,8 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                             </tbody>
                         </table>
                     </div>
-
+                    
+                    <RepeatingPrintHeader />
                      {/* SECTION VI */}
                     <div className="grid grid-cols-2 gap-4 mt-4 break-inside-avoid">
                         <div>
@@ -192,6 +207,7 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                         </div>
                     </div>
                     
+                    <RepeatingPrintHeader />
                     {/* SECTION VII */}
                     <div className={`${styles.sectionContainer} mt-4`}>
                         <p className="font-bold">VII. PERTIMBANGAN ATASAN LANGSUNG</p>
@@ -207,7 +223,7 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                         </tr>
                                         <tr>
                                             <td colSpan={4} className={`${styles.cell}`}>
-                                                <div className="text-center float-right w-1/2">
+                                                <div className="float-right w-1/2 text-center h-28">
                                                     <p>Atasan Langsung {allApprovers.length > 1 ? index + 1 : ''},</p>
                                                     {approverItem?.qrCodeSignature ? (
                                                         <Image src={approverItem.qrCodeSignature} alt="QR Code" width={70} height={70} className="mx-auto my-1" />
@@ -225,7 +241,7 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                         ))}
                     </div>
 
-
+                    <RepeatingPrintHeader />
                     {/* SECTION VIII */}
                     <div className={`${styles.sectionContainer} mt-4`}>
                         <p className="font-bold">VIII. KEPUTUSAN PEJABAT YANG BERWENANG MEMBERIKAN CUTI **</p>
@@ -239,7 +255,7 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                                 </tr>
                                 <tr>
                                     <td colSpan={4} className={`${styles.cell}`}>
-                                        <div className="text-center float-right w-1/2">
+                                        <div className="float-right w-1/2 text-center h-28">
                                             <p>Ketua,</p>
                                             {headOfAgency?.qrCodeSignature ? (
                                                 <Image src={headOfAgency.qrCodeSignature} alt="QR Code" width={70} height={70} className="mx-auto my-1" />
@@ -256,7 +272,7 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                     </div>
                 </div>
 
-                <footer className="mt-4 text-xs">
+                <footer className="mt-4 text-xs break-before-page">
                     <p className="font-bold">Catatan:</p>
                     <table className="w-full">
                         <tbody>
@@ -281,6 +297,9 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                 </footer>
             </div>
             <style jsx global>{`
+                .repeating-header {
+                    break-before: page;
+                }
                 @media print {
                     body {
                         -webkit-print-color-adjust: exact;
@@ -289,15 +308,9 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                     .no-print {
                         display: none;
                     }
-                    .print-header {
-                        position: running(doc_header);
+                    .repeating-header {
+                        display: block;
                     }
-                }
-                 @page {
-                    @top-center {
-                        content: element(doc_header);
-                    }
-                    margin-bottom: 2cm;
                 }
             `}</style>
         </div>
