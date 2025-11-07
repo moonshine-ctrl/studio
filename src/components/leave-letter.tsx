@@ -260,8 +260,16 @@ export function LeaveLetter({ request, user, department, leaveType, letterNumber
                               <tr>
                                 <td className={`${styles.cell} w-2/3 align-top`} style={{height: '110px'}}>
                                     <div className="min-h-[50px]">..................................</div>
-                                    <p className="font-bold">Catatan Kepegawaian:</p>
-                                    <p>Sisa cuti ybs. adalah {leaveBalanceBefore} hari, apabila diambil {request.days} hari, maka sisa cuti ybs. tersisa {leaveBalanceAfter} hari</p>
+                                    {leaveType?.name === 'Cuti Tahunan' && (
+                                      <>
+                                        <p className="font-bold">Catatan Kepegawaian:</p>
+                                        <p>
+                                          Sisa cuti ybs. adalah {leaveBalanceBefore} hari, apabila
+                                          diambil {request.days} hari, maka sisa cuti ybs.
+                                          tersisa {leaveBalanceAfter} hari
+                                        </p>
+                                      </>
+                                    )}
                                 </td>
                                 <td className={`${styles.cell} w-1/3 align-top text-center`}>
                                     <div className='flex flex-col h-full'>
