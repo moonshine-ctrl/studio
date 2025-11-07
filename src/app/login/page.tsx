@@ -71,7 +71,7 @@ export default function LoginPage() {
               <Logo logoUrl={settings.logoUrl} isLogin={true} />
           </div>
           <CardTitle className="text-2xl font-bold font-headline text-slate-800 dark:text-white">SiRancak</CardTitle>
-          <CardDescription className="text-slate-600 dark:text-slate-300">Sistem Cuti Ramah, Cepat, dan Akurat</CardDescription>
+          <CardDescription className="text-slate-600 dark:text-slate-300 italic">Sistem Cuti Ramah, Cepat, dan Akurat</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
@@ -110,6 +110,9 @@ export default function LoginPage() {
             </Link>
         </CardFooter>
       </Card>
+      <div className="fixed bottom-4 left-4 text-sm font-script text-slate-700 dark:text-slate-300">
+        Crafted with ❤️ by KodeSoul
+      </div>
     </div>
   );
 }

@@ -13,6 +13,7 @@ export default {
         body: ['PT Sans', 'sans-serif'],
         headline: ['"Bookman Old Style"', 'Poppins', 'sans-serif'],
         code: ['monospace'],
+        script: ['"Dancing Script"', 'cursive'],
       },
       colors: {
         background: 'hsl(var(--background))',
