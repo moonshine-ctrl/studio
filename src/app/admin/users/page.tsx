@@ -25,7 +25,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MoreHorizontal, PlusCircle, QrCode, Trash2, UserPen, X } from 'lucide-react';
-import { users as initialUsers, departments as initialDepartments } from '@/lib/data';
+import { users as initialUsers, departments as initialDepartments, getDepartmentById } from '@/lib/data';
 import {
   Dialog,
   DialogContent,
@@ -46,7 +46,15 @@ import {
 import type { User } from '@/types';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { formatDistanceToNow, differenceInYears, differenceInMonths, differenceInDays, format } from 'date-fns';
+import { differenceInYears, differenceInMonths, format } from 'date-fns';
+
+
+const updateDepartmentCount = (departmentId: string, amount: number) => {
+    const dept = initialDepartments.find(d => d.id === departmentId);
+    if (dept) {
+        dept.employeeCount += amount;
+    }
+}
 
 export default function UsersPage() {
   const [users, setUsers] = useState<User[]>(initialUsers);
@@ -66,8 +74,6 @@ export default function UsersPage() {
     golongan: '',
     joinDate: new Date(),
   });
-
-  const getDepartmentById = (id: string) => departments.find(d => d.id === id);
 
   const handleInputChange = (field: string, value: string, isEditing: boolean = false) => {
     const target = isEditing ? editingUser : newUser;
@@ -115,6 +121,10 @@ export default function UsersPage() {
       const updatedUsers = [...users, user];
       setUsers(updatedUsers);
       initialUsers.push(user); // Update mock data
+
+      // Update department count
+      updateDepartmentCount(user.departmentId, 1);
+
       setOpen(false);
       setNewUser({
         name: '',
@@ -147,6 +157,8 @@ export default function UsersPage() {
 
   const handleUpdateUser = () => {
     if (editingUser) {
+      const originalUser = users.find(u => u.id === editingUser.id);
+
       const updatedUsers = users.map(u => u.id === editingUser.id ? editingUser : u)
       setUsers(updatedUsers);
 
@@ -155,6 +167,12 @@ export default function UsersPage() {
         initialUsers[index] = editingUser;
       }
       
+      // Update department counts if department changed
+      if (originalUser && originalUser.departmentId !== editingUser.departmentId) {
+          updateDepartmentCount(originalUser.departmentId, -1);
+          updateDepartmentCount(editingUser.departmentId, 1);
+      }
+
       setIsEditDialogOpen(false);
       setEditingUser(null);
       toast({
@@ -165,6 +183,9 @@ export default function UsersPage() {
   };
   
   const handleDeleteUser = (userId: string) => {
+    const userToDelete = users.find(u => u.id === userId);
+    if (!userToDelete) return;
+
     const updatedUsers = users.filter(u => u.id !== userId);
     setUsers(updatedUsers);
 
@@ -172,6 +193,9 @@ export default function UsersPage() {
     if (index !== -1) {
       initialUsers.splice(index, 1);
     }
+    
+    // Update department count
+    updateDepartmentCount(userToDelete.departmentId, -1);
     
     toast({
       title: 'User Deleted',

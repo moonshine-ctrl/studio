@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -39,13 +39,27 @@ import type { Department } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 
 export default function DepartmentsPage() {
-  const [departments, setDepartments] = useState<Department[]>(initialDepartments);
+  const [departments, setDepartments] = useState<Department[]>([]);
   const [open, setOpen] = useState(false);
   const [newDeptName, setNewDeptName] = useState('');
   
   const [editingDepartment, setEditingDepartment] = useState<Department | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const { toast } = useToast();
+
+  // Recalculate employee counts on component mount and when users might change
+  useEffect(() => {
+    const departmentCounts = initialUsers.reduce((acc, user) => {
+        acc[user.departmentId] = (acc[user.departmentId] || 0) + 1;
+        return acc;
+    }, {} as { [key: string]: number });
+
+    const updatedDepartments = initialDepartments.map(dept => ({
+        ...dept,
+        employeeCount: departmentCounts[dept.id] || 0,
+    }));
+    setDepartments(updatedDepartments);
+  }, []); // Re-run if users array could change from an external source in a real app
 
   const handleAddDepartment = () => {
     if (newDeptName) {
@@ -105,6 +119,17 @@ export default function DepartmentsPage() {
   }
 
   const handleDeleteDepartment = (departmentId: string) => {
+    // Check if any user is in this department
+    const usersInDept = initialUsers.filter(u => u.departmentId === departmentId).length;
+    if (usersInDept > 0) {
+        toast({
+            variant: 'destructive',
+            title: 'Deletion Failed',
+            description: 'Cannot delete a department that has employees.',
+        });
+        return;
+    }
+
     const updatedDepartments = departments.filter(d => d.id !== departmentId);
     setDepartments(updatedDepartments);
     
