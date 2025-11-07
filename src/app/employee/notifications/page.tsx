@@ -17,7 +17,6 @@ import { cn } from '@/lib/utils';
 import type { Notification, User } from '@/types';
 import {
   getUserById,
-  users,
 } from '@/lib/data';
 
 export default function NotificationsPage() {
@@ -35,24 +34,29 @@ export default function NotificationsPage() {
   const enrichedNotifications = useMemo(() => {
     if (!currentUser) return [];
 
-    let filteredNotifications = notifData.filter(n => n.userId === currentUser.id);
+    // Employee should only see notifications where userId is their own
+    return notifData.filter(n => n.userId === currentUser.id);
 
-    return filteredNotifications.map(notification => {
-      let finalMessage = notification.message;
-      return { ...notification, message: finalMessage };
-    });
   }, [notifData, currentUser]);
 
 
   const markAsRead = (id: string) => {
     setNotifData(notifData.map(n => n.id === id ? {...n, isRead: true} : n));
-    initialNotifications.find(n => n.id === id)!.isRead = true;
+    const originalNotif = initialNotifications.find(n => n.id === id);
+    if(originalNotif) originalNotif.isRead = true;
   }
 
   const markAllAsRead = () => {
-    setNotifData(notifData.map(n => ({...n, isRead: true})));
+    const userNotifIds = enrichedNotifications.map(n => n.id);
+
+    // Update local state
+    setNotifData(notifData.map(n => 
+        userNotifIds.includes(n.id) ? {...n, isRead: true} : n
+    ));
+    
+    // Update master data
     initialNotifications.forEach(n => {
-        if(enrichedNotifications.find(en => en.id === n.id)) {
+        if (userNotifIds.includes(n.id)) {
             n.isRead = true;
         }
     });

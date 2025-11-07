@@ -37,32 +37,32 @@ export default function NotificationsPage() {
   const enrichedNotifications = useMemo(() => {
     if (!currentUser) return [];
 
-    let filteredNotifications = notifData;
+    // Admin should only see notifications where userId is 'admin'
+    return notifData.filter(n => n.userId === 'admin');
 
-    return filteredNotifications.map(notification => {
-      let finalMessage = notification.message;
-      const request = getLeaveRequestById(notification.leaveRequestId || '');
-      if (request) {
-        const employee = getUserById(request.userId);
-        const leaveType = getLeaveTypeById(request.leaveTypeId);
-        
-        if (notification.type === 'warning' && currentUser?.role === 'Admin' && leaveType?.name !== 'Cuti Tahunan') {
-            finalMessage = `${employee?.name} mengajukan ${leaveType?.name}. Ingatkan untuk melengkapi dokumen pendukung jika diperlukan.`;
-        }
-      }
-      return { ...notification, message: finalMessage };
-    });
   }, [notifData, currentUser]);
 
 
   const markAsRead = (id: string) => {
     setNotifData(notifData.map(n => n.id === id ? {...n, isRead: true} : n));
-    initialNotifications.find(n => n.id === id)!.isRead = true;
+    const originalNotif = initialNotifications.find(n => n.id === id);
+    if(originalNotif) originalNotif.isRead = true;
   }
 
   const markAllAsRead = () => {
-    setNotifData(notifData.map(n => ({...n, isRead: true})));
-    initialNotifications.forEach(n => n.isRead = true);
+    const adminNotifIds = enrichedNotifications.map(n => n.id);
+    
+    // Update local state
+    setNotifData(notifData.map(n => 
+        adminNotifIds.includes(n.id) ? {...n, isRead: true} : n
+    ));
+    
+    // Update master data
+    initialNotifications.forEach(n => {
+        if (adminNotifIds.includes(n.id)) {
+            n.isRead = true;
+        }
+    });
   }
 
   const handleWhatsAppNotification = (notification: Notification) => {
