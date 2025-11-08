@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { LogOut, User as UserIcon } from 'lucide-react';
-import { users } from '@/lib/data';
+import { users } from '@/lib/data-supabase';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { User } from '@/types';
